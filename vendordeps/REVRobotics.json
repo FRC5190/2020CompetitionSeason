@@ -6,7 +6,6 @@
                 "windowsx86-64",
                 "windowsx86",
                 "linuxaarch64bionic",
-                "linuxx86-64",
                 "linuxathena",
                 "linuxraspbian"
             ],
@@ -23,7 +22,6 @@
                 "windowsx86-64",
                 "windowsx86",
                 "linuxaarch64bionic",
-                "linuxx86-64",
                 "linuxathena",
                 "linuxraspbian"
             ],
@@ -53,7 +51,6 @@
                 "windowsx86-64",
                 "windowsx86",
                 "linuxaarch64bionic",
-                "linuxx86-64",
                 "linuxathena",
                 "linuxraspbian"
             ],
