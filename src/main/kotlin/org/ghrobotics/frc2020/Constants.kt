@@ -8,9 +8,12 @@
 
 package org.ghrobotics.frc2020
 
+import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.velocity
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
+import org.ghrobotics.lib.mathematics.units.operations.times
 
 /**
  * Contains constants for the drivetrain.
@@ -33,4 +36,13 @@ object DriveConstants {
 
 object IntakeConstants {
     const val kIntakeId = 9
+}
+
+object FortuneWheelConstants {
+    const val kFortuneMotorId = 5
+
+    val kFortuneWheelSpeed = 30.0 * 360.degrees.velocity // RPM to spin fortune wheel at
+    val kSpinnerWheelRadius = 3.inches // Radius of wheel connected to the motor
+    val kFortuneWheelRadius = 16.inches // Distance from the center of the fortune wheel to our contact point
+    val kSpinnerUnitModel = NativeUnitLengthModel(42.nativeUnits, kSpinnerWheelRadius)
 }
