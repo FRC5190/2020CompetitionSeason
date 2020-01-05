@@ -1,1 +1,2 @@
 # 2020 Competition Code
+[![Build Status](https://dev.azure.com/frc5190/Robot%20Code/_apis/build/status/FRC5190.2020CompetitionSeason?branchName=master)](https://dev.azure.com/frc5190/Robot%20Code/_build/latest?definitionId=17&branchName=master)
