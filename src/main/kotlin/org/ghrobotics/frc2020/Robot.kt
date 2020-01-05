@@ -11,6 +11,7 @@ package org.ghrobotics.frc2020
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.subsystems.Drivetrain
+import org.ghrobotics.frc2020.subsystems.FortuneWheelSpinner
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
@@ -20,12 +21,14 @@ object Robot : FalconTimedRobot() {
 
     // Constructor of the Robot class.
     init {
-        // Add the drivetrain to the subsystem handler
+        // Add the subsystems to the subsystem handler
         +Drivetrain
+        +FortuneWheelSpinner
     }
 
     // Runs once when robot boots up
-    override fun robotInit() {}
+    override fun robotInit() {
+    }
 
     // Runs once when autonomous period starts
     override fun autonomousInit() {
