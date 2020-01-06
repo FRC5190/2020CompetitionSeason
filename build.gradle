@@ -68,11 +68,14 @@ dependencies {
     // We need to add the Kotlin stdlib in order to use most Kotlin language features.
     compile "org.jetbrains.kotlin:kotlin-stdlib"
 
+    // Gson
+    compile "com.github.salomonbrys.kotson:kotson:2.5.0"
+
     // Falcon Library
-    compile "org.ghrobotics.FalconLibrary:core:dd24364b2c"
-    compile "org.ghrobotics.FalconLibrary:wpi:dd24364b2c"
-    compile "org.ghrobotics.FalconLibrary:vendorREV:dd24364b2c"
-    compile "org.ghrobotics.FalconLibrary:vendorCTRE:dd24364b2c"
+    compile "org.ghrobotics.FalconLibrary:core:68339bfea4"
+    compile "org.ghrobotics.FalconLibrary:wpi:68339bfea4"
+    compile "org.ghrobotics.FalconLibrary:vendorREV:68339bfea4"
+    compile "org.ghrobotics.FalconLibrary:vendorCTRE:68339bfea4"
 }
 
 spotless {
