@@ -22,11 +22,6 @@ class TestDrivetrainCommand : FalconCommand(Drivetrain) {
     // The test state.
     private var success = true
 
-    init {
-        // Make this command timeout in 2 seconds.
-        withTimeout(2.0)
-    }
-
     override fun initialize() {
         // Reset drivetrain encoders.
         Drivetrain.resetPosition(Pose2d())
