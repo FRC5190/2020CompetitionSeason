@@ -21,11 +21,11 @@ class TestFortuneWheelCommand : FalconCommand(FortuneWheelSpinner) {
     }
 
     override fun initialize() {
-        //todo
+        // todo
     }
 
     override fun execute() {
-        //todo
+        // todo
     }
 
     override fun end(interrupted: Boolean) {
