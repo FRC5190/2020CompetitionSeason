@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.DriveConstants
+import org.ghrobotics.frc2020.commands.TeleopDriveCommand
 import org.ghrobotics.frc2020.commands.TestDrivetrainCommand
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.drive.FalconWestCoastDrivetrain
@@ -85,7 +86,7 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         rightSlave1.outputInverted = true
 
         // Set the default command
-        // defaultCommand = TeleopDriveCommand()
+        defaultCommand = TeleopDriveCommand()
 
         enableClosedLoopControl()
     }
