@@ -8,10 +8,10 @@
 
 package org.ghrobotics.frc2020.auto
 
-import org.ghrobotics.frc2020.Network
 import org.ghrobotics.frc2020.auto.routines.CharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
 import org.ghrobotics.frc2020.auto.routines.TestSubsystemsRoutine
+import org.ghrobotics.frc2020.comms.Network
 
 /**
  * Handles the autonomous portion of the game -- the first 15 seconds.

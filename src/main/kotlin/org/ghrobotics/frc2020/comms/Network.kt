@@ -6,7 +6,7 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020
+package org.ghrobotics.frc2020.comms
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import org.ghrobotics.frc2020.auto.Autonomous
@@ -25,6 +25,8 @@ object Network {
 
     init {
         // Add the selector to Shuffleboard.
-        tab.add("Auto Mode Selector", autoModeSelector)
+        tab.add("Auto Mode Selector",
+            autoModeSelector
+        )
     }
 }
