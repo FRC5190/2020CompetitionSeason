@@ -90,49 +90,86 @@ object FortuneWheelSpinner : FalconSubsystem() {
     enum class FortuneColor {
         // Default color value
         BLACK {
-            override val rgbValues = rgb(0.0, 0.0, 0.0)
+            override val rgb = RGB(0.0, 0.0, 0.0)
+            override fun next(): FortuneColor{
+                return BLACK
+            }
+            override fun previous(): FortuneColor{
+                return BLACK
+            }
         },
 
+        // Fortune Wheel colors
         RED {
-            override val rgbValues = rgb(0.562, 0.323, 0.114)
+            override val rgb = RGB(0.562, 0.323, 0.114)
             override fun previous(): FortuneColor{
                 return GREEN
             }
         },
 
         YELLOW {
-            override val rgbValues = rgb(0.315, 0.572, 0.112)
+            override val rgb = RGB(0.315, 0.572, 0.112)
         },
 
         BLUE {
-            override val rgbValues = rgb(0.1, 0.422, 0.477)
+            override val rgb = RGB(0.1, 0.422, 0.477)
         },
 
         GREEN {
-            override val rgbValues = rgb(0.143, 0.604, 0.251)
+            override val rgb = RGB(0.143, 0.604, 0.251)
             override fun next(): FortuneColor{
                 return RED
             }
         };
 
         // RGB Values
-        protected class rgb(var red: Double, var green: Double, var blue: Double)
-        protected abstract val rgbValues: rgb
+        protected class RGB(var red: Double, var green: Double, var blue: Double)
+        protected abstract val rgb: RGB
 
-        val red get() = rgbValues.red
-        val green get() = rgbValues.green
-        val blue get() = rgbValues.blue
+        val red get() = rgb.red
+        val green get() = rgb.green
+        val blue get() = rgb.blue
 
-        open fun next(): FortuneColor{
+        protected open fun next(): FortuneColor{
             return values()[ordinal + 1]
         }
 
-        open fun previous(): FortuneColor{
+        protected open fun previous(): FortuneColor{
             return values()[ordinal - 1]
         }
 
+        operator fun plus(increment: Int): FortuneColor{
+            var times = increment
+            var newColor = this
+            while(times != 0) {
+                newColor = newColor.next()
+                times--
+            }
+            return newColor
+        }
+
+        operator fun minus(decrement: Int): FortuneColor{
+            var times = decrement
+            var newColor = this
+            while(times != 0) {
+                newColor = newColor.previous()
+                times--
+            }
+            return newColor
+        }
+
+        // Find the position of a desired color relative to the current color
+        fun findNearest(color: FortuneColor) =
+                when(color) {
+                    this + 1 -> 1
+                    this -1 -> -1
+                    this + 2 -> 2
+                    this -> 0
+                    else -> throw IllegalStateException("${color.name} could not be found relative to ${this.name}")
+                }
+
         companion object {
-            // Returns the fortune wheel color closest to the color given, but only within a designated range.
+            // Fits a normal 8 bit color to a fortune color
             fun getFortune(color: Color): FortuneColor {
                 var resolution = FortuneWheelConstants.kColorBitDepth
 

@@ -62,8 +62,6 @@ object FortuneWheelConstants {
     val kContactVelocity = kFortuneRPM.times(kContactRadius) // Linear velocity of motor at set RPM
     val kContactColor = kContactCirc / 8 // The size of one color panel
 
-    // PID Variables
-    val kFortuneWheelP = 1.0
-    val kFortuneWheelI = 0.0
-    val kFortuneWheelD = 0.0
+    // Data Accuracy
+    val kDataAccuracy = 5
 }
