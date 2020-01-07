@@ -8,66 +8,87 @@
 
 package org.ghrobotics.frc2020.commands
 
-import kotlin.math.roundToInt
+import org.ejml.equation.IntegerSequence
 import org.ghrobotics.frc2020.FortuneWheelConstants
 import org.ghrobotics.frc2020.subsystems.FortuneWheelSpinner
 import org.ghrobotics.lib.commands.FalconCommand
-import org.ghrobotics.lib.mathematics.units.Meter
-import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.velocity
-import org.ghrobotics.lib.mathematics.units.meters
-import org.ghrobotics.lib.mathematics.units.operations.div
-import org.ghrobotics.lib.mathematics.units.operations.times
 
 class FortuneWheelPositionCommand() : FalconCommand(FortuneWheelSpinner) {
 
-    private var position = 0.meters
+    // Distance measured in cycles or number of color changes
+    private var colorTarget = FortuneWheelSpinner.FortuneColor.BLACK
+    private var cycleTarget = 0
+    private var cycle = 0
 
-    constructor(position: SIUnit<Meter>) : this() {
-        this.position = position
+    // Rotate X number of cycles
+    constructor(cycles: Int) : this() {
+        colorTarget = FortuneWheelSpinner.sensorColor + cycles
+        cycleTarget = cycles
     }
 
+    // Rotate to color
     constructor(color: FortuneWheelSpinner.FortuneColor) : this() {
         var currentColor = FortuneWheelSpinner.sensorColor
-        var testingColor = currentColor
-        var index = 0
-        while(testingColor != currentColor) {
-            index++
-            testingColor = testingColor.next()
-        }
-
-        this.position = FortuneWheelConstants.kContactColor * index
+        cycleTarget = currentColor.findNearest(color)
+        colorTarget = color
     }
 
-    private val targetPosition = FortuneWheelConstants.kContactCirc * position
+    // Save data for comparisons
+    private var accuracy = Accuracy()
+    var lastColor = FortuneWheelSpinner.FortuneColor.BLACK
 
-    // Status for LEDs
-    val stageCount = (targetPosition / FortuneWheelConstants.kContactColor).value.roundToInt()
-    var status = 0
-
-    // Color Variables
-    private var lastColor = FortuneWheelSpinner.FortuneColor.BLACK
-    private var lastColorPosition: SIUnit<Meter> = 0.meters
-    private var colorError: SIUnit<Meter> = 0.meters
-
-    // Reset Encoder
+    // Prep data class
     override fun initialize() {
-        FortuneWheelSpinner.resetPosition()
+        accuracy.lastConfirmed = FortuneWheelSpinner.sensorColor
     }
 
     override fun execute() {
-        // Color Correction
-        if (lastColor != FortuneWheelSpinner.sensorColor) {
-            colorError += (FortuneWheelConstants.kContactColor).minus(FortuneWheelSpinner.spinnerPosition - lastColorPosition)
-            lastColorPosition = FortuneWheelSpinner.spinnerPosition
+        var currentColor = FortuneWheelSpinner.sensorColor
+        accuracy.update(currentColor)
 
-            // Update Status
-            status += 1
+        // Run motor if target has not been reached
+        if (cycle != cycleTarget){
+            var velocity = (FortuneWheelConstants.kContactColor * (cycleTarget - cycle)).velocity
+            if (velocity > FortuneWheelConstants.kContactVelocity) velocity = FortuneWheelConstants.kContactVelocity else velocity
+            if (velocity < -FortuneWheelConstants.kContactVelocity) velocity = -FortuneWheelConstants.kContactVelocity else velocity
+            FortuneWheelSpinner.setVelocity(velocity)
+        } else {
+            // If target was reached, but it is wrong color, find correct color
+            if (currentColor != colorTarget) {
+                colorTarget + currentColor.findNearest(colorTarget)
+            }else{
+                if (currentColor == accuracy.lastConfirmed) {
+                    this.end(false)
+                }
+            }
         }
 
-        // Run Motor
-        FortuneWheelSpinner.setVelocity((targetPosition.value - (FortuneWheelSpinner.spinnerPosition.value + colorError.value)).meters.velocity)
+        // Check if color changed to next color
+        if (lastColor != currentColor) {
+            println(currentColor.name)
+            if (lastColor == accuracy.lastConfirmed) {
+                if (lastColor + 1 == currentColor) {
+                    cycle++
+                }
+                if (lastColor - 1 == currentColor) {
+                    cycle--
+                }
+            }
+        }
+    }
 
-        lastColor = FortuneWheelSpinner.sensorColor
+    private class Accuracy {
+        private var weights = mutableMapOf<FortuneWheelSpinner.FortuneColor, Int>()
+        var lastConfirmed = FortuneWheelSpinner.FortuneColor.BLACK
+
+        // Update dataset and dump if max value reached
+        fun update(color: FortuneWheelSpinner.FortuneColor) {
+            weights.computeIfPresent(color) { key, value -> value + 1 }
+            if (weights.getValue(color) == FortuneWheelConstants.kDataAccuracy && color != FortuneWheelSpinner.FortuneColor.BLACK) {
+                weights.clear()
+                lastConfirmed = color
+            }
+        }
     }
 }
