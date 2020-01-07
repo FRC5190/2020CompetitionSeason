@@ -6,7 +6,7 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020
+package org.ghrobotics.frc2020.comms
 
 import edu.wpi.first.wpilibj.DriverStation
 

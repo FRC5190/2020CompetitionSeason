@@ -9,7 +9,7 @@
 package org.ghrobotics.frc2020.commands
 
 import edu.wpi.first.wpilibj.GenericHID
-import org.ghrobotics.frc2020.Controls
+import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.subsystems.Drivetrain
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.wrappers.hid.getRawButton
