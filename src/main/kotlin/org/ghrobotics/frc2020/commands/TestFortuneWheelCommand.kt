@@ -16,8 +16,7 @@ class TestFortuneWheelCommand : FalconCommand(FortuneWheelSpinner) {
     var status = Status.STANDBY
 
     init {
-        // Make this command timeout in 2 seconds.
-        withTimeout(2.0)
+
     }
 
     override fun initialize() {

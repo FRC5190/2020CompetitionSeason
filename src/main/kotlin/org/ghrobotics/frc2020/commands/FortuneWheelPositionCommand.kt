@@ -17,19 +17,36 @@ import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.velocity
 import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.operations.div
+import org.ghrobotics.lib.mathematics.units.operations.times
 
-class FortuneWheelPositionCommand(position: Double) : FalconCommand(FortuneWheelSpinner) {
-    val targetPosition = FortuneWheelConstants.kContactCirc * position
+class FortuneWheelPositionCommand() : FalconCommand(FortuneWheelSpinner) {
+
+    private var position = 0.meters
+
+    constructor(position: SIUnit<Meter>) : this() {
+        this.position = position
+    }
+
+    constructor(color: FortuneWheelSpinner.FortuneColor) : this() {
+        var currentColor = FortuneWheelSpinner.sensorColor
+        var testingColor = currentColor
+        var index = 0
+        while(testingColor != currentColor) {
+            index++
+            testingColor = testingColor.next()
+        }
+
+        this.position = FortuneWheelConstants.kContactColor * index
+    }
+
+    private val targetPosition = FortuneWheelConstants.kContactCirc * position
 
     // Status for LEDs
     val stageCount = (targetPosition / FortuneWheelConstants.kContactColor).value.roundToInt()
     var status = 0
 
-    // Create PID
-    private var positionPID = PositionPID(targetPosition.value)
-
     // Color Variables
-    private var lastColor = FortuneWheelSpinner.FortuneColor.Black
+    private var lastColor = FortuneWheelSpinner.FortuneColor.BLACK
     private var lastColorPosition: SIUnit<Meter> = 0.meters
     private var colorError: SIUnit<Meter> = 0.meters
 
@@ -48,39 +65,9 @@ class FortuneWheelPositionCommand(position: Double) : FalconCommand(FortuneWheel
             status += 1
         }
 
-        // Execute PID
-        FortuneWheelSpinner.setVelocity(positionPID.execute(FortuneWheelSpinner.spinnerPosition.value + colorError.value).meters.velocity)
+        // Run Motor
+        FortuneWheelSpinner.setVelocity((targetPosition.value - (FortuneWheelSpinner.spinnerPosition.value + colorError.value)).meters.velocity)
 
         lastColor = FortuneWheelSpinner.sensorColor
-    }
-
-    private class PositionPID(val target: Double) {
-        // PID Values
-        val kP = FortuneWheelConstants.kFortuneWheelP
-        val kI = FortuneWheelConstants.kFortuneWheelI
-        val kD = FortuneWheelConstants.kFortuneWheelD
-
-        // Variables
-        var error = 0.0
-//        var previousError = 0.0
-//        var integral = 0.0
-//        var derivative = 0.0
-        var output = 0.0
-
-        fun execute(value: Double): Double {
-            // Calculate Output
-            error = target - value
-//            integral += (error*.02)
-//            derivative = (error - previousError) / .02
-//            previousError = error
-            output = kP * error // + kI*integral + kD*derivative
-
-            // Limit output to max RPM
-            if (output > FortuneWheelConstants.kContactVelocity.value) {
-                output = FortuneWheelConstants.kContactVelocity.value
-            }
-            // Return the result
-            return output
-        }
     }
 }

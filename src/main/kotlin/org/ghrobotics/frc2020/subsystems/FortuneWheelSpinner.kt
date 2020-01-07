@@ -53,9 +53,7 @@ object FortuneWheelSpinner : FalconSubsystem() {
         periodicIO.sensorColor = FortuneColor.getFortune(colorSensor.color)
         periodicIO.spinnerPosition = spinnerMotor.encoder.position
 
-        println(colorSensor.color.red)
-        println(colorSensor.color.blue)
-        println(colorSensor.color.green)
+        println(sensorColor.name)
 
         // Do stuff
         if (periodicIO.resetPosition) {
@@ -74,11 +72,11 @@ object FortuneWheelSpinner : FalconSubsystem() {
     }
 
     override fun checkSubsystem(): Command {
-        return TestFortuneWheelCommand()
+        return TestFortuneWheelCommand().withTimeout(2.0)
     }
 
     private class PeriodicIO {
-        var sensorColor: FortuneColor = FortuneColor.Black
+        var sensorColor: FortuneColor = FortuneColor.BLACK
         var spinnerPosition: SIUnit<Meter> = 0.meters
         var desiredOutput: Output = Output.Nothing
         var resetPosition: Boolean = false
@@ -89,21 +87,51 @@ object FortuneWheelSpinner : FalconSubsystem() {
         class Speed(val velocity: SIUnit<Velocity<Meter>>) : Output()
     }
 
-    // Inefficient, should be replaced soon
-    class FortuneColor private constructor(val red: Double, val green: Double, val blue: Double) {
+    enum class FortuneColor {
+        // Default color value
+        BLACK {
+            override val rgbValues = rgb(0.0, 0.0, 0.0)
+        },
+
+        RED {
+            override val rgbValues = rgb(0.562, 0.323, 0.114)
+            override fun previous(): FortuneColor{
+                return GREEN
+            }
+        },
+
+        YELLOW {
+            override val rgbValues = rgb(0.315, 0.572, 0.112)
+        },
+
+        BLUE {
+            override val rgbValues = rgb(0.1, 0.422, 0.477)
+        },
+
+        GREEN {
+            override val rgbValues = rgb(0.143, 0.604, 0.251)
+            override fun next(): FortuneColor{
+                return RED
+            }
+        };
+
+        // RGB Values
+        protected class rgb(var red: Double, var green: Double, var blue: Double)
+        protected abstract val rgbValues: rgb
+
+        val red get() = rgbValues.red
+        val green get() = rgbValues.green
+        val blue get() = rgbValues.blue
+
+        open fun next(): FortuneColor{
+            return values()[ordinal + 1]
+        }
+
+        open fun previous(): FortuneColor{
+            return values()[ordinal - 1]
+        }
+
         companion object {
-            // Returns this if 'getFortune()' cannot find a match
-            val Black get() = FortuneColor(0.0, 0.0, 0.0)
-
-            // Placeholders until I get more accurate numbers
-            val Red get() = FortuneColor(1.0, 0.0, 0.0)
-            val Yellow get() = FortuneColor(1.0, 1.0, 0.0)
-            val Blue get() = FortuneColor(0.0, 0.0, 1.0)
-            val Green get() = FortuneColor(0.0, 1.0, 0.0)
-
-            // Order of colors on wheel
-            private var colors = arrayOf(Red, Yellow, Blue, Green)
-
             // Returns the fortune wheel color closest to the color given, but only within a designated range.
             fun getFortune(color: Color): FortuneColor {
                 var resolution = FortuneWheelConstants.kColorBitDepth
@@ -111,7 +139,7 @@ object FortuneWheelSpinner : FalconSubsystem() {
                 // Get a lower resolution version of the color to be tested
                 var lrColor = Color8Bit((color.red * resolution).roundToInt(), (color.green * resolution).roundToInt(), (color.blue * resolution).roundToInt())
 
-                for (fortune: FortuneColor in colors) {
+                for (fortune: FortuneColor in values()) {
                     // Get a lower resolution version of the fortune color
                     var lrFortune = Color8Bit((fortune.red * resolution).roundToInt(), (fortune.green * resolution).roundToInt(), (fortune.blue * resolution).roundToInt())
 
@@ -119,7 +147,7 @@ object FortuneWheelSpinner : FalconSubsystem() {
                         return fortune
                     }
                 }
-                return Black
+                return BLACK
             }
         }
     }
