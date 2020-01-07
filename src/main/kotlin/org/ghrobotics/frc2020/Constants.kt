@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020
 
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
+import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 
 /**
@@ -28,7 +29,21 @@ object DriveConstants {
     val kTrackWidth = 27.75.inches
     val kNativeUnitModel = NativeUnitLengthModel(9.09.nativeUnits, kWheelRadius)
 
-    val kP = 0.0
+    const val kP = 0.0
+}
+
+@Suppress("MemberVisibilityCanBePrivate", "unused")
+object ShooterConstants {
+    const val kMasterId = 6
+    const val kSlaveId = 7
+
+    val kNativeUnitModel = NativeUnitRotationModel(1.nativeUnits)
+
+    const val kS = 0.0
+    const val kV = 0.0
+    const val kA = 0.0
+
+    const val kP = 0.0
 }
 
 object IntakeConstants {
