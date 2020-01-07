@@ -37,6 +37,7 @@ class TestShooterCommand : FalconCommand(Shooter) {
     }
 
     override fun end(interrupted: Boolean) {
+        timer.stop()
         Shooter.setNeutral()
         SubsystemTestManager.shooterCheck = success
     }
