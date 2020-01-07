@@ -23,10 +23,10 @@ object GameData {
         val gameData: String = DriverStation.getInstance().gameSpecificMessage
         return if (gameData.isNotEmpty()) {
             when (gameData[0]) {
-                'R' -> FortuneWheelSpinner.FortuneColor.Red
-                'G' -> FortuneWheelSpinner.FortuneColor.Green
-                'B' -> FortuneWheelSpinner.FortuneColor.Blue
-                'Y' -> FortuneWheelSpinner.FortuneColor.Yellow
+                'R' -> FortuneWheelSpinner.FortuneColor.RED
+                'G' -> FortuneWheelSpinner.FortuneColor.GREEN
+                'B' -> FortuneWheelSpinner.FortuneColor.BLUE
+                'Y' -> FortuneWheelSpinner.FortuneColor.YELLOW
                 else -> null
             }
         } else {
