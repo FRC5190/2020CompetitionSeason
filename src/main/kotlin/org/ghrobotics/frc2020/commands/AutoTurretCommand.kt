@@ -20,7 +20,7 @@ import org.ghrobotics.lib.utils.Source
 /**
  * A command that sets the angle of the turret to a specific value.
  */
-class TurretCommand(private val angle: Source<SIUnit<Radian>>) : FalconCommand(Turret) {
+class AutoTurretCommand(private val angle: Source<SIUnit<Radian>>) : FalconCommand(Turret) {
 
     override fun execute() {
         Turret.setAngle(TurretPlanner.constrainToAcceptableRange(angle()))
@@ -33,8 +33,8 @@ class TurretCommand(private val angle: Source<SIUnit<Radian>>) : FalconCommand(T
          *
          * @param fieldRelativeAngle The field-relative angle.
          */
-        fun createFromFieldOrientedAngle(fieldRelativeAngle: SIUnit<Radian>): TurretCommand {
-            return TurretCommand { fieldRelativeAngle - SIUnit(Drivetrain.getPose().rotation.radians) }
+        fun createFromFieldOrientedAngle(fieldRelativeAngle: SIUnit<Radian>): AutoTurretCommand {
+            return AutoTurretCommand { fieldRelativeAngle - SIUnit(Drivetrain.getPose().rotation.radians) }
         }
 
         /**
@@ -42,7 +42,7 @@ class TurretCommand(private val angle: Source<SIUnit<Radian>>) : FalconCommand(T
          *
          * @param fieldRelativeAngle The field-relative angle.
          */
-        fun createFromFieldOrientedAngle(fieldRelativeAngle: Rotation2d): TurretCommand =
+        fun createFromFieldOrientedAngle(fieldRelativeAngle: Rotation2d): AutoTurretCommand =
             createFromFieldOrientedAngle(SIUnit(fieldRelativeAngle.radians))
     }
 }
