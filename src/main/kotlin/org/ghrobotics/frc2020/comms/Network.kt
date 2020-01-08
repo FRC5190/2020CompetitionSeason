@@ -61,7 +61,7 @@ object Network {
                 double("Voltage (V)") { Shooter.voltage.value }
             }
             grid("Turret") {
-                position(row = 1, column = 4)
+                position(row = 1, column = 6)
                 size(width = 2, height = 1)
 
                 double("Angle (Degrees)") { Turret.angle.inDegrees() }
