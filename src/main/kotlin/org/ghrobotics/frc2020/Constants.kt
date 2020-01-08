@@ -119,3 +119,4 @@ object VisionConstants {
     val kTargetTrackingDistanceErrorTolerance = 6.inches
     const val kMedianWindowSize = 10
 }
+

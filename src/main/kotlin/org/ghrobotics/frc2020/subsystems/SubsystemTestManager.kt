@@ -24,6 +24,7 @@ object SubsystemTestManager {
      */
     fun haveAllChecksPassed(): Boolean {
         return drivetrainCheck && shooterCheck && intakeCheck && fortuneCheck
+
     }
 
     /**
