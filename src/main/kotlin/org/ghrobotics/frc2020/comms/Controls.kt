@@ -8,11 +8,16 @@
 
 package org.ghrobotics.frc2020.comms
 
+import org.ghrobotics.frc2020.commands.IntakeCommand
+import org.ghrobotics.lib.wrappers.hid.button
+import org.ghrobotics.lib.wrappers.hid.kB
 import org.ghrobotics.lib.wrappers.hid.xboxController
 
 /**
  * Contains all the teleop controls for the robot.
  */
 object Controls {
-    val driverController = xboxController(0) { }
+    val driverController = xboxController(0) {
+        button(kB).change(IntakeCommand(0.75))
+    }
 }

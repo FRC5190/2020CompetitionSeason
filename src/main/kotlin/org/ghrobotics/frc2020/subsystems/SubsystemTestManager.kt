@@ -14,13 +14,14 @@ package org.ghrobotics.frc2020.subsystems
 object SubsystemTestManager {
     // States for each subsystem test.
     var drivetrainCheck = true
+    var intakeCheck = true
 
     /**
      * Returns whether all checks have passed.
      * @return Whether all checks have passed.
      */
     fun haveAllChecksPassed(): Boolean {
-        return drivetrainCheck
+        return drivetrainCheck && intakeCheck
     }
 
     /**
@@ -28,5 +29,6 @@ object SubsystemTestManager {
      */
     fun reset() {
         drivetrainCheck = true
+        intakeCheck = true
     }
 }
