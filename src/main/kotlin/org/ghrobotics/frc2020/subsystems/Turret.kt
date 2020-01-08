@@ -55,6 +55,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Getters
     val angle get() = periodicIO.position
+    val current get() = periodicIO.current
     val hallEffectEngaged get() = periodicIO.hallEffect
 
     // Status (zeroing or ready)

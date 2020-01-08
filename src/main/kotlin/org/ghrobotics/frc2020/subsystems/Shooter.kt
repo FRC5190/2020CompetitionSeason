@@ -47,8 +47,9 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
 
-    // Getter for speed
+    // Getters
     val velocity get() = periodicIO.velocity
+    val voltage get() = periodicIO.voltage
 
     // Initialize and configure motors.
     init {
