@@ -50,6 +50,10 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     override val leftCharacterization = SimpleMotorFeedforward(0.0, 0.0, 0.0)
     override val rightCharacterization = SimpleMotorFeedforward(0.0, 0.0, 0.0)
 
+    // Getters for current
+    val leftCurrent get() = periodicIO.leftCurrent
+    val rightCurrent get() = periodicIO.rightCurrent
+
     override fun disableClosedLoopControl() {
         leftMotor.controller.p = 0.0
         rightMotor.controller.p = 0.0
