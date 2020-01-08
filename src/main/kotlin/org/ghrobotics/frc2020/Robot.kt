@@ -13,6 +13,7 @@ import org.ghrobotics.frc2020.commands.ZeroTurretCommand
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Drivetrain
 import org.ghrobotics.frc2020.subsystems.Shooter
+import org.ghrobotics.frc2020.subsystems.Turret
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
@@ -28,6 +29,8 @@ object Robot : FalconTimedRobot() {
         // Add subsystems
         +Drivetrain
         +Shooter
+        +Turret
+        
     }
 
     // Runs once when robot boots up
