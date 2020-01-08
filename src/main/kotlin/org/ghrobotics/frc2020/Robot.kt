@@ -9,6 +9,7 @@
 package org.ghrobotics.frc2020
 
 import org.ghrobotics.frc2020.auto.Autonomous
+import org.ghrobotics.frc2020.commands.ZeroTurretCommand
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Drivetrain
 import org.ghrobotics.frc2020.subsystems.Shooter
@@ -30,7 +31,9 @@ object Robot : FalconTimedRobot() {
     }
 
     // Runs once when robot boots up
-    override fun robotInit() {}
+    override fun robotInit() {
+        ZeroTurretCommand().schedule()
+    }
 
     // Runs once when autonomous period starts
     override fun autonomousInit() {

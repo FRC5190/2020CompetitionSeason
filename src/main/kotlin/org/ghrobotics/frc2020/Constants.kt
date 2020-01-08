@@ -8,10 +8,14 @@
 
 package org.ghrobotics.frc2020
 
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile
+import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
+import org.ghrobotics.lib.mathematics.units.operations.div
+import org.ghrobotics.lib.mathematics.units.seconds
 
 /**
  * Contains constants for the drivetrain.
@@ -48,4 +52,26 @@ object ShooterConstants {
 
 object IntakeConstants {
     const val kIntakeId = 9
+@Suppress("MemberVisibilityCanBePrivate", "unused")
+object TurretConstants {
+    const val kTurretId = 5
+    const val kHallEffectSensorId = 1
+    const val kGearRatio = 44.0
+
+    val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
+
+    val kAcceptableRange = (-200).degrees..200.degrees
+
+    const val kS = 0.0
+    const val kV = 0.0
+    const val kA = 0.0
+
+    const val kP = 0.0
+    const val kI = 0.0
+    const val kD = 0.0
+
+    val kMaxVelocity = 360.degrees / 1.seconds
+    val kMaxAcceleration = 20.degrees / 1.seconds / 1.seconds
+
+    val kConstraints = TrapezoidProfile.Constraints(kMaxVelocity.value, kMaxAcceleration.value)
 }
