@@ -9,21 +9,40 @@
 package org.ghrobotics.frc2020.commands
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d
+import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.Drivetrain
 import org.ghrobotics.frc2020.subsystems.Turret
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.utils.Source
 
-class TurretCommand(private val angle: Rotation2d) : FalconCommand(Turret) {
+/**
+ * A command that sets the angle of the turret to a specific value.
+ */
+class TurretCommand(private val angle: Source<SIUnit<Radian>>) : FalconCommand(Turret) {
 
-    override fun initialize() {
-        Turret.setAngle(SIUnit(angle.radians))
+    override fun execute() {
+        Turret.setAngle(TurretPlanner.constrainToAcceptableRange(angle()))
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     companion object {
-        fun createFromFieldOrientedAngle(angle: Rotation2d): TurretCommand {
-            val robotAngle = Drivetrain.getPose().rotation
-            return TurretCommand(angle - robotAngle)
+        /**
+         * Creates a TurretCommand from a field-oriented goal.
+         *
+         * @param fieldRelativeAngle The field-relative angle.
+         */
+        fun createFromFieldOrientedAngle(fieldRelativeAngle: SIUnit<Radian>): TurretCommand {
+            return TurretCommand { fieldRelativeAngle - SIUnit(Drivetrain.getPose().rotation.radians) }
         }
+
+        /**
+         * Creates a TurretCommand from a field-oriented goal.
+         *
+         * @param fieldRelativeAngle The field-relative angle.
+         */
+        fun createFromFieldOrientedAngle(fieldRelativeAngle: Rotation2d): TurretCommand =
+            createFromFieldOrientedAngle(SIUnit(fieldRelativeAngle.radians))
     }
 }

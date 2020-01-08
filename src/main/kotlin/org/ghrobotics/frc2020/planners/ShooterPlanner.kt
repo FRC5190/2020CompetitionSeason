@@ -1,15 +1,22 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2019, Green Hope Falcons
+ */
+
 @file:Suppress("MemberVisibilityCanBePrivate")
 
 package org.ghrobotics.frc2020.planners
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d
-import org.ghrobotics.lib.mathematics.units.Meter
-import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
-import org.ghrobotics.lib.mathematics.units.derived.LinearVelocity
 import kotlin.math.hypot
 import kotlin.math.sin
 import kotlin.math.sqrt
+import org.ghrobotics.lib.mathematics.units.Meter
+import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.LinearVelocity
 
 /**
  * An object that is used to perform calculations for shooter mechanics.
@@ -42,8 +49,8 @@ object ShooterPlanner {
 
         return SIUnit(
             distanceToTarget.value * sqrt(
-                kAccelerationDueToGravity
-                    / distanceToTarget.value * sin2Theta - 2 * deltaZ.value * cosThetaSquared
+                kAccelerationDueToGravity /
+                    distanceToTarget.value * sin2Theta - 2 * deltaZ.value * cosThetaSquared
             )
         )
     }
@@ -78,19 +85,5 @@ object ShooterPlanner {
 
         // Pythagorean theorem and return.
         return SIUnit(hypot(newXComponent, zComponent))
-    }
-
-    /**
-     * Calculates the flywheel speed in rad/s to impart the desired exit
-     * velocity onto the power cell.
-     *
-     * @param powerCellExitVelocity The desired power cell exit velocity.
-     */
-    fun calculateFlywheelSpeed(
-        powerCellExitVelocity: SIUnit<LinearVelocity>,
-        flywheelMOI: Double,
-        flywheelRadius: SIUnit<Meter>
-    ): SIUnit<AngularVelocity> {
-
     }
 }

@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2019, Green Hope Falcons
+ */
+
 package org.ghrobotics.frc2020.subsystems
 
 import com.revrobotics.CANSparkMax
@@ -11,7 +19,11 @@ import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.amps
-import org.ghrobotics.lib.mathematics.units.derived.*
+import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
+import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.mathematics.units.derived.Volt
+import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
@@ -66,15 +78,28 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         enableClosedLoopControl()
     }
 
+    /**
+     * Sets the zero of the turret at the current position.
+     */
     fun zero() {
         master.encoder.resetPosition(0.radians)
         status = Status.READY
     }
 
+    /**
+     * Sets the duty cycle of the turret motor.
+     *
+     * @param percent The desired duty cycle.
+     */
     fun setPercent(percent: Double) {
         periodicIO.desiredOutput = Output.Percent(percent)
     }
 
+    /**
+     * Sets the angle of the turret
+     *
+     * @param angle The angle of the turret.
+     */
     fun setAngle(angle: SIUnit<Radian>) {
         periodicIO.desiredOutput = Output.Position(angle)
     }
