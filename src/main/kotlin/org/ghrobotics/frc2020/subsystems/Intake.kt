@@ -80,7 +80,7 @@ object Intake : FalconSubsystem() {
     }
 
     init {
-        defaultCommand = IntakeCommand(0.75)
+        defaultCommand = IntakeCommand{0.75}
     }
 
     override fun checkSubsystem(): Command {

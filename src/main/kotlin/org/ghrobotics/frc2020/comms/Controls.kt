@@ -18,6 +18,6 @@ import org.ghrobotics.lib.wrappers.hid.xboxController
  */
 object Controls {
     val driverController = xboxController(0) {
-        button(kB).change(IntakeCommand(0.75))
+        button(kB).change(IntakeCommand{0.75})
     }
 }
