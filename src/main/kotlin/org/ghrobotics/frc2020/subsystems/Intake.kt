@@ -41,6 +41,7 @@ object Intake : FalconSubsystem() {
         var voltage: SIUnit<Volt> = 0.volts
         var position: SIUnit<NativeUnit> = 0.nativeUnits
 
+        var feedforward: SIUnit<Volt> = 0.volts
         var desiredOutput: Output = Output.Nothing
     }
 
@@ -53,7 +54,7 @@ object Intake : FalconSubsystem() {
             is Output.Nothing ->
                 intakeMotor.setNeutral()
             is Output.Percent ->
-                intakeMotor.setDutyCycle(desiredOutput.percent)
+                intakeMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
         }
     }
 
@@ -68,7 +69,8 @@ object Intake : FalconSubsystem() {
     }
 
     fun setPercent(percent: Double) {
-        intakeMotor.setDutyCycle(percent)
+        periodicIO.desiredOutput = Output.Percent(percent)
+        periodicIO.feedforward = 0.volts
     }
 
     fun enableClosedLoopControl() {
