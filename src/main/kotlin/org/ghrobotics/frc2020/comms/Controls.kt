@@ -19,8 +19,6 @@ import org.ghrobotics.lib.wrappers.hid.button
 import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.kB
 import org.ghrobotics.lib.wrappers.hid.kY
-
-
 import org.ghrobotics.lib.wrappers.hid.xboxController
 
 /**
@@ -28,6 +26,7 @@ import org.ghrobotics.lib.wrappers.hid.xboxController
  */
 object Controls {
     val driverController = xboxController(0) {
+
         button(kA).change(ZeroTurretCommand())
         button(kB).change(VisionTurretCommand())
         button(kY).change(AutoShooterCommand { 360.degrees / 1.minutes * 5000 })

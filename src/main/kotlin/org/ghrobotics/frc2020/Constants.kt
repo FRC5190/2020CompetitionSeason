@@ -122,7 +122,3 @@ object VisionConstants {
     val kP = 0.0
 
 }
-
-
-
-

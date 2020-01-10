@@ -65,7 +65,7 @@ object Intake : FalconSubsystem() {
 
     override fun setNeutral() {
         periodicIO.desiredOutput = Output.Nothing
-        intakeMotor.setNeutral()
+        periodicIO.feedforward = 0.volts
     }
 
     fun setPercent(percent: Double) {
@@ -73,17 +73,8 @@ object Intake : FalconSubsystem() {
         periodicIO.feedforward = 0.volts
     }
 
-    fun enableClosedLoopControl() {
-        intakeMotor.controller.p = IntakeConstants.kP
-    }
-
-    fun disableClosedLoopControl() {
-        intakeMotor.controller.p = 0.0
-    }
-
     init {
-        defaultCommand = IntakeCommand { 0.75 }
-        enableClosedLoopControl()
+        defaultCommand = IntakeCommand { 0.0 }
     }
 
     override fun checkSubsystem(): Command {
