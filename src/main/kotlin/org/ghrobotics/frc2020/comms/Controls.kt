@@ -8,7 +8,6 @@
 
 package org.ghrobotics.frc2020.comms
 
-<<<<<<< HEAD
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.shooter.ManualShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.VisionTurretCommand
@@ -20,10 +19,7 @@ import org.ghrobotics.lib.wrappers.hid.button
 import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.kB
 import org.ghrobotics.lib.wrappers.hid.kY
-=======
-import org.ghrobotics.frc2020.commands.IntakeCommand
-import org.ghrobotics.lib.wrappers.hid.button
-import org.ghrobotics.lib.wrappers.hid.kB
+
 
 import org.ghrobotics.lib.wrappers.hid.xboxController
 

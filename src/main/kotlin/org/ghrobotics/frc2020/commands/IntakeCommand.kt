@@ -21,5 +21,4 @@ class IntakeCommand(private var percentSource: DoubleSource) : FalconCommand(Int
     override fun end(interrupted: Boolean) {
         Intake.setNeutral()
     }
-
 }

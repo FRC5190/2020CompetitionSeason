@@ -118,5 +118,9 @@ object VisionConstants {
     val kMaxTargetTrackingLifetime = 0.5.seconds
     val kTargetTrackingDistanceErrorTolerance = 6.inches
     const val kMedianWindowSize = 10
+
+    val kP = 0.0
+
 }
+
 
