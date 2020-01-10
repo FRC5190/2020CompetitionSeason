@@ -12,7 +12,7 @@ import org.ghrobotics.frc2020.subsystems.Intake
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
-class IntakeCommand(private var percentSource: DoubleSource) : FalconCommand(Intake) {
+class IntakeCommand(private val percentSource: DoubleSource) : FalconCommand(Intake) {
 
     override fun execute() {
         Intake.setPercent(percentSource())

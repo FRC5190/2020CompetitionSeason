@@ -8,7 +8,6 @@
 
 package org.ghrobotics.frc2020.comms
 
-
 import org.ghrobotics.lib.wrappers.hid.xboxController
 
 /**
@@ -16,6 +15,5 @@ import org.ghrobotics.lib.wrappers.hid.xboxController
  */
 object Controls {
     val driverController = xboxController(0) {
-
     }
 }
