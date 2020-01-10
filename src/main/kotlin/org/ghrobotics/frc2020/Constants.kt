@@ -30,3 +30,7 @@ object DriveConstants {
 
     val kP = 0.0
 }
+
+object IntakeConstants {
+    const val kIntakeId = 9
+}

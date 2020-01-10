@@ -14,5 +14,6 @@ import org.ghrobotics.lib.wrappers.hid.xboxController
  * Contains all the teleop controls for the robot.
  */
 object Controls {
-    val driverController = xboxController(0) { }
+    val driverController = xboxController(0) {
+    }
 }
