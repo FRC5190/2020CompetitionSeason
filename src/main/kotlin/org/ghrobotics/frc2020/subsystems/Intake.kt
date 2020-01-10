@@ -11,7 +11,7 @@ package org.ghrobotics.frc2020.subsystems
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.IntakeConstants
-import org.ghrobotics.frc2020.IntakeConstants.kIntake
+import org.ghrobotics.frc2020.IntakeConstants.kIntakeId
 import org.ghrobotics.frc2020.commands.IntakeCommand
 import org.ghrobotics.frc2020.commands.TestIntakeCommand
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -28,7 +28,7 @@ import org.ghrobotics.lib.motors.rev.FalconMAX
 object Intake : FalconSubsystem() {
 
     val intakeMotor = FalconMAX(
-        id = kIntake,
+        id = kIntakeId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = DefaultNativeUnitModel
     )
@@ -80,7 +80,8 @@ object Intake : FalconSubsystem() {
     }
 
     init {
-        defaultCommand = IntakeCommand{0.75}
+        defaultCommand = IntakeCommand { 0.75 }
+        enableClosedLoopControl()
     }
 
     override fun checkSubsystem(): Command {
