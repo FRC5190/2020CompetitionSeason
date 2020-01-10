@@ -10,7 +10,6 @@ package org.ghrobotics.frc2020.subsystems
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.IntakeConstants
 import org.ghrobotics.frc2020.IntakeConstants.kIntakeId
 import org.ghrobotics.frc2020.commands.IntakeCommand
 import org.ghrobotics.frc2020.commands.TestIntakeCommand
