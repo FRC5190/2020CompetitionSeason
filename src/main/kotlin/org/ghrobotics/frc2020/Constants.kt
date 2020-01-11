@@ -128,3 +128,37 @@ object VisionConstants {
     val kTargetTrackingDistanceErrorTolerance = 6.inches
     const val kMedianWindowSize = 10
 }
+
+class StatusColor {
+    var r: Int
+        get() {
+            return b
+        }
+        set(value) {
+            b = value
+        }
+    var g: Int
+        get() {
+            return b
+        }
+        set(value) {
+            b = value
+        }
+    var b: Int
+        get() {
+            return b
+        }
+        set(value) {
+            b = value
+        }
+
+    constructor(rval: Int, gval: Int, bval: Int) {
+        r = rval
+        g = gval
+        b = bval
+    }
+}
+
+object LEDStatusConstants {
+    val ROBOT_INITIALIZING = StatusColor(254, 127, 156)
+}

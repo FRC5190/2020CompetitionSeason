@@ -8,10 +8,12 @@
 
 package org.ghrobotics.frc2020
 
+import org.ghrobotics.frc2020.Robot.unaryPlus
 import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.auto.Paths
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
+import org.ghrobotics.frc2020.subsystems.LEDSubsystem
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
@@ -39,10 +41,12 @@ object Robot : FalconTimedRobot() {
         +Drivetrain
         +Shooter
         +Turret
+        +LEDSubsystem
     }
 
     // Runs once when robot boots up
     override fun robotInit() {
+        LEDSubsystem.setStatus(LEDStatusConstants.ROBOT_INITIALIZING)
         ZeroTurretCommand().schedule()
     }
 
