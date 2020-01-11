@@ -29,11 +29,9 @@ object Network {
 
     init {
         tab("5190") {
-            list("Auto") {
+            sendableChooser("Auto Mode", autoModeSelector) {
                 position(row = 0, column = 0)
                 size(width = 2, height = 2)
-
-                sendableChooser("Auto Mode", autoModeSelector) {}
             }
             list("Robot Pose") {
                 position(row = 0, column = 2)
