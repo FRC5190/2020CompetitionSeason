@@ -22,7 +22,7 @@ class ZeroTurretCommand : FalconCommand(Turret) {
 
     override fun execute() {
         if (!Turret.hallEffectEngaged) {
-            timer.reset()
+            // timer.reset() // For testing with 775Pro.
         }
     }
 
@@ -32,7 +32,8 @@ class ZeroTurretCommand : FalconCommand(Turret) {
     }
 
     override fun isFinished(): Boolean {
-        return timer.get() > 3.0
+        // return timer.get() > 3.0
+        return true // For testing with 775Pro.
     }
 
     override fun runsWhenDisabled(): Boolean {

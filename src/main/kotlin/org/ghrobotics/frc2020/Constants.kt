@@ -52,11 +52,15 @@ object ShooterConstants {
 
 object IntakeConstants {
     const val kIntakeId = 9
+}
+
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 object TurretConstants {
     const val kTurretId = 5
     const val kHallEffectSensorId = 1
-    const val kGearRatio = 44.0
+
+    // const val kGearRatio = 44.0
+    const val kGearRatio = 5.0 * 4096 // For testing with 775Pro
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
 

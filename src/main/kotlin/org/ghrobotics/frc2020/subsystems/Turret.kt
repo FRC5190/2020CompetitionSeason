@@ -8,8 +8,6 @@
 
 package org.ghrobotics.frc2020.subsystems
 
-import com.revrobotics.CANSparkMax
-import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
@@ -26,7 +24,7 @@ import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
-import org.ghrobotics.lib.motors.rev.FalconMAX
+import org.ghrobotics.lib.motors.ctre.FalconSRX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 
 /**
@@ -35,11 +33,20 @@ import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Hardware
+    /*
     private val master = FalconMAX(
         id = TurretConstants.kTurretId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = TurretConstants.kNativeUnitModel
     )
+    */
+
+    // For testing with 775Pro
+    private val master = FalconSRX(
+        id = TurretConstants.kTurretId,
+        model = TurretConstants.kNativeUnitModel
+    )
+
     private val hallEffectSensor = DigitalInput(TurretConstants.kHallEffectSensorId)
 
     // Software
@@ -64,6 +71,19 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     init {
         // Ensure that the turret does not turn past the rotation limits.
+        // For testing with 775Pro.
+        master.talonSRX.configReverseSoftLimitThreshold(
+            TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.start)
+                .value.toInt()
+        )
+        master.talonSRX.configForwardSoftLimitThreshold(
+            TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.endInclusive)
+                .value.toInt()
+
+        )
+        master.talonSRX.overrideSoftLimitsEnable(true)
+
+        /*
         master.canSparkMax.setSoftLimit(
             CANSparkMax.SoftLimitDirection.kReverse,
             TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.start)
@@ -74,6 +94,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.endInclusive)
                 .value.toFloat()
         )
+        */
 
         defaultCommand = InstantCommand(Runnable { setPercent(0.0) }, this).perpetually()
         enableClosedLoopControl()
@@ -136,7 +157,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
                 val feedforward = feedforward.calculate(profiledPIDController.setpoint.velocity)
 
                 // Add two outputs and set voltage.
-                master.canSparkMax.setVoltage(feedback + feedforward)
+                master.setVoltage(SIUnit(feedback + feedforward))
             }
         }
     }

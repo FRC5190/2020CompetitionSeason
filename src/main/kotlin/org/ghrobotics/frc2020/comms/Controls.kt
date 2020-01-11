@@ -8,6 +8,9 @@
 
 package org.ghrobotics.frc2020.comms
 
+import org.ghrobotics.frc2020.commands.ZeroTurretCommand
+import org.ghrobotics.lib.wrappers.hid.button
+import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.xboxController
 
 /**
@@ -15,5 +18,10 @@ import org.ghrobotics.lib.wrappers.hid.xboxController
  */
 object Controls {
     val driverController = xboxController(0) {
+        button(kA).change(ZeroTurretCommand())
+    }
+
+    fun update() {
+        driverController.update()
     }
 }
