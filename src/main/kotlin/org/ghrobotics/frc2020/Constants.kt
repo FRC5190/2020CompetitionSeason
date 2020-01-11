@@ -60,7 +60,7 @@ object TurretConstants {
     const val kHallEffectSensorId = 1
 
     // const val kGearRatio = 44.0
-    const val kGearRatio = 5.0 * 4096 // For testing with 775Pro
+    const val kGearRatio = 100.0 / 20.0 * 124.0 / 18.0 * 4096 // For testing with 775Pro
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
 
