@@ -8,7 +8,6 @@
 
 package org.ghrobotics.frc2020
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Drivetrain
