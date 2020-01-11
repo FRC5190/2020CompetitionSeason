@@ -66,16 +66,16 @@ object TurretConstants {
 
     val kAcceptableRange = (-200).degrees..200.degrees
 
-    const val kS = 0.0
-    const val kV = 0.0
+    const val kS = 1.3
+    const val kV = 2.8 / (0.3 * 12)
     const val kA = 0.0
 
-    const val kP = 0.0
+    const val kP = 4.0
     const val kI = 0.0
     const val kD = 0.0
 
-    val kMaxVelocity = 360.degrees / 1.seconds
-    val kMaxAcceleration = 20.degrees / 1.seconds / 1.seconds
+    val kMaxVelocity = 720.degrees / 1.seconds
+    val kMaxAcceleration = 700.degrees / 1.seconds / 1.seconds
 
     val kConstraints = TrapezoidProfile.Constraints(kMaxVelocity.value, kMaxAcceleration.value)
 }

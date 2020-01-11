@@ -76,6 +76,7 @@ dependencies {
     compile "org.ghrobotics.FalconLibrary:wpi:2020.2.2"
     compile "org.ghrobotics.FalconLibrary:vendorREV:2020.2.2"
     compile "org.ghrobotics.FalconLibrary:vendorCTRE:2020.2.2"
+    compile "org.ghrobotics.FalconLibrary:vendorNAVX:2020.2.2"
 }
 
 spotless {

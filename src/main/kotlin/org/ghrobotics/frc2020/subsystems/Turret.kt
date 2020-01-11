@@ -62,6 +62,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Getters
     val angle get() = periodicIO.position
+    val speed get() = periodicIO.velocity
     val current get() = periodicIO.current
     val hallEffectEngaged get() = periodicIO.hallEffect
 
@@ -79,9 +80,14 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         master.talonSRX.configForwardSoftLimitThreshold(
             TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.endInclusive)
                 .value.toInt()
-
         )
+        master.outputInverted = true
+        master.encoder.encoderPhase = true
         master.talonSRX.overrideSoftLimitsEnable(true)
+
+        master.useMotionProfileForPosition = true
+        master.motionProfileCruiseVelocity = TurretConstants.kMaxVelocity
+        master.motionProfileAcceleration = TurretConstants.kMaxAcceleration
 
         /*
         master.canSparkMax.setSoftLimit(
@@ -130,6 +136,9 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         profiledPIDController.setPID(
             TurretConstants.kP, TurretConstants.kI, TurretConstants.kD
         )
+        master.talonSRX.config_kP(0, 1.0, 0)
+        master.talonSRX.config_kF(0,
+            1023 * 0.3 / TurretConstants.kNativeUnitModel.toNativeUnitVelocity(SIUnit(2.8)).value)
     }
 
     override fun disableClosedLoopControl() {
@@ -150,14 +159,17 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             is Output.Nothing -> master.setNeutral()
             is Output.Percent -> master.setDutyCycle(desiredOutput.percent)
             is Output.Position -> {
-                // Calculate feedback output.
-                val feedback = profiledPIDController.calculate(periodicIO.position.value, desiredOutput.angle.value)
-
-                // Calculate feedforward output.
-                val feedforward = feedforward.calculate(profiledPIDController.setpoint.velocity)
-
-                // Add two outputs and set voltage.
-                master.setVoltage(SIUnit(feedback + feedforward))
+//                // Calculate feedback output.
+//                val feedback = profiledPIDController.calculate(periodicIO.position.value, desiredOutput.angle.value)
+//
+//                // Calculate feedforward output.
+//                val feedforward = feedforward.calculate(profiledPIDController.setpoint.velocity)
+//
+//                println(feedback + feedforward)
+//
+//                // Add two outputs and set voltage.
+//                master.setVoltage(SIUnit(feedback + feedforward))
+                master.setPosition(desiredOutput.angle, 1.0.volts)
             }
         }
     }

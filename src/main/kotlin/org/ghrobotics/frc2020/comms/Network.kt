@@ -65,6 +65,7 @@ object Network {
                 size(width = 2, height = 1)
 
                 double("Angle (Degrees)") { Turret.angle.inDegrees() }
+                double("Speed (rad/s)") { Turret.speed.value }
                 double("Current (A)") { Turret.current.inAmps() }
             }
         }

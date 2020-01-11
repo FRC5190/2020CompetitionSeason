@@ -33,11 +33,11 @@ import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Create the master motor.
-    private val masterMotor = FalconMAX(
-        id = ShooterConstants.kMasterId,
-        type = CANSparkMaxLowLevel.MotorType.kBrushless,
-        model = ShooterConstants.kNativeUnitModel
-    )
+//    private val masterMotor = FalconMAX(
+//        id = ShooterConstants.kMasterId,
+//        type = CANSparkMaxLowLevel.MotorType.kBrushless,
+//        model = ShooterConstants.kNativeUnitModel
+//    )
 
     // Feedforward for the shooter.
     private val feedforward = SimpleMotorFeedforward(
@@ -53,18 +53,18 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Initialize and configure motors.
     init {
-        val slaveMotor = FalconMAX(
-            id = ShooterConstants.kSlaveId,
-            type = CANSparkMaxLowLevel.MotorType.kBrushless,
-            model = ShooterConstants.kNativeUnitModel
-        )
-        slaveMotor.follow(masterMotor)
-
-        masterMotor.canSparkMax.openLoopRampRate = 0.5
-        masterMotor.canSparkMax.closedLoopRampRate = 0.5
-
-        enableClosedLoopControl()
-        defaultCommand = InstantCommand(Runnable { setPercent(0.0) }, this).perpetually()
+//        val slaveMotor = FalconMAX(
+//            id = ShooterConstants.kSlaveId,
+//            type = CANSparkMaxLowLevel.MotorType.kBrushless,
+//            model = ShooterConstants.kNativeUnitModel
+//        )
+//        slaveMotor.follow(masterMotor)
+//
+//        masterMotor.canSparkMax.openLoopRampRate = 0.5
+//        masterMotor.canSparkMax.closedLoopRampRate = 0.5
+//
+//        enableClosedLoopControl()
+//        defaultCommand = InstantCommand(Runnable { setPercent(0.0) }, this).perpetually()
     }
 
     /**
@@ -78,14 +78,14 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * Enables closed loop control.
      */
     override fun enableClosedLoopControl() {
-        masterMotor.controller.p = ShooterConstants.kP
+//        masterMotor.controller.p = ShooterConstants.kP
     }
 
     /**
      * Disables closed loop control.
      */
     override fun disableClosedLoopControl() {
-        masterMotor.controller.p = 0.0
+//        masterMotor.controller.p = 0.0
     }
 
     /**
@@ -117,15 +117,15 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     }
 
     override fun periodic() {
-        periodicIO.velocity = masterMotor.encoder.velocity
-        periodicIO.voltage = masterMotor.voltageOutput
-        periodicIO.current = masterMotor.drawnCurrent
+//        periodicIO.velocity = masterMotor.encoder.velocity
+//        periodicIO.voltage = masterMotor.voltageOutput
+//        periodicIO.current = masterMotor.drawnCurrent
 
-        when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing -> masterMotor.setNeutral()
-            is Output.Percent -> masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-            is Output.Velocity -> masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
-        }
+//        when (val desiredOutput = periodicIO.desiredOutput) {
+//            is Output.Nothing -> masterMotor.setNeutral()
+//            is Output.Percent -> masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+//            is Output.Velocity -> masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
+//        }
     }
 
     private class PeriodicIO {
