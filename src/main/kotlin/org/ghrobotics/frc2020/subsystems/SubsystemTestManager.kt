@@ -17,13 +17,14 @@ object SubsystemTestManager {
     var intakeCheck = true
     var fortuneCheck = true
     var shooterCheck = true
+    var climberCheck = true
 
     /**
      * Returns whether all checks have passed.
      * @return Whether all checks have passed.
      */
     fun haveAllChecksPassed(): Boolean {
-        return drivetrainCheck && shooterCheck && intakeCheck && fortuneCheck
+        return drivetrainCheck && shooterCheck && intakeCheck && fortuneCheck && climberCheck
 
     }
 
@@ -35,5 +36,6 @@ object SubsystemTestManager {
         intakeCheck = true
         shooterCheck = true
         fortuneCheck = true
+        climberCheck = true
     }
 }

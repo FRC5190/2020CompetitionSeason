@@ -16,6 +16,7 @@ import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
+import org.ghrobotics.lib.mathematics.units.nativeunit.SlopeNativeUnitModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.operations.times
@@ -120,5 +121,13 @@ object VisionConstants {
     const val kMedianWindowSize = 10
 
     val kP = 0.0
+
+
+object ClimberConstants {
+    //not sure about these ids
+    const val kClimberMasterId = 10
+    const val kClimberSlaveId =  11
+    //random native unit values
+    val kClimberNativeUnitModel = SlopeNativeUnitModel(15.nativeUnits, 15.nativeUnits)
 
 }
