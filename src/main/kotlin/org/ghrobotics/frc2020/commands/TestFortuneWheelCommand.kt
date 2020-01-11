@@ -11,20 +11,24 @@ package org.ghrobotics.frc2020.commands
 import org.ghrobotics.frc2020.subsystems.FortuneWheelSpinner
 import org.ghrobotics.frc2020.subsystems.SubsystemTestManager
 import org.ghrobotics.lib.commands.FalconCommand
+import org.ghrobotics.lib.mathematics.units.derived.velocity
+import org.ghrobotics.lib.mathematics.units.meters
+import org.ghrobotics.lib.mathematics.units.seconds
 
 class TestFortuneWheelCommand : FalconCommand(FortuneWheelSpinner) {
     var status = Status.STANDBY
 
-    init {
-
-    }
-
     override fun initialize() {
-        // todo
+        FortuneWheelSpinner.resetPosition()
+        status = Status.MOTOR
     }
 
     override fun execute() {
-        // todo
+        if (FortuneWheelSpinner.spinnerPosition < 1.meters){
+            FortuneWheelSpinner.setVelocity(1.meters.velocity)
+        }else{
+            status = Status.SUCCESS
+        }
     }
 
     override fun end(interrupted: Boolean) {
@@ -35,7 +39,6 @@ class TestFortuneWheelCommand : FalconCommand(FortuneWheelSpinner) {
     enum class Status {
         STANDBY,
         MOTOR,
-
         SUCCESS
     }
 }
