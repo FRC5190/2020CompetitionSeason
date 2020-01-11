@@ -43,9 +43,7 @@ object Robot : FalconTimedRobot() {
     override fun disabledInit() {}
 
     // Runs every 20 ms when robot is on
-    override fun robotPeriodic() {
-        Shuffleboard.update()
-    }
+    override fun robotPeriodic() {}
 
     // Runs every 20 ms when autonomous is enabled
     override fun autonomousPeriodic() {}
