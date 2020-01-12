@@ -41,7 +41,7 @@ object ShooterConstants {
     const val kMasterId = 6
     const val kSlaveId = 7
 
-    val kNativeUnitModel = NativeUnitRotationModel(1.nativeUnits)
+    val kNativeUnitModel = NativeUnitRotationModel(1440.nativeUnits)
 
     const val kS = 0.0
     const val kV = 0.0
@@ -59,8 +59,7 @@ object TurretConstants {
     const val kTurretId = 5
     const val kHallEffectSensorId = 1
 
-    // const val kGearRatio = 44.0
-    const val kGearRatio = 100.0 / 20.0 * 124.0 / 18.0 * 4096 // For testing with 775Pro
+    const val kGearRatio = 100.0 / 20.0 * 124.0 / 18.0 * 3.0
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
 

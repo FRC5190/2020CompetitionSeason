@@ -8,6 +8,8 @@
 
 package org.ghrobotics.frc2020.subsystems
 
+import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
@@ -25,6 +27,7 @@ import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.ctre.FalconSRX
+import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 
 /**
@@ -33,17 +36,9 @@ import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Hardware
-    /*
     private val master = FalconMAX(
         id = TurretConstants.kTurretId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
-        model = TurretConstants.kNativeUnitModel
-    )
-    */
-
-    // For testing with 775Pro
-    private val master = FalconSRX(
-        id = TurretConstants.kTurretId,
         model = TurretConstants.kNativeUnitModel
     )
 
@@ -71,25 +66,12 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         private set
 
     init {
-        // Ensure that the turret does not turn past the rotation limits.
-        // For testing with 775Pro.
-        master.talonSRX.configReverseSoftLimitThreshold(
-            TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.start)
-                .value.toInt()
-        )
-        master.talonSRX.configForwardSoftLimitThreshold(
-            TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.endInclusive)
-                .value.toInt()
-        )
         master.outputInverted = true
-        master.encoder.encoderPhase = true
-        master.talonSRX.overrideSoftLimitsEnable(true)
 
         master.useMotionProfileForPosition = true
         master.motionProfileCruiseVelocity = TurretConstants.kMaxVelocity
         master.motionProfileAcceleration = TurretConstants.kMaxAcceleration
 
-        /*
         master.canSparkMax.setSoftLimit(
             CANSparkMax.SoftLimitDirection.kReverse,
             TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.start)
@@ -100,7 +82,6 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.endInclusive)
                 .value.toFloat()
         )
-        */
 
         defaultCommand = InstantCommand(Runnable { setPercent(0.0) }, this).perpetually()
         enableClosedLoopControl()
@@ -136,9 +117,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         profiledPIDController.setPID(
             TurretConstants.kP, TurretConstants.kI, TurretConstants.kD
         )
-        master.talonSRX.config_kP(0, 1.0, 0)
-        master.talonSRX.config_kF(0,
-            1023 * 0.3 / TurretConstants.kNativeUnitModel.toNativeUnitVelocity(SIUnit(2.8)).value)
+        master.controller.p = 0.0001
+        master.controller.ff = 0.0
     }
 
     override fun disableClosedLoopControl() {
@@ -169,7 +149,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 //
 //                // Add two outputs and set voltage.
 //                master.setVoltage(SIUnit(feedback + feedforward))
-                master.setPosition(desiredOutput.angle, 1.0.volts)
+                master.setPosition(desiredOutput.angle)
             }
         }
     }

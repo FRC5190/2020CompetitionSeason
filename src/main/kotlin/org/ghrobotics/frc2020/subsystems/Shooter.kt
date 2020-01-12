@@ -24,6 +24,7 @@ import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
+import org.ghrobotics.lib.motors.ctre.FalconSRX
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 
@@ -33,11 +34,10 @@ import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Create the master motor.
-//    private val masterMotor = FalconMAX(
-//        id = ShooterConstants.kMasterId,
-//        type = CANSparkMaxLowLevel.MotorType.kBrushless,
-//        model = ShooterConstants.kNativeUnitModel
-//    )
+    private val masterMotor = FalconSRX(
+        id = ShooterConstants.kMasterId,
+        model = ShooterConstants.kNativeUnitModel
+    )
 
     // Feedforward for the shooter.
     private val feedforward = SimpleMotorFeedforward(
@@ -53,18 +53,17 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Initialize and configure motors.
     init {
-//        val slaveMotor = FalconMAX(
-//            id = ShooterConstants.kSlaveId,
-//            type = CANSparkMaxLowLevel.MotorType.kBrushless,
-//            model = ShooterConstants.kNativeUnitModel
-//        )
-//        slaveMotor.follow(masterMotor)
-//
-//        masterMotor.canSparkMax.openLoopRampRate = 0.5
-//        masterMotor.canSparkMax.closedLoopRampRate = 0.5
-//
-//        enableClosedLoopControl()
-//        defaultCommand = InstantCommand(Runnable { setPercent(0.0) }, this).perpetually()
+        val slaveMotor = FalconSRX(
+            id = ShooterConstants.kSlaveId,
+            model = ShooterConstants.kNativeUnitModel
+        )
+        slaveMotor.follow(masterMotor)
+
+        masterMotor.openLoopRamp = 0.5.seconds
+        masterMotor.closedLoopRamp = 0.5.seconds
+
+        enableClosedLoopControl()
+        defaultCommand = InstantCommand(Runnable { setPercent(0.0) }, this).perpetually()
     }
 
     /**
@@ -117,15 +116,15 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     }
 
     override fun periodic() {
-//        periodicIO.velocity = masterMotor.encoder.velocity
-//        periodicIO.voltage = masterMotor.voltageOutput
-//        periodicIO.current = masterMotor.drawnCurrent
+        periodicIO.velocity = masterMotor.encoder.velocity
+        periodicIO.voltage = masterMotor.voltageOutput
+        periodicIO.current = masterMotor.drawnCurrent
 
-//        when (val desiredOutput = periodicIO.desiredOutput) {
-//            is Output.Nothing -> masterMotor.setNeutral()
-//            is Output.Percent -> masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-//            is Output.Velocity -> masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
-//        }
+        when (val desiredOutput = periodicIO.desiredOutput) {
+            is Output.Nothing -> masterMotor.setNeutral()
+            is Output.Percent -> masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+            is Output.Velocity -> masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
+        }
     }
 
     private class PeriodicIO {

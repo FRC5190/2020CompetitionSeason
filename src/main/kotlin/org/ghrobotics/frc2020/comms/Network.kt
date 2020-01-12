@@ -61,11 +61,11 @@ object Network {
                 double("Voltage (V)") { Shooter.voltage.value }
             }
             grid("Turret") {
-                position(row = 1, column = 6)
+                position(row = 0, column = 8)
                 size(width = 2, height = 1)
 
                 double("Angle (Degrees)") { Turret.angle.inDegrees() }
-                double("Speed (rad/s)") { Turret.speed.value }
+                double("Speed (RPM)") { Turret.speed.value * 60 / 2 * Math.PI}
                 double("Current (A)") { Turret.current.inAmps() }
             }
         }

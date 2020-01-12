@@ -8,9 +8,7 @@
 
 package org.ghrobotics.frc2020.comms
 
-import org.ghrobotics.frc2020.commands.AutoTurretCommand
-import org.ghrobotics.frc2020.commands.ManualTurretCommand
-import org.ghrobotics.frc2020.commands.ZeroTurretCommand
+import org.ghrobotics.frc2020.commands.*
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.wrappers.hid.*
 
@@ -21,7 +19,11 @@ object Controls {
     val driverController = xboxController(0) {
         button(kA).change(ZeroTurretCommand())
         button(kB).change(ManualTurretCommand { 0.3 })
-        button(kY).change(AutoTurretCommand({-270.degrees}))
+        button(kY).change(VisionTurretCommand())
+
+        axisButton(5, 0.04) {
+            change(ManualShooterCommand(source))
+        }
     }
 
     fun update() {
