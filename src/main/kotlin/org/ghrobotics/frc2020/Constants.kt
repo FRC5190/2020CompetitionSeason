@@ -8,8 +8,9 @@
 
 package org.ghrobotics.frc2020
 
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
@@ -37,24 +38,6 @@ object DriveConstants {
 }
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-object ShooterConstants {
-    const val kMasterId = 6
-    const val kSlaveId = 7
-
-    val kNativeUnitModel = NativeUnitRotationModel(1440.nativeUnits)
-
-    const val kS = 0.0
-    const val kV = 0.0
-    const val kA = 0.0
-
-    const val kP = 0.0
-}
-
-object IntakeConstants {
-    const val kIntakeId = 9
-}
-
-@Suppress("MemberVisibilityCanBePrivate", "unused")
 object TurretConstants {
     const val kTurretId = 5
     const val kHallEffectSensorId = 1
@@ -62,19 +45,40 @@ object TurretConstants {
     const val kGearRatio = 100.0 / 20.0 * 124.0 / 18.0 * 3.0
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
-
     val kAcceptableRange = (-200).degrees..200.degrees
 
-    const val kS = 1.3
-    const val kV = 2.8 / (0.3 * 12)
-    const val kA = 0.0
+    val kS = 0.2.volts
 
-    const val kP = 4.0
-    const val kI = 0.0
-    const val kD = 0.0
+    const val kP = 0.0001
+    const val kF = 0.0
 
     val kMaxVelocity = 720.degrees / 1.seconds
     val kMaxAcceleration = 700.degrees / 1.seconds / 1.seconds
+}
 
-    val kConstraints = TrapezoidProfile.Constraints(kMaxVelocity.value, kMaxAcceleration.value)
+@Suppress("MemberVisibilityCanBePrivate", "unused")
+object ShooterConstants {
+    const val kMasterId = 6
+    const val kSlaveId = 7
+
+    val kNativeUnitModel = NativeUnitRotationModel(1440.nativeUnits)
+
+    val kS = 0.volts
+
+    const val kP = 0.0
+    const val kF = 0.0
+}
+
+object IntakeConstants {
+    const val kIntakeId = 9
+}
+
+object VisionConstants {
+    const val kLEDId = 0
+
+    val kGoalHeight = 90.inches
+    val kCameraHeight = 26.inches
+    val kCameraAngle = Rotation2d.fromDegrees(15.0)
+
+    val kGoalFieldRelativeAngle = Rotation2d()
 }

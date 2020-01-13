@@ -8,12 +8,10 @@
 
 package org.ghrobotics.frc2020.subsystems
 
-import com.revrobotics.CANSparkMaxLowLevel
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.ShooterConstants
-import org.ghrobotics.frc2020.commands.TestShooterCommand
+import org.ghrobotics.frc2020.commands.tests.TestShooterCommand
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -25,7 +23,6 @@ import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.ctre.FalconSRX
-import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 
 /**
@@ -37,11 +34,6 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     private val masterMotor = FalconSRX(
         id = ShooterConstants.kMasterId,
         model = ShooterConstants.kNativeUnitModel
-    )
-
-    // Feedforward for the shooter.
-    private val feedforward = SimpleMotorFeedforward(
-        ShooterConstants.kS, ShooterConstants.kV, ShooterConstants.kA
     )
 
     // PeriodicIO.
@@ -77,14 +69,14 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * Enables closed loop control.
      */
     override fun enableClosedLoopControl() {
-//        masterMotor.controller.p = ShooterConstants.kP
+        masterMotor.talonSRX.config_kP(0, ShooterConstants.kP)
     }
 
     /**
      * Disables closed loop control.
      */
     override fun disableClosedLoopControl() {
-//        masterMotor.controller.p = 0.0
+        masterMotor.talonSRX.config_kP(0, 0.0)
     }
 
     /**
@@ -104,7 +96,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun setSpeed(speed: SIUnit<AngularVelocity>) {
         periodicIO.desiredOutput = Output.Velocity(speed)
-        periodicIO.feedforward = SIUnit(feedforward.calculate(speed.value))
+        periodicIO.feedforward = ShooterConstants.kS
     }
 
     /**

@@ -8,9 +8,15 @@
 
 package org.ghrobotics.frc2020.comms
 
-import org.ghrobotics.frc2020.commands.*
-import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.wrappers.hid.*
+import org.ghrobotics.frc2020.commands.ManualShooterCommand
+import org.ghrobotics.frc2020.commands.ManualTurretCommand
+import org.ghrobotics.frc2020.commands.VisionTurretCommand
+import org.ghrobotics.frc2020.commands.ZeroTurretCommand
+import org.ghrobotics.lib.wrappers.hid.button
+import org.ghrobotics.lib.wrappers.hid.kA
+import org.ghrobotics.lib.wrappers.hid.kB
+import org.ghrobotics.lib.wrappers.hid.kY
+import org.ghrobotics.lib.wrappers.hid.xboxController
 
 /**
  * Contains all the teleop controls for the robot.

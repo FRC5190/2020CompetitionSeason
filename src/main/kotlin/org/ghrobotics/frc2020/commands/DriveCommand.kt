@@ -20,7 +20,7 @@ import org.ghrobotics.lib.wrappers.hid.kA
 /**
  * Command to drive the robot using the Xbox controller in teleop.
  */
-class TeleopDriveCommand : FalconCommand(Drivetrain) {
+class ManualDriveCommand : FalconCommand(Drivetrain) {
     override fun execute() {
         Drivetrain.curvatureDrive(-xSource(), cSource(), qSource())
     }

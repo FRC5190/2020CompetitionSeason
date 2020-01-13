@@ -11,10 +11,9 @@ package org.ghrobotics.frc2020.subsystems
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.TurretConstants
+import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -26,7 +25,6 @@ import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
-import org.ghrobotics.lib.motors.ctre.FalconSRX
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 
@@ -43,14 +41,6 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     )
 
     private val hallEffectSensor = DigitalInput(TurretConstants.kHallEffectSensorId)
-
-    // Software
-    private val feedforward = SimpleMotorFeedforward(
-        TurretConstants.kS, TurretConstants.kV, TurretConstants.kA
-    )
-    private val profiledPIDController = ProfiledPIDController(
-        TurretConstants.kP, TurretConstants.kI, TurretConstants.kD, TurretConstants.kConstraints
-    )
 
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
@@ -71,6 +61,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         master.useMotionProfileForPosition = true
         master.motionProfileCruiseVelocity = TurretConstants.kMaxVelocity
         master.motionProfileAcceleration = TurretConstants.kMaxAcceleration
+
+        master.brakeMode = true
 
         master.canSparkMax.setSoftLimit(
             CANSparkMax.SoftLimitDirection.kReverse,
@@ -102,6 +94,14 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun setPercent(percent: Double) {
         periodicIO.desiredOutput = Output.Percent(percent)
+        periodicIO.feedforward = 0.volts
+    }
+
+    /**
+     * Idles the turret motor.
+     */
+    override fun setNeutral() {
+        setPercent(0.0)
     }
 
     /**
@@ -110,19 +110,18 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * @param angle The angle of the turret.
      */
     fun setAngle(angle: SIUnit<Radian>) {
-        periodicIO.desiredOutput = Output.Position(angle)
+        periodicIO.desiredOutput = Output.Position(TurretPlanner.constrainToAcceptableRange(angle))
+        periodicIO.feedforward = TurretConstants.kS
     }
 
     override fun enableClosedLoopControl() {
-        profiledPIDController.setPID(
-            TurretConstants.kP, TurretConstants.kI, TurretConstants.kD
-        )
-        master.controller.p = 0.0001
-        master.controller.ff = 0.0
+        master.controller.p = TurretConstants.kP
+        master.controller.ff = TurretConstants.kF
     }
 
     override fun disableClosedLoopControl() {
-        profiledPIDController.setPID(0.0, 0.0, 0.0)
+        master.controller.p = 0.0
+        master.controller.ff = 0.0
     }
 
     override fun periodic() {
@@ -137,20 +136,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         // Write motor outputs.
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> master.setNeutral()
-            is Output.Percent -> master.setDutyCycle(desiredOutput.percent)
-            is Output.Position -> {
-//                // Calculate feedback output.
-//                val feedback = profiledPIDController.calculate(periodicIO.position.value, desiredOutput.angle.value)
-//
-//                // Calculate feedforward output.
-//                val feedforward = feedforward.calculate(profiledPIDController.setpoint.velocity)
-//
-//                println(feedback + feedforward)
-//
-//                // Add two outputs and set voltage.
-//                master.setVoltage(SIUnit(feedback + feedforward))
-                master.setPosition(desiredOutput.angle)
-            }
+            is Output.Percent -> master.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+            is Output.Position -> master.setPosition(desiredOutput.angle, periodicIO.feedforward)
         }
     }
 
@@ -161,6 +148,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         var current: SIUnit<Ampere> = 0.amps
         var hallEffect: Boolean = false
 
+        var feedforward: SIUnit<Volt> = 0.volts
         var desiredOutput: Output = Output.Nothing
     }
 
