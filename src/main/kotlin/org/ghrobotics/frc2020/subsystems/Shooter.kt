@@ -126,9 +126,11 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
             is Output.Percent -> {
                 masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
                 hoodServoA.angle = desiredOutput.hoodAngle.value
+                hoodServoB.angle = desiredOutput.hoodAngle.value
             }
             is Output.Velocity -> {
                 masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
+                hoodServoA.angle = desiredOutput.hoodAngle.value
                 hoodServoB.angle = desiredOutput.hoodAngle.value
             }
         }
