@@ -40,6 +40,9 @@ object VisionProcessing : FalconSubsystem() {
      */
     val angle get() = camera.yaw
 
+    /**
+     * Returns whether the camera sees a valid target.
+     */
     val isValid get() = camera.isValid
 
     /**

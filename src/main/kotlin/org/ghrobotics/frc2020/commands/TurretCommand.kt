@@ -10,6 +10,8 @@ package org.ghrobotics.frc2020.commands
 
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Rotation2d
+import edu.wpi.first.wpilibj.geometry.Transform2d
+import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Drivetrain
 import org.ghrobotics.frc2020.subsystems.Turret
 import org.ghrobotics.frc2020.vision.GoalTracker
@@ -17,8 +19,7 @@ import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
-import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.derived.inRadians
+import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 import org.ghrobotics.lib.utils.DoubleSource
 import org.ghrobotics.lib.utils.Source
 
@@ -55,10 +56,21 @@ class AutoTurretCommand(private val angle: Source<SIUnit<Radian>>) : FalconComma
 class VisionTurretCommand : FalconCommand(Turret) {
     override fun initialize() = VisionProcessing.turnOnLEDs()
     override fun execute() {
-//        val robotPose = Drivetrain.getPose()
-//        val targetLocation = GoalTracker.getBestTarget(robotPose) ?: return
-//        val angle = (targetLocation.averagePose.relativeTo(robotPose)).rotation.radians
-        Turret.setAngle(Turret.angle + SIUnit(VisionProcessing.angle.radians + 0.8.degrees.inRadians()))
+        // Get the field-relative robot pose.
+        val robotPose = Drivetrain.getPose()
+
+        // Get the field-relative turret pose.
+        val turretPose = robotPose +
+            Transform2d(TurretConstants.kTurretRelativeToRobotCenter, Turret.angle.toRotation2d())
+
+        // Get the best target.
+        val target = GoalTracker.getBestTarget(robotPose) ?: return
+
+        // Get the angle to the target.
+        val angle = target.averagePose.relativeTo(turretPose).rotation.radians
+
+        Turret.setAngle(Turret.angle + SIUnit(angle))
+//        Turret.setAngle(Turret.angle + SIUnit(VisionProcessing.angle.radians + 0.8.degrees.inRadians()))
     }
 
     override fun end(interrupted: Boolean) = VisionProcessing.turnOffLEDs()
@@ -76,7 +88,6 @@ class ManualTurretCommand(val percent: DoubleSource) : FalconCommand(Turret) {
  * A command that zeros the turret when the robot is being setup.
  */
 class ZeroTurretCommand : FalconCommand(Turret) {
-
     private val timer = Timer()
 
     override fun initialize() = timer.start()

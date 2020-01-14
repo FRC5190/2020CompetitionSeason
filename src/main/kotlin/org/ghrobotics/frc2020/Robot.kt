@@ -9,11 +9,13 @@
 package org.ghrobotics.frc2020
 
 import org.ghrobotics.frc2020.auto.Autonomous
+import org.ghrobotics.frc2020.commands.ZeroTurretCommand
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Drivetrain
 import org.ghrobotics.frc2020.subsystems.Shooter
 import org.ghrobotics.frc2020.subsystems.Turret
+import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
@@ -34,7 +36,8 @@ object Robot : FalconTimedRobot() {
 
     // Runs once when robot boots up
     override fun robotInit() {
-        // ZeroTurretCommand().schedule() // For testing with 775Pro.
+        VisionProcessing.turnOffLEDs()
+        ZeroTurretCommand().schedule()
     }
 
     // Runs once when autonomous period starts
