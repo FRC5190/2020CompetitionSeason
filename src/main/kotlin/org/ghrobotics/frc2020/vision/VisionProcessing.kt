@@ -9,15 +9,24 @@
 package org.ghrobotics.frc2020.vision
 
 import edu.wpi.first.wpilibj.DigitalOutput
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Transform2d
 import kotlin.math.tan
+import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
+import org.ghrobotics.frc2020.subsystems.Drivetrain
+import org.ghrobotics.frc2020.subsystems.Turret
+import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
+import org.ghrobotics.lib.mathematics.units.seconds
 
 /**
  * Object that handles Vision Processing on the robot.
  */
-object VisionProcessing {
+object VisionProcessing : FalconSubsystem() {
     // The Green LED to track targets.
     private val led = DigitalOutput(VisionConstants.kLEDId)
 
@@ -31,11 +40,6 @@ object VisionProcessing {
      */
     val angle get() = camera.yaw
 
-    /**
-     * Returns whether a target exists and is valid.
-     *
-     * @return Whether a target exists and is valid.
-     */
     val isValid get() = camera.isValid
 
     /**
@@ -50,6 +54,22 @@ object VisionProcessing {
         }
 
     /**
+     * Run periodically to update the target tracker with the latest data.
+     */
+    override fun periodic() {
+        val transformToGoalFromCamera = camera.transform ?: return
+        val timestamp = Timer.getFPGATimestamp().seconds - camera.latency
+
+        val turretToGoal = VisionConstants.kCameraRelativeToTurretCenter + transformToGoalFromCamera
+        val turretRelativeToRobot = Pose2d(TurretConstants.kTurretRelativeToRobotCenter, Turret.angle.toRotation2d())
+
+        val goalRelativeToRobot = turretRelativeToRobot + turretToGoal.toTransform()
+        val robotPose = Drivetrain.getPose(timestamp)
+
+        GoalTracker.addSample(timestamp, robotPose + goalRelativeToRobot.toTransform())
+    }
+
+    /**
      * Turns on the LEDs for vision tracking.
      */
     fun turnOnLEDs() {
@@ -61,5 +81,9 @@ object VisionProcessing {
      */
     fun turnOffLEDs() {
         led.set(true)
+    }
+
+    private fun Pose2d.toTransform(): Transform2d {
+        return Transform2d(translation, rotation)
     }
 }

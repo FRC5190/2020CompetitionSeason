@@ -26,5 +26,8 @@ class AutoShooterCommand(val speed: Source<SIUnit<AngularVelocity>>) : FalconCom
  * A command that allows manual control of the shooter.
  */
 class ManualShooterCommand(val source: DoubleSource) : FalconCommand(Shooter) {
-    override fun execute() = Shooter.setPercent(source())
+    override fun execute() {
+        println(source() * 12)
+        Shooter.setPercent(source())
+    }
 }

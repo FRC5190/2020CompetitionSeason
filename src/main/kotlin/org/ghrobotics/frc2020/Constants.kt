@@ -9,6 +9,8 @@
 package org.ghrobotics.frc2020
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.inches
@@ -54,6 +56,8 @@ object TurretConstants {
 
     val kMaxVelocity = 720.degrees / 1.seconds
     val kMaxAcceleration = 700.degrees / 1.seconds / 1.seconds
+
+    val kTurretRelativeToRobotCenter = Translation2d((-6).inches, 0.inches)
 }
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -76,9 +80,15 @@ object IntakeConstants {
 object VisionConstants {
     const val kLEDId = 0
 
-    val kGoalHeight = 90.inches
-    val kCameraHeight = 26.inches
+    val kGoalHeight = 92.inches
+    val kCameraHeight = 22.5.inches
     val kCameraAngle = Rotation2d.fromDegrees(15.0)
 
+    val kCameraRelativeToTurretCenter = Pose2d(10.5.inches, 0.inches, Rotation2d())
+
     val kGoalFieldRelativeAngle = Rotation2d()
+
+    val kMaxTargetTrackingLifetime = 0.5.seconds
+    val kTargetTrackingDistanceErrorTolerance = 6.inches
+    const val kMedianWindowSize = 10
 }

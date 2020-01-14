@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import edu.wpi.first.networktables.NetworkTable
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
+import edu.wpi.first.wpilibj.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
 import org.ghrobotics.lib.mathematics.units.milli
@@ -69,6 +70,15 @@ class ChameleonCamera(cameraName: String) {
      */
     val pose: Pose2d?
         get() = targetPoses.firstOrNull()
+
+    /**
+     * The transform that maps the camera pose to the target pose.
+     */
+    val transform: Transform2d?
+        get() {
+            val pose_ = pose ?: return null
+            return Transform2d(pose_.translation, pose_.rotation)
+        }
 
     /**
      * Represents the latency in the pipeline between the capture
