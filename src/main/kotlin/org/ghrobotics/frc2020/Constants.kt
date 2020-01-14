@@ -61,3 +61,7 @@ object FortuneWheelConstants {
     // Data Accuracy
     val kDataAccuracy = 5
 }
+
+object IntakeConstants {
+    const val kIntakeId = 9
+}

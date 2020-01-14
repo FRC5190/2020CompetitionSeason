@@ -8,8 +8,8 @@
 
 package org.ghrobotics.frc2020
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import org.ghrobotics.frc2020.auto.Autonomous
+import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Drivetrain
 import org.ghrobotics.frc2020.subsystems.FortuneWheelSpinner
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
@@ -21,7 +21,10 @@ object Robot : FalconTimedRobot() {
 
     // Constructor of the Robot class.
     init {
-        // Add the subsystems to the subsystem handler
+        // Initialize Network
+        Network
+
+        // Add the drivetrain to the subsystem handler
         +Drivetrain
         +FortuneWheelSpinner
     }
@@ -42,9 +45,7 @@ object Robot : FalconTimedRobot() {
     override fun disabledInit() {}
 
     // Runs every 20 ms when robot is on
-    override fun robotPeriodic() {
-        Shuffleboard.update()
-    }
+    override fun robotPeriodic() {}
 
     // Runs every 20 ms when autonomous is enabled
     override fun autonomousPeriodic() {}

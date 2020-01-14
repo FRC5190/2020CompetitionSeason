@@ -15,13 +15,14 @@ object SubsystemTestManager {
     // States for each subsystem test.
     var drivetrainCheck = true
     var fortuneCheck = true
+    var intakeCheck = true
 
     /**
      * Returns whether all checks have passed.
      * @return Whether all checks have passed.
      */
     fun haveAllChecksPassed(): Boolean {
-        return drivetrainCheck && fortuneCheck
+        return drivetrainCheck && intakeCheck && fortuneCheck
     }
 
     /**
@@ -29,5 +30,7 @@ object SubsystemTestManager {
      */
     fun reset() {
         drivetrainCheck = true
+        intakeCheck = true
     }
 }
+ 
