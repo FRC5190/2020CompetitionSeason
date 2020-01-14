@@ -65,7 +65,11 @@ object ShooterConstants {
     const val kMasterId = 6
     const val kSlaveId = 7
 
+    const val kHoodServoAId = 0
+    const val kHoodServoBId = 1
+
     val kNativeUnitModel = NativeUnitRotationModel(1440.nativeUnits)
+    val kStowedHoodAngle = 10.degrees
 
     val kS = 0.volts
 
