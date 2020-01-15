@@ -8,7 +8,6 @@
 
 package org.ghrobotics.frc2020.commands
 
-import org.ejml.equation.IntegerSequence
 import org.ghrobotics.frc2020.FortuneWheelConstants
 import org.ghrobotics.frc2020.subsystems.FortuneWheelSpinner
 import org.ghrobotics.lib.commands.FalconCommand
@@ -48,7 +47,7 @@ class FortuneWheelPositionCommand() : FalconCommand(FortuneWheelSpinner) {
         accuracy.update(currentColor)
 
         // Run motor if target has not been reached
-        if (cycle != cycleTarget){
+        if (cycle != cycleTarget) {
             var velocity = (FortuneWheelConstants.kContactColor * (cycleTarget - cycle)).velocity
             if (velocity > FortuneWheelConstants.kContactVelocity) velocity = FortuneWheelConstants.kContactVelocity else velocity
             if (velocity < -FortuneWheelConstants.kContactVelocity) velocity = -FortuneWheelConstants.kContactVelocity else velocity
@@ -57,7 +56,7 @@ class FortuneWheelPositionCommand() : FalconCommand(FortuneWheelSpinner) {
             // If target was reached, but it is wrong color, find correct color
             if (currentColor != colorTarget) {
                 colorTarget + currentColor.findNearest(colorTarget)
-            }else{
+            } else {
                 if (currentColor == accuracy.lastConfirmed) {
                     this.end(false)
                 }
