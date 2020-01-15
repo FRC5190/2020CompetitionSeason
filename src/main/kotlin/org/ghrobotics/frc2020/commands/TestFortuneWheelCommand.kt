@@ -13,7 +13,6 @@ import org.ghrobotics.frc2020.subsystems.SubsystemTestManager
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.derived.velocity
 import org.ghrobotics.lib.mathematics.units.meters
-import org.ghrobotics.lib.mathematics.units.seconds
 
 class TestFortuneWheelCommand : FalconCommand(FortuneWheelSpinner) {
     var status = Status.STANDBY
@@ -24,9 +23,9 @@ class TestFortuneWheelCommand : FalconCommand(FortuneWheelSpinner) {
     }
 
     override fun execute() {
-        if (FortuneWheelSpinner.spinnerPosition < 1.meters){
+        if (FortuneWheelSpinner.spinnerPosition < 1.meters) {
             FortuneWheelSpinner.setVelocity(1.meters.velocity)
-        }else{
+        } else {
             status = Status.SUCCESS
         }
     }

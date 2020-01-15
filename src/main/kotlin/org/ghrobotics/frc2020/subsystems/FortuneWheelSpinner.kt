@@ -91,10 +91,10 @@ object FortuneWheelSpinner : FalconSubsystem() {
         // Default color value
         BLACK {
             override val rgb = RGB(0.0, 0.0, 0.0)
-            override fun next(): FortuneColor{
+            override fun next(): FortuneColor {
                 return BLACK
             }
-            override fun previous(): FortuneColor{
+            override fun previous(): FortuneColor {
                 return BLACK
             }
         },
@@ -102,7 +102,7 @@ object FortuneWheelSpinner : FalconSubsystem() {
         // Fortune Wheel colors
         RED {
             override val rgb = RGB(0.562, 0.323, 0.114)
-            override fun previous(): FortuneColor{
+            override fun previous(): FortuneColor {
                 return GREEN
             }
         },
@@ -117,7 +117,7 @@ object FortuneWheelSpinner : FalconSubsystem() {
 
         GREEN {
             override val rgb = RGB(0.143, 0.604, 0.251)
-            override fun next(): FortuneColor{
+            override fun next(): FortuneColor {
                 return RED
             }
         };
@@ -130,28 +130,28 @@ object FortuneWheelSpinner : FalconSubsystem() {
         val green get() = rgb.green
         val blue get() = rgb.blue
 
-        protected open fun next(): FortuneColor{
+        protected open fun next(): FortuneColor {
             return values()[ordinal + 1]
         }
 
-        protected open fun previous(): FortuneColor{
+        protected open fun previous(): FortuneColor {
             return values()[ordinal - 1]
         }
 
-        operator fun plus(increment: Int): FortuneColor{
+        operator fun plus(increment: Int): FortuneColor {
             var times = increment
             var newColor = this
-            while(times != 0) {
+            while (times != 0) {
                 newColor = newColor.next()
                 times--
             }
             return newColor
         }
 
-        operator fun minus(decrement: Int): FortuneColor{
+        operator fun minus(decrement: Int): FortuneColor {
             var times = decrement
             var newColor = this
-            while(times != 0) {
+            while (times != 0) {
                 newColor = newColor.previous()
                 times--
             }
@@ -160,9 +160,9 @@ object FortuneWheelSpinner : FalconSubsystem() {
 
         // Find the position of a desired color relative to the current color
         fun findNearest(color: FortuneColor) =
-                when(color) {
+                when (color) {
                     this + 1 -> 1
-                    this -1 -> -1
+                    this - 1 -> -1
                     this + 2 -> 2
                     this -> 0
                     else -> throw IllegalStateException("${color.name} could not be found relative to ${this.name}")
