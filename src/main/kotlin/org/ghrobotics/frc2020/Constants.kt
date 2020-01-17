@@ -43,7 +43,7 @@ object FortuneWheelConstants {
     // Determines the bit-depth of colors when being compared.
     // The bit-depth determines the amount of possible colors.
     // Ex: '255' would result in an 8bit color spectrum.
-    const val kColorBitDepth = 3
+    const val kColorBitDepth = 10
 
     // Spinner
     val kSpinnerRadius = 3.inches // Radius of wheel connected to the spinner motor
@@ -59,7 +59,7 @@ object FortuneWheelConstants {
     val kContactColor = kContactCirc / 8 // The size of one color panel
 
     // Data Accuracy
-    val kDataAccuracy = 5
+    val kDataAccuracy = 10
 }
 
 object IntakeConstants {
