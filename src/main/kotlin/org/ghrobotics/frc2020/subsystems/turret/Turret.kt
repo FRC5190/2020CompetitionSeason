@@ -6,7 +6,7 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems
+package org.ghrobotics.frc2020.subsystems.turret
 
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
@@ -75,7 +75,11 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
                 .value.toFloat()
         )
 
-        defaultCommand = InstantCommand(Runnable { setPercent(0.0) }, this).perpetually()
+        defaultCommand = InstantCommand(Runnable {
+            setPercent(
+                0.0
+            )
+        }, this).perpetually()
         enableClosedLoopControl()
     }
 
@@ -84,7 +88,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun zero() {
         master.encoder.resetPosition(0.radians)
-        status = Status.READY
+        status =
+            Status.READY
     }
 
     /**
@@ -93,7 +98,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * @param percent The desired duty cycle.
      */
     fun setPercent(percent: Double) {
-        periodicIO.desiredOutput = Output.Percent(percent)
+        periodicIO.desiredOutput =
+            Output.Percent(percent)
         periodicIO.feedforward = 0.volts
     }
 
@@ -110,7 +116,10 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * @param angle The angle of the turret.
      */
     fun setAngle(angle: SIUnit<Radian>) {
-        periodicIO.desiredOutput = Output.Position(TurretPlanner.constrainToAcceptableRange(angle))
+        periodicIO.desiredOutput =
+            Output.Position(
+                TurretPlanner.constrainToAcceptableRange(angle)
+            )
         periodicIO.feedforward = TurretConstants.kS
     }
 
@@ -149,7 +158,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         var hallEffect: Boolean = false
 
         var feedforward: SIUnit<Volt> = 0.volts
-        var desiredOutput: Output = Output.Nothing
+        var desiredOutput: Output =
+            Output.Nothing
     }
 
     private sealed class Output {

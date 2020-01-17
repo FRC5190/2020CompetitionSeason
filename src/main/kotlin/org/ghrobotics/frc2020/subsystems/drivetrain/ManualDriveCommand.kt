@@ -6,11 +6,10 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.commands
+package org.ghrobotics.frc2020.subsystems.drivetrain
 
 import edu.wpi.first.wpilibj.GenericHID
 import org.ghrobotics.frc2020.comms.Controls
-import org.ghrobotics.frc2020.subsystems.Drivetrain
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.wrappers.hid.getRawButton
 import org.ghrobotics.lib.wrappers.hid.getX

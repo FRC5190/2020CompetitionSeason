@@ -6,10 +6,9 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.commands.tests
+package org.ghrobotics.frc2020.subsystems.shooter
 
 import edu.wpi.first.wpilibj.Timer
-import org.ghrobotics.frc2020.subsystems.Shooter
 import org.ghrobotics.frc2020.subsystems.SubsystemTestManager
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.derived.radians
