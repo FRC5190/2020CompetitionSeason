@@ -6,19 +6,17 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.commands
+package org.ghrobotics.frc2020.subsystems.shooter
 
-import org.ghrobotics.frc2020.subsystems.Intake
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
-class IntakeCommand(private val percentSource: DoubleSource) : FalconCommand(Intake) {
-
+/**
+ * A command that allows manual control of the shooter.
+ */
+class ManualShooterCommand(val source: DoubleSource) : FalconCommand(Shooter) {
     override fun execute() {
-        Intake.setPercent(percentSource())
-    }
-
-    override fun end(interrupted: Boolean) {
-        Intake.setNeutral()
+        println(source() * 12)
+        Shooter.setPercent(source())
     }
 }

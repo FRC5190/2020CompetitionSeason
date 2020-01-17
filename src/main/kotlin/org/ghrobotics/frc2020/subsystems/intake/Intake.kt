@@ -6,13 +6,11 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems
+package org.ghrobotics.frc2020.subsystems.intake
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.IntakeConstants.kIntakeId
-import org.ghrobotics.frc2020.commands.IntakeCommand
-import org.ghrobotics.frc2020.commands.tests.TestIntakeCommand
+import org.ghrobotics.frc2020.IntakeConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -27,7 +25,7 @@ import org.ghrobotics.lib.motors.rev.FalconMAX
 object Intake : FalconSubsystem() {
 
     val intakeMotor = FalconMAX(
-        id = kIntakeId,
+        id = IntakeConstants.kIntakeId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = DefaultNativeUnitModel
     )
@@ -41,7 +39,8 @@ object Intake : FalconSubsystem() {
         var position: SIUnit<NativeUnit> = 0.nativeUnits
 
         var feedforward: SIUnit<Volt> = 0.volts
-        var desiredOutput: Output = Output.Nothing
+        var desiredOutput: Output =
+            Output.Nothing
     }
 
     override fun periodic() {
@@ -63,12 +62,14 @@ object Intake : FalconSubsystem() {
     }
 
     override fun setNeutral() {
-        periodicIO.desiredOutput = Output.Nothing
+        periodicIO.desiredOutput =
+            Output.Nothing
         periodicIO.feedforward = 0.volts
     }
 
     fun setPercent(percent: Double) {
-        periodicIO.desiredOutput = Output.Percent(percent)
+        periodicIO.desiredOutput =
+            Output.Percent(percent)
         periodicIO.feedforward = 0.volts
     }
 

@@ -6,13 +6,12 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems
+package org.ghrobotics.frc2020.subsystems.shooter
 
 import edu.wpi.first.wpilibj.Servo
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.ShooterConstants
-import org.ghrobotics.frc2020.commands.tests.TestShooterCommand
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -61,7 +60,11 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         masterMotor.closedLoopRamp = 0.5.seconds
 
         enableClosedLoopControl()
-        defaultCommand = InstantCommand(Runnable { setPercent(0.0) }, this).perpetually()
+        defaultCommand = InstantCommand(Runnable {
+            setPercent(
+                0.0
+            )
+        }, this).perpetually()
     }
 
     /**
@@ -91,7 +94,11 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * @param percent The desired duty cycle.
      */
     fun setPercent(percent: Double) {
-        periodicIO.desiredOutput = Output.Percent(percent, ShooterConstants.kStowedHoodAngle)
+        periodicIO.desiredOutput =
+            Output.Percent(
+                percent,
+                ShooterConstants.kStowedHoodAngle
+            )
         periodicIO.feedforward = 0.volts
     }
 
@@ -105,7 +112,8 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         speed: SIUnit<AngularVelocity>,
         hoodAngle: SIUnit<Radian> = ShooterConstants.kStowedHoodAngle
     ) {
-        periodicIO.desiredOutput = Output.Velocity(speed, hoodAngle)
+        periodicIO.desiredOutput =
+            Output.Velocity(speed, hoodAngle)
         periodicIO.feedforward = ShooterConstants.kS
     }
 
@@ -113,7 +121,8 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * Idles the shooter motor.
      */
     override fun setNeutral() {
-        periodicIO.desiredOutput = Output.Nothing
+        periodicIO.desiredOutput =
+            Output.Nothing
         periodicIO.feedforward = 0.volts
     }
 
@@ -121,7 +130,8 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         periodicIO.velocity = masterMotor.encoder.velocity
         periodicIO.voltage = masterMotor.voltageOutput
         periodicIO.current = masterMotor.drawnCurrent
-        periodicIO.hoodAngle = SIUnit(hoodServoA.angle)
+        periodicIO.hoodAngle = SIUnit(
+            hoodServoA.angle)
 
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> masterMotor.setNeutral()
@@ -145,7 +155,8 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         var hoodAngle: SIUnit<Radian> = 10.radians
 
         var feedforward: SIUnit<Volt> = 0.volts
-        var desiredOutput: Output = Output.Nothing
+        var desiredOutput: Output =
+            Output.Nothing
     }
 
     private sealed class Output {

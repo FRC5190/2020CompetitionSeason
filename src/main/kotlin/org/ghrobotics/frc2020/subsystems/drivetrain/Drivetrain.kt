@@ -6,7 +6,7 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems
+package org.ghrobotics.frc2020.subsystems.drivetrain
 
 import com.kauailabs.navx.frc.AHRS
 import com.revrobotics.CANSparkMaxLowLevel
@@ -17,8 +17,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.DriveConstants
-import org.ghrobotics.frc2020.commands.ManualDriveCommand
-import org.ghrobotics.frc2020.commands.tests.TestDrivetrainCommand
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.drive.FalconWestCoastDrivetrain
 import org.ghrobotics.lib.utils.asSource

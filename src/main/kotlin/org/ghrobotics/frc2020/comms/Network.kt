@@ -9,9 +9,9 @@
 package org.ghrobotics.frc2020.comms
 
 import org.ghrobotics.frc2020.auto.Autonomous
-import org.ghrobotics.frc2020.subsystems.Drivetrain
-import org.ghrobotics.frc2020.subsystems.Shooter
-import org.ghrobotics.frc2020.subsystems.Turret
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.shooter.Shooter
+import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.twodim.geometry.x_u
 import org.ghrobotics.lib.mathematics.twodim.geometry.y_u
 import org.ghrobotics.lib.mathematics.units.derived.inDegrees
