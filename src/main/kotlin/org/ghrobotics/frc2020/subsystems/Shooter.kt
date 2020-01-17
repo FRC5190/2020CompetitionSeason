@@ -101,8 +101,10 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * @param speed The desired speed.
      * @param hoodAngle The desired hood angle.
      */
-    fun setSpeed(speed: SIUnit<AngularVelocity>,
-                 hoodAngle: SIUnit<Radian> = ShooterConstants.kStowedHoodAngle) {
+    fun setSpeed(
+        speed: SIUnit<AngularVelocity>,
+        hoodAngle: SIUnit<Radian> = ShooterConstants.kStowedHoodAngle
+    ) {
         periodicIO.desiredOutput = Output.Velocity(speed, hoodAngle)
         periodicIO.feedforward = ShooterConstants.kS
     }

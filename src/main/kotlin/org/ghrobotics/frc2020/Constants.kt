@@ -57,6 +57,8 @@ object TurretConstants {
     val kMaxVelocity = 720.degrees / 1.seconds
     val kMaxAcceleration = 700.degrees / 1.seconds / 1.seconds
 
+    val kBadTurretOffset = 1.2.degrees
+
     val kTurretRelativeToRobotCenter = Translation2d((-6).inches, 0.inches)
 }
 
