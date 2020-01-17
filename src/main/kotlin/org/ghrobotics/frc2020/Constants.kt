@@ -8,9 +8,17 @@
 
 package org.ghrobotics.frc2020
 
+import edu.wpi.first.wpilibj.geometry.Rotation2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
+import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
+import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
+import org.ghrobotics.lib.mathematics.units.operations.div
+import org.ghrobotics.lib.mathematics.units.seconds
 
 /**
  * Contains constants for the drivetrain.
@@ -28,9 +36,65 @@ object DriveConstants {
     val kTrackWidth = 27.75.inches
     val kNativeUnitModel = NativeUnitLengthModel(9.09.nativeUnits, kWheelRadius)
 
-    val kP = 0.0
+    const val kP = 0.0
+}
+
+@Suppress("MemberVisibilityCanBePrivate", "unused")
+object TurretConstants {
+    const val kTurretId = 5
+    const val kHallEffectSensorId = 1
+
+    const val kGearRatio = 100.0 / 20.0 * 124.0 / 18.0 * 3.0
+
+    val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
+    val kAcceptableRange = (-200).degrees..200.degrees
+
+    val kS = 0.2.volts
+
+    const val kP = 0.0001
+    const val kF = 0.0
+
+    val kMaxVelocity = 720.degrees / 1.seconds
+    val kMaxAcceleration = 700.degrees / 1.seconds / 1.seconds
+
+    val kBadTurretOffset = 1.2.degrees
+
+    val kTurretRelativeToRobotCenter = Translation2d((-6).inches, 0.inches)
+}
+
+@Suppress("MemberVisibilityCanBePrivate", "unused")
+object ShooterConstants {
+    const val kMasterId = 6
+    const val kSlaveId = 7
+
+    const val kHoodServoAId = 0
+    const val kHoodServoBId = 1
+
+    val kNativeUnitModel = NativeUnitRotationModel(1440.nativeUnits)
+    val kStowedHoodAngle = 10.degrees
+
+    val kS = 0.volts
+
+    const val kP = 0.0
+    const val kF = 0.0
 }
 
 object IntakeConstants {
     const val kIntakeId = 9
+}
+
+object VisionConstants {
+    const val kLEDId = 0
+
+    val kGoalHeight = 92.inches
+    val kCameraHeight = 22.5.inches
+    val kCameraAngle = Rotation2d.fromDegrees(15.0)
+
+    val kCameraRelativeToTurretCenter = Pose2d(10.5.inches, 0.inches, Rotation2d())
+
+    val kGoalFieldRelativeAngle = Rotation2d()
+
+    val kMaxTargetTrackingLifetime = 0.5.seconds
+    val kTargetTrackingDistanceErrorTolerance = 6.inches
+    const val kMedianWindowSize = 10
 }

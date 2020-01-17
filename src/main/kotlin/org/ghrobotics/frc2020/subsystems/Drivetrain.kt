@@ -8,18 +8,20 @@
 
 package org.ghrobotics.frc2020.subsystems
 
+import com.kauailabs.navx.frc.AHRS
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.SPI
 import edu.wpi.first.wpilibj.controller.RamseteController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
-import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.DriveConstants
-import org.ghrobotics.frc2020.commands.TeleopDriveCommand
-import org.ghrobotics.frc2020.commands.TestDrivetrainCommand
+import org.ghrobotics.frc2020.commands.ManualDriveCommand
+import org.ghrobotics.frc2020.commands.tests.TestDrivetrainCommand
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.drive.FalconWestCoastDrivetrain
+import org.ghrobotics.lib.utils.asSource
 
 /**
  * Represents the drivetrain of the robot.
@@ -38,8 +40,9 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     )
 
     // Gyro
+    private val navx = AHRS(SPI.Port.kMXP)
     // private val pigeon = PigeonIMU(DriveConstants.kPigeonId)
-    override val gyro = { Rotation2d() }
+    override val gyro = navx.asSource()
 
     // Path following
     override val controller = RamseteController(2.0, 0.7)
@@ -90,7 +93,7 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         rightSlave1.outputInverted = true
 
         // Set the default command
-        defaultCommand = TeleopDriveCommand()
+        defaultCommand = ManualDriveCommand()
 
         enableClosedLoopControl()
     }

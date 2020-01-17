@@ -9,8 +9,13 @@
 package org.ghrobotics.frc2020
 
 import org.ghrobotics.frc2020.auto.Autonomous
+import org.ghrobotics.frc2020.commands.ZeroTurretCommand
+import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Drivetrain
+import org.ghrobotics.frc2020.subsystems.Shooter
+import org.ghrobotics.frc2020.subsystems.Turret
+import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
@@ -23,12 +28,17 @@ object Robot : FalconTimedRobot() {
         // Initialize Network
         Network
 
-        // Add the drivetrain to the subsystem handler
+        // Add subsystems
         +Drivetrain
+        +Shooter
+        +Turret
     }
 
     // Runs once when robot boots up
-    override fun robotInit() {}
+    override fun robotInit() {
+        VisionProcessing.turnOffLEDs()
+        ZeroTurretCommand().schedule()
+    }
 
     // Runs once when autonomous period starts
     override fun autonomousInit() {
@@ -42,7 +52,9 @@ object Robot : FalconTimedRobot() {
     override fun disabledInit() {}
 
     // Runs every 20 ms when robot is on
-    override fun robotPeriodic() {}
+    override fun robotPeriodic() {
+        Controls.update()
+    }
 
     // Runs every 20 ms when autonomous is enabled
     override fun autonomousPeriodic() {}

@@ -12,7 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.IntakeConstants.kIntakeId
 import org.ghrobotics.frc2020.commands.IntakeCommand
-import org.ghrobotics.frc2020.commands.TestIntakeCommand
+import org.ghrobotics.frc2020.commands.tests.TestIntakeCommand
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit

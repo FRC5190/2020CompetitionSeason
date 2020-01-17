@@ -6,7 +6,7 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.commands
+package org.ghrobotics.frc2020.commands.tests
 
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import org.ghrobotics.frc2020.subsystems.Drivetrain
