@@ -79,6 +79,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     override fun enableClosedLoopControl() {
         masterMotor.talonSRX.config_kP(0, ShooterConstants.kP)
+        masterMotor.talonSRX.config_kF(0, ShooterConstants.kF)
     }
 
     /**

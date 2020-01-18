@@ -49,13 +49,13 @@ object TurretConstants {
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
     val kAcceptableRange = (-200).degrees..200.degrees
 
-    val kS = 0.2.volts
+    val kS = 0.0.volts
 
-    const val kP = 0.0001
-    const val kF = 0.0
+    const val kP = 3.50E-5
+    const val kF = 1.041667E-4
 
     val kMaxVelocity = 720.degrees / 1.seconds
-    val kMaxAcceleration = 700.degrees / 1.seconds / 1.seconds
+    val kMaxAcceleration = 550.degrees / 1.seconds / 1.seconds
 
     val kBadTurretOffset = 1.2.degrees
 
@@ -67,16 +67,16 @@ object ShooterConstants {
     const val kMasterId = 6
     const val kSlaveId = 7
 
-    const val kHoodServoAId = 0
-    const val kHoodServoBId = 1
+    const val kHoodServoAId = 3
+    const val kHoodServoBId = 4
 
     val kNativeUnitModel = NativeUnitRotationModel(1440.nativeUnits)
     val kStowedHoodAngle = 10.degrees
 
     val kS = 0.volts
 
-    const val kP = 0.0
-    const val kF = 0.0
+    const val kP = 0.2
+    const val kF = 0.05585
 }
 
 object IntakeConstants {

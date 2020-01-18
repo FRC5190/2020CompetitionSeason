@@ -57,7 +57,7 @@ object Network {
                 position(row = 0, column = 6)
                 size(width = 2, height = 1)
 
-                double("RPM") { Shooter.velocity.value * 60 / 2 * Math.PI }
+                double("RPM") { Shooter.velocity.value * 60 / 2 / Math.PI }
                 double("Voltage (V)") { Shooter.voltage.value }
             }
             grid("Turret") {
@@ -65,7 +65,7 @@ object Network {
                 size(width = 2, height = 1)
 
                 double("Angle (Degrees)") { Turret.angle.inDegrees() }
-                double("Speed (RPM)") { Turret.speed.value * 60 / 2 * Math.PI }
+                double("Speed") { Math.toDegrees(Turret.speed.value) }
                 double("Current (A)") { Turret.current.inAmps() }
             }
         }
