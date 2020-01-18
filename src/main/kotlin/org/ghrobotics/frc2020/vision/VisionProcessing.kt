@@ -30,7 +30,7 @@ object VisionProcessing : FalconSubsystem() {
 
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
-    private var lastDesiredOutput = false
+    private var lastDesiredOutput = true
 
     /**
      * Returns the angle to the best target.
