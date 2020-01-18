@@ -28,6 +28,9 @@ object Robot : FalconTimedRobot() {
         // Initialize Network
         Network
 
+        // Add vision processing
+        +VisionProcessing
+
         // Add subsystems
         +Drivetrain
         +Shooter
@@ -36,7 +39,6 @@ object Robot : FalconTimedRobot() {
 
     // Runs once when robot boots up
     override fun robotInit() {
-        VisionProcessing.turnOffLEDs()
         ZeroTurretCommand().schedule()
     }
 

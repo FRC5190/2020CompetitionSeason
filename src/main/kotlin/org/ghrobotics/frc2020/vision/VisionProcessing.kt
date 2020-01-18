@@ -10,19 +10,27 @@ package org.ghrobotics.frc2020.vision
 
 import edu.wpi.first.wpilibj.DigitalOutput
 import kotlin.math.tan
+import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.VisionConstants
+import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
  * Object that handles Vision Processing on the robot.
  */
-object VisionProcessing {
+object VisionProcessing : FalconSubsystem() {
+
     // The Green LED to track targets.
     private val led = DigitalOutput(VisionConstants.kLEDId)
 
     // The camera on the turret.
     private val camera = ChameleonCamera("USB Camera-B4.09.24.1")
+
+    // PeriodicIO.
+    private val periodicIO = PeriodicIO()
+    private var lastDesiredOutput = false
 
     /**
      * Returns the angle to the best target.
@@ -47,17 +55,31 @@ object VisionProcessing {
             return deltaHeight / tan(camera.pitch.radians + VisionConstants.kCameraAngle.radians)
         }
 
+    override fun periodic() {
+        if (Robot.currentMode == FalconTimedRobot.Mode.DISABLED) {
+            periodicIO.desiredLEDState = !camera.isConnected
+        }
+        if (periodicIO.desiredLEDState != lastDesiredOutput) {
+            led.set(!periodicIO.desiredLEDState)
+            lastDesiredOutput = periodicIO.desiredLEDState
+        }
+    }
+
     /**
      * Turns on the LEDs for vision tracking.
      */
     fun turnOnLEDs() {
-        led.set(false)
+        periodicIO.desiredLEDState = true
     }
 
     /**
      * Turns off the LEDs for vision tracking.
      */
     fun turnOffLEDs() {
-        led.set(true)
+        periodicIO.desiredLEDState = false
+    }
+
+    private class PeriodicIO {
+        var desiredLEDState: Boolean = false
     }
 }
