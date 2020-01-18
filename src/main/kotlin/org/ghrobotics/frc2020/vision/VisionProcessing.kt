@@ -9,13 +9,13 @@
 package org.ghrobotics.frc2020.vision
 
 import edu.wpi.first.wpilibj.DigitalOutput
+import kotlin.math.tan
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
-import kotlin.math.tan
 
 /**
  * Object that handles Vision Processing on the robot.
