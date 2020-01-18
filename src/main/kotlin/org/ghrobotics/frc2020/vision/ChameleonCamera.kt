@@ -8,8 +8,6 @@
 
 package org.ghrobotics.frc2020.vision
 
-import com.github.salomonbrys.kotson.fromJson
-import com.google.gson.Gson
 import edu.wpi.first.networktables.NetworkTable
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
@@ -24,22 +22,26 @@ import org.ghrobotics.lib.wrappers.networktables.get
  * Represents a camera connected to a co-processor which is running
  * Chameleon Vision.
  */
-class ChameleonCamera(cameraName: String) {
+class ChameleonCamera(private val cameraName: String) {
     // NetworkTable for the specific camera
-    private val table: NetworkTable = FalconNetworkTable.getTable("chameleon-vision").getSubTable(cameraName)
+    private val table = FalconNetworkTable.getTable("chameleon-vision")
+    private val subtable: NetworkTable = table.getSubTable(cameraName)
 
     // Entries for the NetworkTable
-    private val pitchEntry = table["pitch"]
-    private val yawEntry = table["yaw"]
-    private val pipelineEntry = table["pipeline"]
-    private val latencyEntry = table["latency"]
-    private val driverModeEntry = table["driver_mode"]
-    private val isValidEntry = table["is_valid"]
-    private val areaEntry = table["area"]
-    private val poseListEntry = table["poseList"]
-    private val altTargetEntry = table["aux_targets"]
+    private val pitchEntry = subtable["pitch"]
+    private val yawEntry = subtable["yaw"]
+    private val pipelineEntry = subtable["pipeline"]
+    private val latencyEntry = subtable["latency"]
+    private val driverModeEntry = subtable["driver_mode"]
+    private val isValidEntry = subtable["is_valid"]
+    private val areaEntry = subtable["area"]
+    private val poseEntry = subtable["pose"]
 
-    private val gson = Gson()
+    /**
+     * Returns whether the camera is connected or not.
+     */
+    val isConnected: Boolean
+        get() = table.containsSubTable(cameraName)
 
     /**
      * Returns the vertical angle to the best target.
@@ -60,16 +62,15 @@ class ChameleonCamera(cameraName: String) {
         get() = areaEntry.getDouble(0.0)
 
     /**
-     * The poses of all the targets detected.
-     */
-    val targetPoses: List<Pose2d>
-        get() = gson.fromJson(poseListEntry.getString("[]"))
-
-    /**
      * The camera relative pose of the best target.
      */
     val pose: Pose2d?
-        get() = targetPoses.firstOrNull()
+        get() {
+            val array = poseEntry.getDoubleArray(DoubleArray(0))
+            return if (array.size == 3) {
+                Pose2d(array[0], array[1], Rotation2d.fromDegrees(array[2]))
+            } else null
+        }
 
     /**
      * The transform that maps the camera pose to the target pose.
@@ -94,18 +95,6 @@ class ChameleonCamera(cameraName: String) {
         get() = isValidEntry.getBoolean(false)
 
     /**
-     * Returns a list representing all the targets currently being tracked, as ordered by the selected sorting method.
-     */
-    val altTargetList: List<ChameleonTrackedTarget>
-        get() = gson.fromJson(altTargetEntry.getString("[]"))
-
-    /**
-     * Returns the current best ChameleonTrackedTarget.
-     */
-    val bestTarget: ChameleonTrackedTarget?
-        get() = altTargetList.firstOrNull()
-
-    /**
      * Gets or sets the value of the pipeline. This can be used
      * to switch between different Vision pipelines.
      */
@@ -124,11 +113,4 @@ class ChameleonCamera(cameraName: String) {
         set(value) {
             driverModeEntry.setBoolean(value)
         }
-
-    data class ChameleonTrackedTarget(
-        val pitch: Double,
-        val yaw: Double,
-        val area: Double,
-        val cameraRelativePose: Pose2d
-    )
 }
