@@ -11,6 +11,7 @@ package org.ghrobotics.frc2020
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
+import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.inches
@@ -49,13 +50,13 @@ object TurretConstants {
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
     val kAcceptableRange = (-200).degrees..200.degrees
 
-    val kS = 0.2.volts
+    val kS = 0.0.volts
 
-    const val kP = 0.0001
-    const val kF = 0.0
+    const val kP = 0.000035
+    val kF = 0.075 / 60.0 / 12.0 // TODO figure out this F and make it a W
 
     val kMaxVelocity = 720.degrees / 1.seconds
-    val kMaxAcceleration = 700.degrees / 1.seconds / 1.seconds
+    val kMaxAcceleration = 550.degrees / 1.seconds / 1.seconds
 
     val kBadTurretOffset = 1.2.degrees
 
@@ -67,16 +68,16 @@ object ShooterConstants {
     const val kMasterId = 6
     const val kSlaveId = 7
 
-    const val kHoodServoAId = 0
-    const val kHoodServoBId = 1
+    const val kHoodServoAId = 3
+    const val kHoodServoBId = 4
 
     val kNativeUnitModel = NativeUnitRotationModel(1440.nativeUnits)
     val kStowedHoodAngle = 10.degrees
 
     val kS = 0.volts
 
-    const val kP = 0.0
-    const val kF = 0.0
+    const val kP = 0.2
+    val kF = 1023 * (5.0 / 12.0) / (kNativeUnitModel.toNativeUnitVelocity(SIUnit(333.0)).value / 10)
 }
 
 object IntakeConstants {

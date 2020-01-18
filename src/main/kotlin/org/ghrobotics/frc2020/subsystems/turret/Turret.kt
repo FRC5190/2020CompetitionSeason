@@ -34,7 +34,7 @@ import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Hardware
-    private val master = FalconMAX(
+    val master = FalconMAX(
         id = TurretConstants.kTurretId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = TurretConstants.kNativeUnitModel
@@ -145,8 +145,12 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         // Write motor outputs.
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> master.setNeutral()
-            is Output.Percent -> master.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-            is Output.Position -> master.setPosition(desiredOutput.angle, periodicIO.feedforward)
+            is Output.Percent -> {
+                master.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+            }
+            is Output.Position -> {
+                master.setPosition(desiredOutput.angle, periodicIO.feedforward)
+            }
         }
     }
 
