@@ -51,13 +51,13 @@ object TurretConstants {
 
     val kS = 0.0.volts
 
-    const val kP = 3.50E-5
+    const val kP = 1.50E-5
     const val kF = 1.041667E-4
 
     val kMaxVelocity = 720.degrees / 1.seconds
     val kMaxAcceleration = 550.degrees / 1.seconds / 1.seconds
 
-    val kBadTurretOffset = 1.2.degrees
+    val kBadTurretOffset = 3.0.degrees
 
     val kTurretRelativeToRobotCenter = Translation2d((-6).inches, 0.inches)
 }
@@ -75,7 +75,7 @@ object ShooterConstants {
 
     val kS = 0.volts
 
-    const val kP = 0.2
+    const val kP = 0.35
     const val kF = 0.05585
 }
 
