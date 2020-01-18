@@ -11,7 +11,6 @@ package org.ghrobotics.frc2020
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
-import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.inches
@@ -52,8 +51,8 @@ object TurretConstants {
 
     val kS = 0.0.volts
 
-    const val kP = 0.000035
-    val kF = 0.075 / 60.0 / 12.0 // TODO figure out this F and make it a W
+    const val kP = 3.50E-5
+    const val kF = 1.041667E-4
 
     val kMaxVelocity = 720.degrees / 1.seconds
     val kMaxAcceleration = 550.degrees / 1.seconds / 1.seconds
@@ -77,7 +76,7 @@ object ShooterConstants {
     val kS = 0.volts
 
     const val kP = 0.2
-    val kF = 1023 * (5.0 / 12.0) / (kNativeUnitModel.toNativeUnitVelocity(SIUnit(333.0)).value / 10)
+    const val kF = 0.05585
 }
 
 object IntakeConstants {
