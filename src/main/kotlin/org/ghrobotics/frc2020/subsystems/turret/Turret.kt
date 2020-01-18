@@ -34,7 +34,7 @@ import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Hardware
-    val master = FalconMAX(
+    private val master = FalconMAX(
         id = TurretConstants.kTurretId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = TurretConstants.kNativeUnitModel
