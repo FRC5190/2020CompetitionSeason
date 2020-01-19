@@ -36,9 +36,9 @@ object DriveConstants {
 
     val kWheelRadius = 3.inches
     val kTrackWidth = 27.75.inches
-    val kNativeUnitModel = NativeUnitLengthModel(9.09.nativeUnits, kWheelRadius)
+    val kNativeUnitModel = NativeUnitLengthModel(7.29.nativeUnits, kWheelRadius)
 
-    const val kP = 0.0
+    const val kP = 0.0003
 }
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")

@@ -36,6 +36,16 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = DriveConstants.kNativeUnitModel
     )
+    private val leftSlave1 = FalconMAX(
+        DriveConstants.kLeftSlave1Id,
+        CANSparkMaxLowLevel.MotorType.kBrushless,
+        DriveConstants.kNativeUnitModel
+    )
+    private val rightSlave1 = FalconMAX(
+        DriveConstants.kRightSlave1Id,
+        CANSparkMaxLowLevel.MotorType.kBrushless,
+        DriveConstants.kNativeUnitModel
+    )
 
     // Gyro
     private val navx = AHRS(SPI.Port.kMXP)
@@ -48,8 +58,8 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     override val odometry = DifferentialDriveOdometry(gyro())
 
     // Motor characterization
-    override val leftCharacterization = SimpleMotorFeedforward(0.0, 0.0, 0.0)
-    override val rightCharacterization = SimpleMotorFeedforward(0.0, 0.0, 0.0)
+    override val leftCharacterization = SimpleMotorFeedforward(0.2, 1.77, 0.151)
+    override val rightCharacterization = SimpleMotorFeedforward(0.0, 1.77, 0.151)
 
     // Getters for current
     val leftCurrent get() = periodicIO.leftCurrent
@@ -71,17 +81,6 @@ object Drivetrain : FalconWestCoastDrivetrain() {
 
     // Initialize follower motors and other motor configs
     init {
-        val leftSlave1 = FalconMAX(
-            DriveConstants.kLeftSlave1Id,
-            CANSparkMaxLowLevel.MotorType.kBrushless,
-            DriveConstants.kNativeUnitModel
-        )
-        val rightSlave1 = FalconMAX(
-            DriveConstants.kRightSlave1Id,
-            CANSparkMaxLowLevel.MotorType.kBrushless,
-            DriveConstants.kNativeUnitModel
-        )
-
         leftSlave1.follow(leftMotor)
         rightSlave1.follow(rightMotor)
 
@@ -94,5 +93,12 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         defaultCommand = ManualDriveCommand()
 
         enableClosedLoopControl()
+    }
+
+    fun setBrakeMode(brakeMode: Boolean) {
+        leftMotor.brakeMode = brakeMode
+        leftSlave1.brakeMode = brakeMode
+        rightMotor.brakeMode = brakeMode
+        rightSlave1.brakeMode = brakeMode
     }
 }
