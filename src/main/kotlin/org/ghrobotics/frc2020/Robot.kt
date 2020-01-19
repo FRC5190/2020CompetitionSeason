@@ -30,7 +30,8 @@ object Robot : FalconTimedRobot() {
     }
 
     // Runs once when robot boots up
-    override fun robotInit() {}
+    override fun robotInit() {
+    }
 
     // Runs once when autonomous period starts
     override fun autonomousInit() {
@@ -38,7 +39,9 @@ object Robot : FalconTimedRobot() {
     }
 
     // Runs once when teleop period starts
-    override fun teleopInit() {}
+    override fun teleopInit() {
+        FortuneWheelPositionCommand(3).schedule()
+    }
 
     // Runs once when robot is disabled
     override fun disabledInit() {}
