@@ -8,9 +8,9 @@
 
 package org.ghrobotics.frc2020.subsystems.shooter
 
+import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Servo
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.ShooterConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
@@ -23,7 +23,7 @@ import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
-import org.ghrobotics.lib.motors.ctre.FalconSRX
+import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 
 /**
@@ -32,8 +32,9 @@ import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Create the master motor.
-    private val masterMotor = FalconSRX(
+    private val masterMotor = FalconMAX(
         id = ShooterConstants.kMasterId,
+        type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = ShooterConstants.kNativeUnitModel
     )
 
@@ -50,21 +51,17 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // Initialize and configure motors.
     init {
-        val slaveMotor = FalconSRX(
+        val slaveMotor = FalconMAX(
             id = ShooterConstants.kSlaveId,
+            type = CANSparkMaxLowLevel.MotorType.kBrushless,
             model = ShooterConstants.kNativeUnitModel
         )
         slaveMotor.follow(masterMotor)
 
-        masterMotor.openLoopRamp = 0.5.seconds
-        masterMotor.closedLoopRamp = 0.5.seconds
+        masterMotor.canSparkMax.closedLoopRampRate = 0.1
+        masterMotor.canSparkMax.openLoopRampRate = 0.5
 
         enableClosedLoopControl()
-        defaultCommand = InstantCommand(Runnable {
-            setPercent(
-                0.0
-            )
-        }, this).perpetually()
     }
 
     /**
@@ -78,15 +75,15 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * Enables closed loop control.
      */
     override fun enableClosedLoopControl() {
-        masterMotor.talonSRX.config_kP(0, ShooterConstants.kP)
-        masterMotor.talonSRX.config_kF(0, ShooterConstants.kF)
+        masterMotor.controller.p = ShooterConstants.kP
+        masterMotor.controller.ff = ShooterConstants.kF
     }
 
     /**
      * Disables closed loop control.
      */
     override fun disableClosedLoopControl() {
-        masterMotor.talonSRX.config_kP(0, 0.0)
+        masterMotor.controller.p = 0.0
     }
 
     /**
