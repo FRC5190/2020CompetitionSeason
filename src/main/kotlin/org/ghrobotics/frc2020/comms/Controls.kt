@@ -15,7 +15,11 @@ import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
-import org.ghrobotics.lib.wrappers.hid.*
+import org.ghrobotics.lib.wrappers.hid.button
+import org.ghrobotics.lib.wrappers.hid.kA
+import org.ghrobotics.lib.wrappers.hid.kB
+import org.ghrobotics.lib.wrappers.hid.kY
+import org.ghrobotics.lib.wrappers.hid.xboxController
 
 /**
  * Contains all the teleop controls for the robot.

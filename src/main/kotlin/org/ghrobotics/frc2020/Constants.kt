@@ -77,8 +77,8 @@ object ShooterConstants {
 
     val kS = 0.volts
 
-    const val kP = 0.00015 // TODO Tune
-    const val kF = 0.5 / (5000 / 2.0)
+    const val kP = 1.5E-4
+    const val kF = 2.0E-4
 }
 
 object IntakeConstants {
