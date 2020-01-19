@@ -9,9 +9,11 @@
 package org.ghrobotics.frc2020
 
 import org.ghrobotics.frc2020.auto.Autonomous
+import org.ghrobotics.frc2020.auto.Paths
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
@@ -25,6 +27,9 @@ object Robot : FalconTimedRobot() {
 
     // Constructor of the Robot class.
     init {
+        // Initialize auto paths
+        Paths
+
         // Initialize Network
         Network
 
@@ -35,6 +40,7 @@ object Robot : FalconTimedRobot() {
         +Drivetrain
         +Shooter
         +Turret
+        +FortuneWheel
     }
 
     // Runs once when robot boots up
@@ -44,14 +50,19 @@ object Robot : FalconTimedRobot() {
 
     // Runs once when autonomous period starts
     override fun autonomousInit() {
+        Drivetrain.setBrakeMode(true)
         Autonomous.start()
     }
 
     // Runs once when teleop period starts
-    override fun teleopInit() {}
+    override fun teleopInit() {
+        Drivetrain.setBrakeMode(true)
+    }
 
     // Runs once when robot is disabled
-    override fun disabledInit() {}
+    override fun disabledInit() {
+        Drivetrain.setBrakeMode(false)
+    }
 
     // Runs every 20 ms when robot is on
     override fun robotPeriodic() {

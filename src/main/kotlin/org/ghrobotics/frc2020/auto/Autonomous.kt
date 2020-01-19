@@ -11,6 +11,7 @@ package org.ghrobotics.frc2020.auto
 import org.ghrobotics.frc2020.auto.routines.CharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
 import org.ghrobotics.frc2020.auto.routines.TestSubsystemsRoutine
+import org.ghrobotics.frc2020.auto.routines.TrajectoryRoutine
 import org.ghrobotics.frc2020.comms.Network
 
 /**
@@ -22,6 +23,7 @@ object Autonomous {
         when (Network.autoModeSelector.selected) {
             Mode.TEST -> TestSubsystemsRoutine()
             Mode.CHARACTERIZE -> CharacterizationRoutine()
+            Mode.TRAJECTORY -> TrajectoryRoutine()
             null -> DefaultRoutine()
         }.startRoutine()
     }
@@ -30,6 +32,6 @@ object Autonomous {
      * Represents the various auto modes.
      */
     enum class Mode {
-        TEST, CHARACTERIZE
+        TEST, CHARACTERIZE, TRAJECTORY
     }
 }
