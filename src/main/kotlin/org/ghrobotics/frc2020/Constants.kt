@@ -18,7 +18,9 @@ import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.mathematics.units.operations.div
+import org.ghrobotics.lib.mathematics.units.operations.times
 import org.ghrobotics.lib.mathematics.units.seconds
+import org.ghrobotics.lib.mathematics.units.specialops.times
 
 /**
  * Contains constants for the drivetrain.
@@ -81,6 +83,23 @@ object ShooterConstants {
 
 object IntakeConstants {
     const val kIntakeId = 9
+}
+
+object FortuneWheelConstants {
+    // Determines the bit-depth of colors when being compared.
+    // The bit-depth determines the amount of possible colors.
+    // Ex: '255' would result in an 8bit color spectrum.
+    const val kColorBitDepth = 9
+
+    // Spinner
+    const val kSpinnerSpeed = 0.2
+    const val kSpinnerMotorId = 8
+    val kSpinnerRadius = 3.inches // Radius of wheel connected to the spinner motor
+    val kSpinnerUnitModel = NativeUnitLengthModel(42.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
+
+    // Accuracy
+    val kDataAccuracy = 4
+    val kCompletion = 10
 }
 
 object VisionConstants {
