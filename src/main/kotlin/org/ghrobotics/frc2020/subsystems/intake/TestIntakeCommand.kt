@@ -6,9 +6,8 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.commands
+package org.ghrobotics.frc2020.subsystems.intake
 
-import org.ghrobotics.frc2020.subsystems.Intake
 import org.ghrobotics.frc2020.subsystems.SubsystemTestManager
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits

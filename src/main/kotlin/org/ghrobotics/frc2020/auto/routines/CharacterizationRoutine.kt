@@ -10,7 +10,7 @@ package org.ghrobotics.frc2020.auto.routines
 
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.auto.AutoRoutine
-import org.ghrobotics.frc2020.subsystems.Drivetrain
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 
 /**
  * Characterizes the robot using the frc-characterization tool.

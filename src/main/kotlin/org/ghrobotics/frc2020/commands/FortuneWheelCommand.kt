@@ -9,16 +9,14 @@
 package org.ghrobotics.frc2020.commands
 
 import org.ghrobotics.frc2020.FortuneWheelConstants
-import org.ghrobotics.frc2020.subsystems.FortuneWheelSpinner
+import org.ghrobotics.frc2020.subsystems.FortuneWheel
 import org.ghrobotics.lib.commands.FalconCommand
-import org.ghrobotics.lib.mathematics.units.derived.velocity
-import org.ghrobotics.lib.mathematics.units.meters
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 
-class FortuneWheelCommand() : FalconCommand(FortuneWheelSpinner) {
+class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
-    private var colorTarget = FortuneWheelSpinner.FortuneColor.BLACK
+    private var colorTarget = FortuneWheel.FortuneColor.BLACK
     private var cycleTarget = 0
     private var cycle = 0
     private var direction = 0
@@ -28,13 +26,13 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheelSpinner) {
 
     // Rotate X number of cycles
     constructor(cycles: Int) : this() {
-        colorTarget = FortuneWheelSpinner.sensorColor + cycles
+        colorTarget = FortuneWheel.sensorColor + cycles
         cycleTarget = cycles
     }
 
     // Rotate to color
-    constructor(color: FortuneWheelSpinner.FortuneColor) : this() {
-        var currentColor = FortuneWheelSpinner.sensorColor
+    constructor(color: FortuneWheel.FortuneColor) : this() {
+        var currentColor = FortuneWheel.sensorColor
         cycleTarget = currentColor.findNearest(color+2)
         colorTarget = color+2
     }
@@ -44,12 +42,12 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheelSpinner) {
 
     // Prep data class
     override fun initialize() {
-        accuracy.confirmed = FortuneWheelSpinner.sensorColor
-        accuracy.lastConfirmed = FortuneWheelSpinner.sensorColor
+        accuracy.confirmed = FortuneWheel.sensorColor
+        accuracy.lastConfirmed = FortuneWheel.sensorColor
     }
 
     override fun execute() {
-        var currentColor = FortuneWheelSpinner.sensorColor
+        var currentColor = FortuneWheel.sensorColor
         if (accuracy.refresh(currentColor, direction)) { update() }
         direction = when{
             cycleTarget > cycle -> 1
@@ -68,7 +66,7 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheelSpinner) {
         speed = 1 - (2.0.pow(cycle.absoluteValue - cycleTarget.absoluteValue))
 
         println("    => " + accuracy.confirmed + " | $cycle -> $cycleTarget |")
-        FortuneWheelSpinner.setPercent(-FortuneWheelConstants.kSpinnerSpeed * speed * direction)
+        FortuneWheel.setPercent(-FortuneWheelConstants.kSpinnerSpeed * speed * direction)
 
         if (cycle == cycleTarget) {
             if (accuracy.confirmed != accuracy.lastConfirmed) {
@@ -81,7 +79,7 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheelSpinner) {
         }
 
         if (correctCount > FortuneWheelConstants.kCompletion) {
-            FortuneWheelSpinner.setNeutral()
+            FortuneWheel.setNeutral()
             success = true
         }
     }
@@ -92,11 +90,11 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheelSpinner) {
 
     private class Accuracy {
         private var weights = mutableMapOf<String, Int>()
-        var confirmed = FortuneWheelSpinner.FortuneColor.BLACK
-        var lastConfirmed = FortuneWheelSpinner.FortuneColor.BLACK
+        var confirmed = FortuneWheel.FortuneColor.BLACK
+        var lastConfirmed = FortuneWheel.FortuneColor.BLACK
 
         // Update dataset and dump if max value reached
-        fun refresh(color: FortuneWheelSpinner.FortuneColor, direction: Int): Boolean {
+        fun refresh(color: FortuneWheel.FortuneColor, direction: Int): Boolean {
             weights.putIfAbsent(color.name, 0)
             weights.computeIfPresent(color.name) { key, value -> value + 1 }
             if (weights.getValue(color.name) == FortuneWheelConstants.kDataAccuracy && color != confirmed + 2 && color.name != "BLACK" && color != color - direction) {

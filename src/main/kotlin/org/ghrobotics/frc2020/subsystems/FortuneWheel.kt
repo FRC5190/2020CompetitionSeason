@@ -26,7 +26,7 @@ import org.ghrobotics.lib.motors.rev.FalconMAX
 import kotlin.math.absoluteValue
 import kotlin.math.floor
 
-object FortuneWheelSpinner : FalconSubsystem() {
+object FortuneWheel : FalconSubsystem() {
     // Create objects
     private val colorSensor = ColorSensorV3(I2C.Port.kOnboard)
     private val spinnerMotor = FalconMAX(

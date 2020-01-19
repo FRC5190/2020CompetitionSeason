@@ -8,23 +8,22 @@
 
 package org.ghrobotics.frc2020.commands
 
-import org.ghrobotics.frc2020.subsystems.FortuneWheelSpinner
+import org.ghrobotics.frc2020.subsystems.FortuneWheel
 import org.ghrobotics.frc2020.subsystems.SubsystemTestManager
 import org.ghrobotics.lib.commands.FalconCommand
-import org.ghrobotics.lib.mathematics.units.derived.velocity
 import org.ghrobotics.lib.mathematics.units.meters
 
-class TestFortuneWheelCommand : FalconCommand(FortuneWheelSpinner) {
+class TestFortuneWheelCommand : FalconCommand(FortuneWheel) {
     var status = Status.STANDBY
 
     override fun initialize() {
-        FortuneWheelSpinner.resetPosition()
+        FortuneWheel.resetPosition()
         status = Status.MOTOR
     }
 
     override fun execute() {
-        if (FortuneWheelSpinner.spinnerPosition < 1.meters) {
-            FortuneWheelSpinner.setPercent(0.2)
+        if (FortuneWheel.spinnerPosition < 1.meters) {
+            FortuneWheel.setPercent(0.2)
         } else {
             status = Status.SUCCESS
         }

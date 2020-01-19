@@ -9,9 +9,14 @@
 package org.ghrobotics.frc2020
 
 import org.ghrobotics.frc2020.auto.Autonomous
+import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
-import org.ghrobotics.frc2020.subsystems.Drivetrain
-import org.ghrobotics.frc2020.subsystems.FortuneWheelSpinner
+import org.ghrobotics.frc2020.subsystems.FortuneWheel
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.shooter.Shooter
+import org.ghrobotics.frc2020.subsystems.turret.Turret
+import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
+import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
@@ -24,13 +29,19 @@ object Robot : FalconTimedRobot() {
         // Initialize Network
         Network
 
-        // Add subsystems to subsystem handler
+        // Add vision processing
+        +VisionProcessing
+
+        // Add subsystems
         +Drivetrain
-        +FortuneWheelSpinner
+        +Shooter
+        +Turret
+        +FortuneWheel
     }
 
     // Runs once when robot boots up
     override fun robotInit() {
+        ZeroTurretCommand().schedule()
     }
 
     // Runs once when autonomous period starts
@@ -39,15 +50,15 @@ object Robot : FalconTimedRobot() {
     }
 
     // Runs once when teleop period starts
-    override fun teleopInit() {
-        FortuneWheelPositionCommand(3).schedule()
-    }
+    override fun teleopInit() {}
 
     // Runs once when robot is disabled
     override fun disabledInit() {}
 
     // Runs every 20 ms when robot is on
-    override fun robotPeriodic() {}
+    override fun robotPeriodic() {
+        Controls.update()
+    }
 
     // Runs every 20 ms when autonomous is enabled
     override fun autonomousPeriodic() {}
