@@ -8,10 +8,10 @@
 
 package org.ghrobotics.frc2020.subsystems.fortunewheel
 
-import org.ghrobotics.frc2020.FortuneWheelConstants
-import org.ghrobotics.lib.commands.FalconCommand
 import kotlin.math.absoluteValue
 import kotlin.math.pow
+import org.ghrobotics.frc2020.FortuneWheelConstants
+import org.ghrobotics.lib.commands.FalconCommand
 
 class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
@@ -32,8 +32,8 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
     // Rotate to color
     constructor(color: FortuneColor) : this() {
         var currentColor = FortuneWheel.sensorColor
-        cycleTarget = currentColor.findNearest(color+2)
-        colorTarget = color+2
+        cycleTarget = currentColor.findNearest(color + 2)
+        colorTarget = color + 2
     }
 
     // Save data for comparisons
@@ -48,7 +48,7 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
     override fun execute() {
         var currentColor = FortuneWheel.sensorColor
         if (accuracy.refresh(currentColor, direction)) { update() }
-        direction = when{
+        direction = when {
             cycleTarget > cycle -> 1
             cycleTarget < cycle -> -1
             else -> 0
@@ -56,7 +56,7 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
     }
 
     fun update() {
-        cycle = when{
+        cycle = when {
             accuracy.confirmed == accuracy.lastConfirmed + 1 -> cycle + 1
             accuracy.confirmed == accuracy.lastConfirmed - 1 -> cycle - 1
             else -> cycle
@@ -70,7 +70,7 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
         if (cycle == cycleTarget) {
             if (accuracy.confirmed != accuracy.lastConfirmed) {
                 cycleTarget + accuracy.confirmed.findNearest(colorTarget)
-            }else{
+            } else {
                 correctCount++
             }
         } else {

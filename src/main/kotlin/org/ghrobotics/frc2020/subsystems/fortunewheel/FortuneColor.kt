@@ -1,11 +1,19 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2019, Green Hope Falcons
+ */
+
 package org.ghrobotics.frc2020.subsystems.fortunewheel
 
 import edu.wpi.first.wpilibj.util.Color
 import edu.wpi.first.wpilibj.util.Color8Bit
-import org.ghrobotics.frc2020.FortuneWheelConstants
 import kotlin.math.absoluteValue
 import kotlin.math.floor
 import kotlin.math.roundToInt
+import org.ghrobotics.frc2020.FortuneWheelConstants
 
 enum class FortuneColor {
     // Fortune Wheel colors
@@ -29,7 +37,7 @@ enum class FortuneColor {
         if (this == BLACK) { return BLACK
         }
         var number = ordinal + increment
-        var color = number - (floor(number.toDouble()/4).toInt() * 4)
+        var color = number - (floor(number.toDouble() / 4).toInt() * 4)
         return values()[color]
     }
 
@@ -37,7 +45,7 @@ enum class FortuneColor {
         if (this == BLACK) { return BLACK
         }
         var number = (ordinal - 4) - decrement
-        var color = number + (floor(number.absoluteValue.toDouble()/4).toInt() * 4) + 4
+        var color = number + (floor(number.absoluteValue.toDouble() / 4).toInt() * 4) + 4
         return values()[color]
     }
 

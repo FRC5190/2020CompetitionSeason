@@ -8,20 +8,19 @@
 
 package org.ghrobotics.frc2020
 
-import org.ghrobotics.lib.mathematics.units.derived.degrees
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
+import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.inches
-import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.operations.times
-import org.ghrobotics.lib.mathematics.units.specialops.times
 import org.ghrobotics.lib.mathematics.units.seconds
+import org.ghrobotics.lib.mathematics.units.specialops.times
 
 /**
  * Contains constants for the drivetrain.
