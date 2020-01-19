@@ -16,36 +16,40 @@ import edu.wpi.first.wpilibj.util.Color8Bit
 import edu.wpi.first.wpilibj2.command.Command
 import kotlin.math.roundToInt
 import org.ghrobotics.frc2020.FortuneWheelConstants
-import org.ghrobotics.frc2020.commands.FortuneWheelPositionCommand
 import org.ghrobotics.frc2020.commands.TestFortuneWheelCommand
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.derived.Velocity
+import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.motors.rev.FalconMAX
+import kotlin.math.absoluteValue
+import kotlin.math.floor
 
 object FortuneWheelSpinner : FalconSubsystem() {
     // Create objects
     private val colorSensor = ColorSensorV3(I2C.Port.kOnboard)
-    val spinnerMotor = FalconMAX(
+    private val spinnerMotor = FalconMAX(
         id = FortuneWheelConstants.kSpinnerMotorId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = FortuneWheelConstants.kSpinnerUnitModel
     )
+
+    init {
+        spinnerMotor.voltageCompSaturation = 12.volts
+    }
 
     // Create PeriodicIO
     private val periodicIO = PeriodicIO()
     val sensorColor get() = periodicIO.sensorColor
     val spinnerPosition get() = periodicIO.spinnerPosition
 
-    fun setPercent(percent: Double) {
-        periodicIO.desiredOutput = Output.Percent(percent)
+    override fun setNeutral() {
+        periodicIO.desiredOutput = Output.Nothing
     }
 
-    // Sets the output speed of the spinner motor
-    fun setVelocity(velocity: SIUnit<Velocity<Meter>>) {
-        periodicIO.desiredOutput = Output.Speed(velocity)
+    fun setPercent(percent: Double) {
+        periodicIO.desiredOutput = Output.Percent(percent)
     }
 
     // Resets 'position' of encoder
@@ -58,9 +62,6 @@ object FortuneWheelSpinner : FalconSubsystem() {
         periodicIO.sensorColor = FortuneColor.getFortune(colorSensor.color)
         periodicIO.spinnerPosition = spinnerMotor.encoder.position
 
-        println(periodicIO.sensorColor)
-        // println("R: " + colorSensor.color.red + " G: " + colorSensor.color.green + " B: " + colorSensor.color.blue)
-
         // Do stuff
         if (periodicIO.resetPosition) {
             spinnerMotor.encoder.resetPosition(0.meters)
@@ -68,7 +69,7 @@ object FortuneWheelSpinner : FalconSubsystem() {
         }
 
         when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing -> spinnerMotor.setDutyCycle(0.0)
+            is Output.Nothing -> spinnerMotor.setNeutral()
             is Output.Percent -> spinnerMotor.setDutyCycle(desiredOutput.speed)
         }
     }
@@ -86,7 +87,6 @@ object FortuneWheelSpinner : FalconSubsystem() {
 
     private sealed class Output {
         object Nothing : Output()
-        class Speed(val velocity: SIUnit<Velocity<Meter>>) : Output()
         class Percent(val speed: Double) : Output()
     }
 
@@ -95,47 +95,14 @@ object FortuneWheelSpinner : FalconSubsystem() {
     }
 
     enum class FortuneColor {
-        // Default color value
-        BLACK {
-            override val rgb = RGB(0.0, 0.0, 0.0)
-            override fun next(): FortuneColor {
-                return BLACK
-            }
-            override fun previous(): FortuneColor {
-                return BLACK
-            }
-        },
-
         // Fortune Wheel colors
-        RED {
-            // old values r: 0.562 g: 0.323 b: 0.114
-            // correct values r: 0.3842 g: 0.4152 b: 0.2004
-            override val rgb = RGB(0.2954, 0.4726, 0.2319)
-            override fun previous(): FortuneColor {
-                return GREEN
-            }
-        },
+        RED { override val rgb = RGB(0.3559, 0.4287, 0.2153) },
+        YELLOW { override val rgb = RGB(0.2927, 0.5378, 0.1694) },
+        BLUE { override val rgb = RGB(0.1782, 0.4514, 0.3706) },
+        GREEN { override val rgb = RGB(0.2136, 0.5288, 0.2575) },
 
-        YELLOW {
-            // old values r: 0.315 g: 0.572 b: 0.112
-            // correct values r: 0.3105 g: 0.5229 b: 0.1665
-            override val rgb = RGB(0.2907, 0.4821, 0.2270)
-        },
-
-        BLUE {
-            // old values r: 0.1 g: 0.422 b: 0.477
-            // correct values r: 0.1872 g: 0.4568 b: 0.3559
-            override val rgb = RGB(0.2685, 0.4841, 0.2470)
-        },
-
-        GREEN {
-            // old values r: 0.143 g: 0.604 b: 0.251
-            // correct values r: 0.2177 g: 0.5241 b: 0.2580
-            override val rgb = RGB(0.2724, 0.4772, 0.2507)
-            override fun next(): FortuneColor {
-                return RED
-            }
-        };
+        // Default color value
+        BLACK { override val rgb = RGB(0.0, 0.0, 0.0) };
 
         // RGB Values
         protected class RGB(var red: Double, var green: Double, var blue: Double)
@@ -145,32 +112,18 @@ object FortuneWheelSpinner : FalconSubsystem() {
         val green get() = rgb.green
         val blue get() = rgb.blue
 
-        protected open fun next(): FortuneColor {
-            return values()[ordinal + 1]
-        }
-
-        protected open fun previous(): FortuneColor {
-            return values()[ordinal - 1]
-        }
-
         operator fun plus(increment: Int): FortuneColor {
-            var times = increment
-            var newColor = this
-            while (times != 0) {
-                newColor = newColor.next()
-                times--
-            }
-            return newColor
+            if (this == BLACK) { return BLACK }
+            var number = ordinal + increment
+            var color = number - (floor(number.toDouble()/4).toInt() * 4)
+            return values()[color]
         }
 
         operator fun minus(decrement: Int): FortuneColor {
-            var times = decrement
-            var newColor = this
-            while (times != 0) {
-                newColor = newColor.previous()
-                times--
-            }
-            return newColor
+            if (this == BLACK) { return BLACK }
+            var number = (ordinal - 4) - decrement
+            var color = number + (floor(number.absoluteValue.toDouble()/4).toInt() * 4) + 4
+            return values()[color]
         }
 
         // Find the position of a desired color relative to the current color

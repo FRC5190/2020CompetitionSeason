@@ -41,27 +41,18 @@ object IntakeConstants {
 }
 
 object FortuneWheelConstants {
-    // IDs
-    const val kSpinnerMotorId = 8
-
     // Determines the bit-depth of colors when being compared.
     // The bit-depth determines the amount of possible colors.
     // Ex: '255' would result in an 8bit color spectrum.
-    const val kColorBitDepth = 10
+    const val kColorBitDepth = 9
 
     // Spinner
+    const val kSpinnerSpeed = 0.2
+    const val kSpinnerMotorId = 8
     val kSpinnerRadius = 3.inches // Radius of wheel connected to the spinner motor
     val kSpinnerUnitModel = NativeUnitLengthModel(42.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
 
-    // Fortune Wheel
-    val kFortuneRPM = 30.0 * 360.degrees / 1.minutes // RPM to spin the fortune wheel at
-
-    // Contact Circle
-    val kContactRadius = 16.inches // Distance from the center of the fortune wheel to our contact point
-    val kContactCirc = 360.degrees * kContactRadius // Circumference of the fortune wheel
-    val kContactVelocity = kFortuneRPM.times(kContactRadius) // Linear velocity of motor at set RPM
-    val kContactColor = kContactCirc / 8 // The size of one color panel
-
-    // Data Accuracy
-    val kDataAccuracy = 10
+    // Accuracy
+    val kDataAccuracy = 4
+    val kCompletion = 10
 }

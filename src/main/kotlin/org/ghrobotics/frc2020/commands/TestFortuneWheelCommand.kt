@@ -24,7 +24,7 @@ class TestFortuneWheelCommand : FalconCommand(FortuneWheelSpinner) {
 
     override fun execute() {
         if (FortuneWheelSpinner.spinnerPosition < 1.meters) {
-            FortuneWheelSpinner.setVelocity(1.meters.velocity)
+            FortuneWheelSpinner.setPercent(0.2)
         } else {
             status = Status.SUCCESS
         }
