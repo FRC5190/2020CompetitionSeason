@@ -58,8 +58,11 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         )
         slaveMotor.follow(masterMotor)
 
-        masterMotor.canSparkMax.closedLoopRampRate = 0.1
+        masterMotor.canSparkMax.closedLoopRampRate = 0.25
         masterMotor.canSparkMax.openLoopRampRate = 0.5
+
+        masterMotor.brakeMode = false
+        slaveMotor.brakeMode = false
 
         enableClosedLoopControl()
     }
