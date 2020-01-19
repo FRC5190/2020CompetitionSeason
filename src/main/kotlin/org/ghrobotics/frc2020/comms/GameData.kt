@@ -9,7 +9,7 @@
 package org.ghrobotics.frc2020.comms
 
 import edu.wpi.first.wpilibj.DriverStation
-import org.ghrobotics.frc2020.subsystems.FortuneWheel
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneColor
 
 /**
  * Takes care of game data from the FMS.
@@ -19,14 +19,14 @@ object GameData {
      * Returns the color of the fortune wheel that needs to be under the color
      * sensor on the field.
      */
-    fun getColor(): FortuneWheel.FortuneColor? {
+    fun getColor(): FortuneColor? {
         val gameData: String = DriverStation.getInstance().gameSpecificMessage
         return if (gameData.isNotEmpty()) {
             when (gameData[0]) {
-                'R' -> FortuneWheel.FortuneColor.RED
-                'G' -> FortuneWheel.FortuneColor.GREEN
-                'B' -> FortuneWheel.FortuneColor.BLUE
-                'Y' -> FortuneWheel.FortuneColor.YELLOW
+                'R' -> FortuneColor.RED
+                'G' -> FortuneColor.GREEN
+                'B' -> FortuneColor.BLUE
+                'Y' -> FortuneColor.YELLOW
                 else -> null
             }
         } else {

@@ -6,17 +6,16 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.commands
+package org.ghrobotics.frc2020.subsystems.fortunewheel
 
 import org.ghrobotics.frc2020.FortuneWheelConstants
-import org.ghrobotics.frc2020.subsystems.FortuneWheel
 import org.ghrobotics.lib.commands.FalconCommand
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 
 class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
-    private var colorTarget = FortuneWheel.FortuneColor.BLACK
+    private var colorTarget = FortuneColor.BLACK
     private var cycleTarget = 0
     private var cycle = 0
     private var direction = 0
@@ -31,7 +30,7 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
     }
 
     // Rotate to color
-    constructor(color: FortuneWheel.FortuneColor) : this() {
+    constructor(color: FortuneColor) : this() {
         var currentColor = FortuneWheel.sensorColor
         cycleTarget = currentColor.findNearest(color+2)
         colorTarget = color+2
@@ -90,11 +89,11 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
     private class Accuracy {
         private var weights = mutableMapOf<String, Int>()
-        var confirmed = FortuneWheel.FortuneColor.BLACK
-        var lastConfirmed = FortuneWheel.FortuneColor.BLACK
+        var confirmed = FortuneColor.BLACK
+        var lastConfirmed = FortuneColor.BLACK
 
         // Update dataset and dump if max value reached
-        fun refresh(color: FortuneWheel.FortuneColor, direction: Int): Boolean {
+        fun refresh(color: FortuneColor, direction: Int): Boolean {
             weights.putIfAbsent(color.name, 0)
             weights.computeIfPresent(color.name) { key, value -> value + 1 }
             if (weights.getValue(color.name) == FortuneWheelConstants.kDataAccuracy && color != confirmed + 2 && color.name != "BLACK" && color != color - direction) {
