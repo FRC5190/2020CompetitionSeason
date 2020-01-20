@@ -28,15 +28,15 @@ import org.ghrobotics.lib.motors.rev.FalconMAX
 
 object Climber : FalconSubsystem() {
 
-    val pistonBrake = Solenoid(kPistonBrakeModuleId, kPistonBrakeId)
+    private val pistonBrake = Solenoid(kPistonBrakeModuleId, kPistonBrakeId)
 
-    val climberMasterMotor = FalconMAX(
+    private val climberMasterMotor = FalconMAX(
         id = kClimberMasterId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = kClimberNativeUnitModel
         )
 
-    val climberSlaveMotor = FalconMAX(
+    private val climberSlaveMotor = FalconMAX(
         id = kClimberSlaveId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = kClimberNativeUnitModel
@@ -57,7 +57,7 @@ object Climber : FalconSubsystem() {
     sealed class Output {
         object Nothing : Output()
         class Percent(val percent: Double) : Output()
-        class ClosedLoop(val position: SIUnit<Meter>) : Output()
+        class ClosedLoop(val Position: SIUnit<Meter>) : Output()
     }
 
     override fun periodic() {
@@ -73,7 +73,7 @@ object Climber : FalconSubsystem() {
                 climberMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
             }
             is Output.ClosedLoop -> {
-                climberMasterMotor.setPosition(desiredOutput.position, periodicIO.feedforward)
+                climberMasterMotor.setPosition(desiredOutput.Position, periodicIO.feedforward)
             }
         }
     }
@@ -97,13 +97,13 @@ object Climber : FalconSubsystem() {
         pistonBrake.set(brake)
     }
 
-    fun resetPosition(position: SIUnit<Meter>){
+    fun resetPosition(position: SIUnit<Meter>) {
         climberMasterMotor.encoder.resetPosition(position)
     }
 
     init {
         climberSlaveMotor.follow(climberMasterMotor)
-        defaultCommand = OpenLoopClimberCommand { 0.0 }
+        defaultCommand = ManualClimberCommand { 0.0 }
         pistonBrake.set(true)
     }
 

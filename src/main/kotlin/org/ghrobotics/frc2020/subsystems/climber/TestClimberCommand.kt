@@ -20,7 +20,7 @@ class TestClimberCommand : FalconCommand(Climber) {
         Climber.resetPosition(0.meters)
     }
     override fun execute() {
-        OpenLoopClimberCommand { .75 }
+        ManualClimberCommand { .75 }
     }
 
     override fun end(interrupted: Boolean) {

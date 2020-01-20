@@ -11,7 +11,7 @@ package org.ghrobotics.frc2020.subsystems.climber
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
-class OpenLoopClimberCommand(private val percentSource: DoubleSource) : FalconCommand(Climber) {
+class ManualClimberCommand(private val percentSource: DoubleSource) : FalconCommand(Climber) {
 
     override fun execute() {
         Climber.setBrake(false)
