@@ -14,8 +14,10 @@ import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.inches
+import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
+import org.ghrobotics.lib.mathematics.units.nativeunit.SlopeNativeUnitModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.operations.times
@@ -118,4 +120,13 @@ object VisionConstants {
     val kMaxTargetTrackingLifetime = 0.5.seconds
     val kTargetTrackingDistanceErrorTolerance = 6.inches
     const val kMedianWindowSize = 10
+}
+
+object ClimberConstants {
+    const val kClimberMasterId = 10
+    const val kClimberSlaveId = 11
+    const val kPistonBrakeId = 12
+    const val kPistonBrakeModuleId = 13
+
+    val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }
