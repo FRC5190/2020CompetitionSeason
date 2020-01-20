@@ -16,7 +16,7 @@ class OpenLoopClimberCommand(private val percentSource: DoubleSource) : FalconCo
 
     override fun execute() {
         Climber.pistonBrake.set(false)
-        Climber.setPercent(percentSource())
+        Climber.setPercent{percentSource()}
     }
 
     override fun end(interrupted: Boolean) {
