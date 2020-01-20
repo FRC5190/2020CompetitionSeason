@@ -28,6 +28,7 @@ import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnit
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.motors.rev.FalconMAX
+import org.ghrobotics.lib.utils.DoubleSource
 
 object Climber : FalconSubsystem() {
 
@@ -59,7 +60,7 @@ object Climber : FalconSubsystem() {
 
     sealed class Output {
         object Nothing : Output()
-        class Percent(val percent: Double) : Output()
+        class Percent(val percent: DoubleSource) : Output()
         class ClosedLoop(val height: SIUnit<NativeUnit>, val feedforward: SIUnit<Volt>) : Output()
     }
 
@@ -74,8 +75,9 @@ object Climber : FalconSubsystem() {
                 ClimberSlaveMotor.setNeutral()
             }
             is Output.Percent -> {
-                ClimberMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-                ClimberSlaveMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+                OpenLoopClimberCommand(desiredOutput.percent)
+                ClimberMasterMotor.setDutyCycle(desiredOutput.percent(), periodicIO.feedforward)
+                ClimberSlaveMotor.setDutyCycle(desiredOutput.percent(), periodicIO.feedforward)
             }
             is Output.ClosedLoop -> {
                 ClosedLoopClimberCommand(desiredOutput.height)
@@ -95,7 +97,7 @@ object Climber : FalconSubsystem() {
         periodicIO.desiredOutput = Output.ClosedLoop(desiredHeight, periodicIO.feedforward)
     }
 
-    fun setPercent(percent: Double) {
+    fun setPercent(percent: DoubleSource) {
         periodicIO.feedforward = 0.volts
         periodicIO.desiredOutput = Output.Percent(percent)
     }
