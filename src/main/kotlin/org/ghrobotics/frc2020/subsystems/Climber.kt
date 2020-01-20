@@ -1,10 +1,14 @@
 package org.ghrobotics.frc2020.subsystems
 
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.ClimberConstants.kClimberMasterId
 import org.ghrobotics.frc2020.ClimberConstants.kClimberNativeUnitModel
 import org.ghrobotics.frc2020.ClimberConstants.kClimberSlaveId
+import org.ghrobotics.frc2020.ClimberConstants.kPistonBrakeId
+import org.ghrobotics.frc2020.ClimberConstants.kPistonBrakeModuleId
 import org.ghrobotics.frc2020.commands.ClosedLoopClimberCommand
 import org.ghrobotics.frc2020.commands.OpenLoopClimberCommand
 import org.ghrobotics.frc2020.commands.TestClimberCommand
@@ -19,7 +23,9 @@ import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.motors.rev.FalconMAX
 
 object Climber: FalconSubsystem(){
-    //need to add break stuff
+
+    val pistonBrake = Solenoid(kPistonBrakeModuleId, kPistonBrakeId )
+
     val ClimberMasterMotor = FalconMAX(
         id = kClimberMasterId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
@@ -47,7 +53,7 @@ object Climber: FalconSubsystem(){
     sealed class Output{
         object Nothing: Output()
         class Percent(val percent: Double) : Output()
-        class ClosedLoop(val height: SIUnit<NativeUnit>): Output()
+        class ClosedLoop(val height: SIUnit<NativeUnit>, val feedforward: SIUnit<Volt>): Output()
     }
 
     override fun periodic() {
@@ -56,14 +62,18 @@ object Climber: FalconSubsystem(){
         periodicIO.position = ClimberMasterMotor.encoder.position
 
         when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing ->
+            is Output.Nothing ->{
                 ClimberMasterMotor.setNeutral()
-            is Output.Percent ->
+                ClimberSlaveMotor.setNeutral()
+            }
+            is Output.Percent -> {
                 ClimberMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+                ClimberSlaveMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+            }
             is Output.ClosedLoop -> {
                 ClosedLoopClimberCommand(desiredOutput.height)
-                ClimberMasterMotor.setPosition(desiredOutput.height)
-                ClimberSlaveMotor.setPosition (desiredOutput.height)
+                ClimberMasterMotor.setPosition(desiredOutput.height, desiredOutput.feedforward)
+                ClimberSlaveMotor.setPosition (desiredOutput.height, desiredOutput.feedforward)
             }
         }
 
@@ -75,17 +85,19 @@ object Climber: FalconSubsystem(){
     }
 
     fun setHeight(desiredHeight : SIUnit<NativeUnit>){
-        periodicIO.desiredOutput = Output.ClosedLoop(desiredHeight)
+        periodicIO.feedforward = 0.volts
+        periodicIO.desiredOutput = Output.ClosedLoop(desiredHeight, periodicIO.feedforward)
     }
 
     fun setPercent(percent: Double){
-        periodicIO.desiredOutput = Output.Percent(percent)
         periodicIO.feedforward = 0.volts
+        periodicIO.desiredOutput = Output.Percent(percent)
     }
 
     init{
         ClimberSlaveMotor.follow(ClimberMasterMotor)
         defaultCommand = OpenLoopClimberCommand{0.0}
+        pistonBrake.set(true)
     }
 
     override fun checkSubsystem(): Command {

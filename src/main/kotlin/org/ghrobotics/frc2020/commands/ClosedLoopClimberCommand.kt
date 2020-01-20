@@ -7,12 +7,14 @@ import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnit
 
 class ClosedLoopClimberCommand(private val desiredHeight : SIUnit<NativeUnit>) : FalconCommand(Climber){
 
-    //do break stuff
+
     override fun initialize() {
+        Climber.pistonBrake.set(false)
         Climber.setHeight(desiredHeight)
     }
 
     override fun end(interrupted: Boolean) {
+        Climber.pistonBrake.set(true)
         Climber.ClimberMasterMotor.setNeutral()
         Climber.ClimberSlaveMotor.setNeutral()
     }

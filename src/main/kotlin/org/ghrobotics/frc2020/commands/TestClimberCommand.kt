@@ -8,8 +8,9 @@ import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 
 class TestClimberCommand : FalconCommand(Climber){
     private var success = true
-    //need to add break stuff
+
     override fun initialize(){
+        Climber.pistonBrake.set(false)
         Climber.ClimberMasterMotor.encoder.resetPosition(0.nativeUnits)
         Climber.ClimberSlaveMotor.encoder.resetPosition(0.nativeUnits)
     }
@@ -18,6 +19,7 @@ class TestClimberCommand : FalconCommand(Climber){
     }
 
     override fun end(interrupted: Boolean) {
+        Climber.pistonBrake.set(true)
         success = Climber.position > 3.nativeUnits
         Climber.setNeutral()
         SubsystemTestManager.climberCheck = success
