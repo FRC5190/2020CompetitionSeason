@@ -97,6 +97,10 @@ object Climber : FalconSubsystem() {
         pistonBrake.set(brake)
     }
 
+    fun resetPosition(position: SIUnit<Meter>){
+        climberMasterMotor.encoder.resetPosition(position)
+    }
+
     init {
         climberSlaveMotor.follow(climberMasterMotor)
         defaultCommand = OpenLoopClimberCommand { 0.0 }

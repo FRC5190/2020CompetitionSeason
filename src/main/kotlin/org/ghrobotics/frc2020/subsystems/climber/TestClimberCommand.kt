@@ -17,8 +17,7 @@ class TestClimberCommand : FalconCommand(Climber) {
 
     override fun initialize() {
         Climber.setBrake(false)
-        Climber.climberMasterMotor.encoder.resetPosition(0.meters)
-        Climber.climberSlaveMotor.encoder.resetPosition(0.meters)
+        Climber.resetPosition(0.meters)
     }
     override fun execute() {
         OpenLoopClimberCommand { .75 }
