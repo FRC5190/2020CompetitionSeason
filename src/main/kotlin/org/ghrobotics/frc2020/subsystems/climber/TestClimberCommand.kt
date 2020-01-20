@@ -10,9 +10,7 @@ package org.ghrobotics.frc2020.subsystems.climber
 
 import org.ghrobotics.frc2020.subsystems.SubsystemTestManager
 import org.ghrobotics.lib.commands.FalconCommand
-import org.ghrobotics.lib.mathematics.units.meter
 import org.ghrobotics.lib.mathematics.units.meters
-import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 
 class TestClimberCommand : FalconCommand(Climber) {
     private var success = true
