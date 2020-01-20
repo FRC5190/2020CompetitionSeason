@@ -121,14 +121,13 @@ object VisionConstants {
     const val kMedianWindowSize = 10
 
     val kP = 0.0
-
+}
 
 object ClimberConstants {
     const val kClimberMasterId = 10
-    const val kClimberSlaveId =  11
+    const val kClimberSlaveId = 11
     const val kPistonBrakeId = 12
     const val kPistonBrakeModuleId = 13
 
     val kClimberNativeUnitModel = SlopeNativeUnitModel(15.nativeUnits, 15.nativeUnits)
-
 }

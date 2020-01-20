@@ -1,6 +1,13 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2019, Green Hope Falcons
+ */
+
 package org.ghrobotics.frc2020.subsystems
 
-import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj2.command.Command
@@ -12,19 +19,19 @@ import org.ghrobotics.frc2020.ClimberConstants.kPistonBrakeModuleId
 import org.ghrobotics.frc2020.commands.ClosedLoopClimberCommand
 import org.ghrobotics.frc2020.commands.OpenLoopClimberCommand
 import org.ghrobotics.frc2020.commands.TestClimberCommand
-import org.ghrobotics.frc2020.commands.TestIntakeCommand
 import org.ghrobotics.lib.commands.FalconSubsystem
-import org.ghrobotics.lib.mathematics.units.*
+import org.ghrobotics.lib.mathematics.units.Ampere
+import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.volts
-import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnit
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.motors.rev.FalconMAX
 
-object Climber: FalconSubsystem(){
+object Climber : FalconSubsystem() {
 
-    val pistonBrake = Solenoid(kPistonBrakeModuleId, kPistonBrakeId )
+    val pistonBrake = Solenoid(kPistonBrakeModuleId, kPistonBrakeId)
 
     val ClimberMasterMotor = FalconMAX(
         id = kClimberMasterId,
@@ -41,7 +48,7 @@ object Climber: FalconSubsystem(){
     private val periodicIO = PeriodicIO()
     val position get() = periodicIO.position
 
-    private class PeriodicIO(){
+    private class PeriodicIO() {
         var current: SIUnit<Ampere> = 0.amps
         var voltage: SIUnit<Volt> = 0.volts
         var position: SIUnit<NativeUnit> = 0.nativeUnits
@@ -50,10 +57,10 @@ object Climber: FalconSubsystem(){
         var desiredOutput: Output = Output.Nothing
     }
 
-    sealed class Output{
-        object Nothing: Output()
+    sealed class Output {
+        object Nothing : Output()
         class Percent(val percent: Double) : Output()
-        class ClosedLoop(val height: SIUnit<NativeUnit>, val feedforward: SIUnit<Volt>): Output()
+        class ClosedLoop(val height: SIUnit<NativeUnit>, val feedforward: SIUnit<Volt>) : Output()
     }
 
     override fun periodic() {
@@ -62,7 +69,7 @@ object Climber: FalconSubsystem(){
         periodicIO.position = ClimberMasterMotor.encoder.position
 
         when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing ->{
+            is Output.Nothing -> {
                 ClimberMasterMotor.setNeutral()
                 ClimberSlaveMotor.setNeutral()
             }
@@ -73,10 +80,9 @@ object Climber: FalconSubsystem(){
             is Output.ClosedLoop -> {
                 ClosedLoopClimberCommand(desiredOutput.height)
                 ClimberMasterMotor.setPosition(desiredOutput.height, desiredOutput.feedforward)
-                ClimberSlaveMotor.setPosition (desiredOutput.height, desiredOutput.feedforward)
+                ClimberSlaveMotor.setPosition(desiredOutput.height, desiredOutput.feedforward)
             }
         }
-
     }
 
     override fun setNeutral() {
@@ -84,19 +90,19 @@ object Climber: FalconSubsystem(){
         periodicIO.desiredOutput = Output.Nothing
     }
 
-    fun setHeight(desiredHeight : SIUnit<NativeUnit>){
+    fun setHeight(desiredHeight: SIUnit<NativeUnit>) {
         periodicIO.feedforward = 0.volts
         periodicIO.desiredOutput = Output.ClosedLoop(desiredHeight, periodicIO.feedforward)
     }
 
-    fun setPercent(percent: Double){
+    fun setPercent(percent: Double) {
         periodicIO.feedforward = 0.volts
         periodicIO.desiredOutput = Output.Percent(percent)
     }
 
-    init{
+    init {
         ClimberSlaveMotor.follow(ClimberMasterMotor)
-        defaultCommand = OpenLoopClimberCommand{0.0}
+        defaultCommand = OpenLoopClimberCommand { 0.0 }
         pistonBrake.set(true)
     }
 
