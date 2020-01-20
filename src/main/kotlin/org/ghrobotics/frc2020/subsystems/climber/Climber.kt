@@ -57,7 +57,7 @@ object Climber : FalconSubsystem() {
     sealed class Output {
         object Nothing : Output()
         class Percent(val percent: Double) : Output()
-        class ClosedLoop(val Position: SIUnit<Meter>) : Output()
+        class Position(val position: SIUnit<Meter>) : Output()
     }
 
     override fun periodic() {
@@ -72,8 +72,8 @@ object Climber : FalconSubsystem() {
             is Output.Percent -> {
                 climberMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
             }
-            is Output.ClosedLoop -> {
-                climberMasterMotor.setPosition(desiredOutput.Position, periodicIO.feedforward)
+            is Output.Position -> {
+                climberMasterMotor.setPosition(desiredOutput.position, periodicIO.feedforward)
             }
         }
     }
@@ -85,7 +85,7 @@ object Climber : FalconSubsystem() {
 
     fun setHeight(desiredHeight: SIUnit<Meter>) {
         periodicIO.feedforward = 0.volts
-        periodicIO.desiredOutput = Output.ClosedLoop(desiredHeight)
+        periodicIO.desiredOutput = Output.Position(desiredHeight)
     }
 
     fun setPercent(percent: Double) {
