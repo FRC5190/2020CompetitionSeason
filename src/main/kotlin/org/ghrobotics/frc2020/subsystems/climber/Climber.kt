@@ -6,7 +6,7 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems
+package org.ghrobotics.frc2020.subsystems.climber
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
@@ -16,9 +16,6 @@ import org.ghrobotics.frc2020.ClimberConstants.kClimberNativeUnitModel
 import org.ghrobotics.frc2020.ClimberConstants.kClimberSlaveId
 import org.ghrobotics.frc2020.ClimberConstants.kPistonBrakeId
 import org.ghrobotics.frc2020.ClimberConstants.kPistonBrakeModuleId
-import org.ghrobotics.frc2020.commands.ClosedLoopClimberCommand
-import org.ghrobotics.frc2020.commands.OpenLoopClimberCommand
-import org.ghrobotics.frc2020.commands.TestClimberCommand
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit

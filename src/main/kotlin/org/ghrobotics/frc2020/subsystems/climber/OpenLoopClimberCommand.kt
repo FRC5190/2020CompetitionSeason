@@ -6,19 +6,20 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.commands
+package org.ghrobotics.frc2020.subsystems.climber
 
-import org.ghrobotics.frc2020.subsystems.Intake
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
-class IntakeCommand(private val percentSource: DoubleSource) : FalconCommand(Intake) {
+class OpenLoopClimberCommand(private val percentSource: DoubleSource) : FalconCommand(Climber) {
 
     override fun execute() {
-        Intake.setPercent(percentSource())
+        Climber.pistonBrake.set(false)
+        Climber.setPercent { percentSource() }
     }
 
     override fun end(interrupted: Boolean) {
-        Intake.setNeutral()
+        Climber.pistonBrake.set(true)
+        Climber.setNeutral()
     }
 }
