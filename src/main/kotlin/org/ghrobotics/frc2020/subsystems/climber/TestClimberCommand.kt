@@ -10,23 +10,25 @@ package org.ghrobotics.frc2020.subsystems.climber
 
 import org.ghrobotics.frc2020.subsystems.SubsystemTestManager
 import org.ghrobotics.lib.commands.FalconCommand
+import org.ghrobotics.lib.mathematics.units.meter
+import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 
 class TestClimberCommand : FalconCommand(Climber) {
     private var success = true
 
     override fun initialize() {
-        Climber.pistonBrake.set(false)
-        Climber.ClimberMasterMotor.encoder.resetPosition(0.nativeUnits)
-        Climber.ClimberSlaveMotor.encoder.resetPosition(0.nativeUnits)
+        Climber.setBrake(false)
+        Climber.climberMasterMotor.encoder.resetPosition(0.meters)
+        Climber.climberSlaveMotor.encoder.resetPosition(0.meters)
     }
     override fun execute() {
         OpenLoopClimberCommand { .75 }
     }
 
     override fun end(interrupted: Boolean) {
-        Climber.pistonBrake.set(true)
-        success = Climber.position > 3.nativeUnits
+        Climber.setBrake(true)
+        success = Climber.position > 2.meters
         Climber.setNeutral()
         SubsystemTestManager.climberCheck = success
     }
