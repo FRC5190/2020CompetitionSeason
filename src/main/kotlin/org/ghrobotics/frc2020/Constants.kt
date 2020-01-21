@@ -20,9 +20,7 @@ import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.SlopeNativeUnitModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.mathematics.units.operations.div
-import org.ghrobotics.lib.mathematics.units.operations.times
 import org.ghrobotics.lib.mathematics.units.seconds
-import org.ghrobotics.lib.mathematics.units.specialops.times
 
 /**
  * Contains constants for the drivetrain.

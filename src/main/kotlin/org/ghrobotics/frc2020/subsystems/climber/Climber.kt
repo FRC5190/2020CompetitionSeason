@@ -34,7 +34,7 @@ object Climber : FalconSubsystem() {
         id = kClimberMasterId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = kClimberNativeUnitModel
-        )
+    )
 
     private val climberSlaveMotor = FalconMAX(
         id = kClimberSlaveId,
