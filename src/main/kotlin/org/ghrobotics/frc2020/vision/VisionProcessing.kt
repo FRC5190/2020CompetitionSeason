@@ -20,6 +20,7 @@ import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.seconds
+import org.ghrobotics.lib.utils.toTransform
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 import kotlin.math.tan
 
@@ -78,6 +79,9 @@ object VisionProcessing : FalconSubsystem() {
             GoalTracker.addSample(timestamp, fieldRelativeTarget)
         }
 
+        // Update GoalTracker.
+        GoalTracker.update()
+
         if (Robot.currentMode == FalconTimedRobot.Mode.DISABLED) {
             periodicIO.desiredLEDState = !camera.isConnected
         }
@@ -104,7 +108,5 @@ object VisionProcessing : FalconSubsystem() {
     private class PeriodicIO {
         var desiredLEDState: Boolean = false
     }
-
-    private fun Pose2d.toTransform() = minus(Pose2d())
 }
 
