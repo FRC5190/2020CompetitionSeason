@@ -10,8 +10,8 @@ package org.ghrobotics.frc2020.vision
 
 import edu.wpi.first.wpilibj.DigitalOutput
 import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
+import kotlin.math.tan
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
@@ -22,7 +22,6 @@ import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.utils.toTransform
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
-import kotlin.math.tan
 
 /**
  * Object that handles Vision Processing on the robot.
@@ -109,4 +108,3 @@ object VisionProcessing : FalconSubsystem() {
         var desiredLEDState: Boolean = false
     }
 }
-

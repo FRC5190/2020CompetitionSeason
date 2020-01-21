@@ -74,7 +74,6 @@ class ChameleonCamera(private val cameraName: String) {
     val isValid: Boolean
         get() = periodicIO.isValid
 
-
     /**
      * Updates all values from NT.
      */
