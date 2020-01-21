@@ -104,6 +104,15 @@ object FortuneWheelConstants {
     val kCompletion = 10
 }
 
+object ClimberConstants {
+    const val kClimberMasterId = 10
+    const val kClimberSlaveId = 11
+    const val kPistonBrakeId = 12
+    const val kPistonBrakeModuleId = 13
+
+    val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
+}
+
 object VisionConstants {
     const val kLEDId = 0
 
@@ -118,13 +127,4 @@ object VisionConstants {
     val kMaxTargetTrackingLifetime = 0.5.seconds
     val kTargetTrackingDistanceErrorTolerance = 6.inches
     const val kMedianWindowSize = 10
-}
-
-object ClimberConstants {
-    const val kClimberMasterId = 10
-    const val kClimberSlaveId = 11
-    const val kPistonBrakeId = 12
-    const val kPistonBrakeModuleId = 13
-
-    val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }

@@ -9,8 +9,14 @@
 package org.ghrobotics.lib.utils
 
 import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Transform2d
 
 /**
  * Converts a Pose2d to a Transform2d.
  */
-fun Pose2d.toTransform() = minus(Pose2d())
+fun Pose2d.toTransform(): Transform2d = minus(Pose2d())
+
+/**
+ * Converts a Transform2d to a Pose2d.
+ */
+fun Transform2d.toPose(): Pose2d = Pose2d(translation, rotation)
