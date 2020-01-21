@@ -11,6 +11,8 @@ package org.ghrobotics.frc2020.subsystems.turret
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
+import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Transform2d
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.planners.TurretPlanner
@@ -22,6 +24,7 @@ import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
@@ -50,6 +53,9 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     val speed get() = periodicIO.velocity
     val current get() = periodicIO.current
     val hallEffectEngaged get() = periodicIO.hallEffect
+
+    val robotToTurret: Pose2d
+        get() = Pose2d(TurretConstants.kTurretRelativeToRobotCenter, periodicIO.position.toRotation2d())
 
     // Status (zeroing or ready)
     var status = Status.ZEROING

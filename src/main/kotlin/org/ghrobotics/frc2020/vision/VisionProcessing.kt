@@ -9,13 +9,19 @@
 package org.ghrobotics.frc2020.vision
 
 import edu.wpi.first.wpilibj.DigitalOutput
-import kotlin.math.tan
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Transform2d
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.VisionConstants
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
+import kotlin.math.tan
 
 /**
  * Object that handles Vision Processing on the robot.
@@ -56,6 +62,22 @@ object VisionProcessing : FalconSubsystem() {
         }
 
     override fun periodic() {
+        // Update camera.
+        camera.update()
+
+        // Add solvePnP pose to GoalTracker.
+        val cameraToTarget: Transform2d? = camera.transform
+        if (cameraToTarget != null) {
+            val latency = camera.latency
+            val timestamp = Timer.getFPGATimestamp().seconds - latency
+
+            val turretToTarget = VisionConstants.kTurretToCamera + cameraToTarget
+            val robotToTarget = Turret.robotToTurret + turretToTarget.toTransform()
+            val fieldRelativeTarget = Drivetrain.getPose(timestamp) + robotToTarget.toTransform()
+
+            GoalTracker.addSample(timestamp, fieldRelativeTarget)
+        }
+
         if (Robot.currentMode == FalconTimedRobot.Mode.DISABLED) {
             periodicIO.desiredLEDState = !camera.isConnected
         }
@@ -82,4 +104,7 @@ object VisionProcessing : FalconSubsystem() {
     private class PeriodicIO {
         var desiredLEDState: Boolean = false
     }
+
+    private fun Pose2d.toTransform() = minus(Pose2d())
 }
+
