@@ -19,6 +19,7 @@ class TestClimberCommand : FalconCommand(Climber) {
         Climber.setBrake(false)
         Climber.resetPosition(0.meters)
     }
+
     override fun execute() {
         ManualClimberCommand { .75 }
     }

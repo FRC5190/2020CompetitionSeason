@@ -132,7 +132,8 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         periodicIO.voltage = masterMotor.voltageOutput
         periodicIO.current = masterMotor.drawnCurrent
         periodicIO.hoodAngle = SIUnit(
-            hoodServoA.angle)
+            hoodServoA.angle
+        )
 
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> masterMotor.setNeutral()
