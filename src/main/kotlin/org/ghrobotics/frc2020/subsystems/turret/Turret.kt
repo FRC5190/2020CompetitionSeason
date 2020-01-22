@@ -11,22 +11,29 @@ package org.ghrobotics.frc2020.subsystems.turret
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.Second
 import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.Volt
+import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
+import org.ghrobotics.lib.utils.InterpolatingTreeMapBuffer
 
 /**
  * Represents the turret on the robot.
@@ -45,11 +52,39 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
 
+    // Buffer to store previous turret angles for latency compensation.
+    private val buffer =
+        InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(1.seconds) { Timer.getFPGATimestamp().seconds }
+
     // Getters
-    val angle get() = periodicIO.position
     val speed get() = periodicIO.velocity
     val current get() = periodicIO.current
     val hallEffectEngaged get() = periodicIO.hallEffect
+
+    /**
+     * Returns the angle at the specified timestamp.
+     *
+     * @param timestamp The timestamp.
+     * @return The angle at the specified timestamp.
+     */
+    fun getAngle(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): SIUnit<Radian> {
+        return buffer[timestamp] ?: {
+            DriverStation.reportError("[Turret] Buffer was empty!", false)
+            0.degrees
+        }()
+    }
+
+    /**
+     * Returns the turret position with the robot's center as the origin of
+     * the coordinate frame at the specified timestamp.
+     *
+     * @param timestamp The timestamp.
+     * @return The turret position with the robot's center as the origin of
+     *         the coordinate frame at the specified timestamp.
+     */
+    fun getRobotToTurret(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): Pose2d {
+        return Pose2d(TurretConstants.kTurretRelativeToRobotCenter, getAngle(timestamp).toRotation2d())
+    }
 
     // Status (zeroing or ready)
     var status = Status.ZEROING
@@ -141,6 +176,9 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         periodicIO.current = master.drawnCurrent
 
         periodicIO.hallEffect = hallEffectSensor.get()
+
+        // Update the buffer.
+        buffer[Timer.getFPGATimestamp().seconds] = periodicIO.position
 
         // Write motor outputs.
         when (val desiredOutput = periodicIO.desiredOutput) {

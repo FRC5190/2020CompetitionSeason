@@ -8,25 +8,41 @@
 
 package org.ghrobotics.frc2020.subsystems.turret
 
-import org.ghrobotics.frc2020.TurretConstants
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.derived.inRadians
+import org.ghrobotics.lib.utils.toTransform
 
 /**
  * A command that aligns the turret to the best available vision target.
  */
 class VisionTurretCommand : FalconCommand(Turret) {
-    override fun initialize() = VisionProcessing.turnOnLEDs()
-    override fun execute() {
-        Turret.setAngle(
-            Turret.angle + SIUnit(
-                VisionProcessing.angle.radians +
-                    TurretConstants.kBadTurretOffset.inRadians()
-            )
-        )
+    override fun initialize() {
+        // Turn on LEDs for tracking.
+        VisionProcessing.turnOnLEDs()
     }
 
-    override fun end(interrupted: Boolean) = VisionProcessing.turnOffLEDs()
+    override fun execute() {
+        // Get the robot pose.
+        val robotPose = Drivetrain.getPose()
+
+        // Get the closest target.
+        val target = GoalTracker.getClosestTarget(robotPose)
+
+        if (target != null) {
+            // Find the angle to the target.
+            val angle = target.averagePose.relativeTo(robotPose + Turret.getRobotToTurret().toTransform()).rotation
+            Turret.setAngle(Turret.getAngle() + SIUnit(angle.radians))
+        } else {
+            // If there is no target, hold the current robot-relative angle.
+            Turret.setAngle(Turret.getAngle())
+        }
+    }
+
+    override fun end(interrupted: Boolean) {
+        // Turn off LEDs for tracking.
+        VisionProcessing.turnOffLEDs()
+    }
 }

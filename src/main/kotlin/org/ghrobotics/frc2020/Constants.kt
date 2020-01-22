@@ -104,22 +104,6 @@ object FortuneWheelConstants {
     val kCompletion = 10
 }
 
-object VisionConstants {
-    const val kLEDId = 0
-
-    val kGoalHeight = 92.inches
-    val kCameraHeight = 22.5.inches
-    val kCameraAngle = Rotation2d.fromDegrees(15.0)
-
-    val kCameraRelativeToTurretCenter = Pose2d(10.5.inches, 0.inches, Rotation2d())
-
-    val kGoalFieldRelativeAngle = Rotation2d()
-
-    val kMaxTargetTrackingLifetime = 0.5.seconds
-    val kTargetTrackingDistanceErrorTolerance = 6.inches
-    const val kMedianWindowSize = 10
-}
-
 object ClimberConstants {
     const val kClimberMasterId = 10
     const val kClimberSlaveId = 11
@@ -127,4 +111,20 @@ object ClimberConstants {
     const val kPistonBrakeModuleId = 13
 
     val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
+}
+
+object VisionConstants {
+    const val kLEDId = 0
+
+    val kGoalHeight = 92.inches
+    val kCameraHeight = 22.5.inches
+    val kCameraAngle = Rotation2d.fromDegrees(15.0)
+
+    val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d())
+
+    val kGoalFieldRelativeAngle = Rotation2d()
+
+    val kMaxTargetTrackingLifetime = 0.5.seconds
+    val kTargetTrackingDistanceErrorTolerance = 6.inches
+    const val kMedianWindowSize = 10
 }
