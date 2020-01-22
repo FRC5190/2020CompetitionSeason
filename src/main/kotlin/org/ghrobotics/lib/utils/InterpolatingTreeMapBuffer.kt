@@ -20,7 +20,6 @@ class InterpolatingTreeMapBuffer<K : SIKey, V>(
     private val bufferSize: SIUnit<K>,
     private val source: Source<SIUnit<K>>
 ) : InterpolatingTreeMap<K, V>(interpolatingFunc) {
-
     /**
      * Removes old entries from the map.
      */
