@@ -64,7 +64,7 @@ object Network {
                 position(row = 0, column = 8)
                 size(width = 2, height = 1)
 
-                double("Angle (Degrees)") { Turret.angle.inDegrees() }
+                double("Angle (Degrees)") { Turret.getAngle().inDegrees() }
                 double("Speed") { Math.toDegrees(Turret.speed.value) }
                 double("Current (A)") { Turret.current.inAmps() }
             }
