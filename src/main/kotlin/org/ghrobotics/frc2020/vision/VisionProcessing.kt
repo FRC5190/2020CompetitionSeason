@@ -72,7 +72,7 @@ object VisionProcessing : FalconSubsystem() {
             val timestamp = Timer.getFPGATimestamp().seconds - latency
 
             val turretToTarget = VisionConstants.kTurretToCamera + cameraToTarget
-            val robotToTarget = Turret.robotToTurret + turretToTarget.toTransform()
+            val robotToTarget = Turret.getRobotToTurret(timestamp) + turretToTarget.toTransform()
             val fieldRelativeTarget = Drivetrain.getPose(timestamp) + robotToTarget.toTransform()
 
             GoalTracker.addSample(timestamp, fieldRelativeTarget)
