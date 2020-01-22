@@ -47,7 +47,9 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
     override fun execute() {
         var currentColor = FortuneWheel.sensorColor
-        if (accuracy.refresh(currentColor, direction)) { update() }
+        if (accuracy.refresh(currentColor, direction)) {
+            update()
+        }
         direction = when {
             cycleTarget > cycle -> 1
             cycleTarget < cycle -> -1
