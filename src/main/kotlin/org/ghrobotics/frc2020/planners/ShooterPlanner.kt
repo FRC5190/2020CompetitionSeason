@@ -10,22 +10,23 @@
 
 package org.ghrobotics.frc2020.planners
 
-import java.io.InputStreamReader
-import java.util.Objects
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.mathematics.units.operations.div
+import org.ghrobotics.lib.mathematics.units.unitlessValue
 import org.ghrobotics.lib.types.Interpolatable
-import org.ghrobotics.lib.utils.InterpolatingTreeMap
+import java.io.InputStreamReader
+import java.util.*
 
 /**
  * An object that reads the trajectory.csv file from the filesystem and
  * returns interpolated values.
  */
 object ShooterPlanner {
-    // Interpolating tree map which stores all distance to ShooterParams values.
-    private val map = InterpolatingTreeMap<Meter, ShooterParams>()
+
+    private val map: TreeMap<SIUnit<Meter>, ShooterParams> = TreeMap()
 
     init {
         // Load table from CSV.
@@ -41,11 +42,29 @@ object ShooterPlanner {
     /**
      * Returns the shooter parameters for a given distance to the
      * goal.
-     *
-     * @param distanceToGoal The distance to the goal.
-     * @return The ShooterParams that corresponds to the given distance.
      */
-    operator fun get(distanceToGoal: SIUnit<Meter>) = map[distanceToGoal]
+    fun getShooterParams(distance: SIUnit<Meter>): ShooterParams {
+        // If we have the exact value that we're looking for, then return it.
+        map[distance]?.let { return it }
+
+        // Get the top and bottom entries for this distance.
+        val topBound = map.ceilingEntry(distance)
+        val bottomBound = map.floorEntry(distance)
+
+        return when {
+            // When there are no more elements at the top, return the highest element.
+            topBound == null -> bottomBound.value
+
+            // When there are no more elements at the bottom, return the lowest element.
+            bottomBound == null -> topBound.value
+
+            // If there is a ceiling and a floor, interpolate between the two values.
+            else -> bottomBound.value.interpolate(
+                topBound.value,
+                ((distance - bottomBound.key) / (topBound.key - bottomBound.key)).unitlessValue
+            )
+        }
+    }
 
     data class ShooterParams(
         val speed: SIUnit<AngularVelocity>,
