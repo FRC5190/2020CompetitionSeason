@@ -6,16 +6,18 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems.turret
+package org.ghrobotics.lib.utils
 
+import org.ghrobotics.lib.mathematics.units.Second
+import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.junit.Test
 
-class TurretAngleInterpolatableBufferTest {
+class InterpolatingTreeMapBufferTest {
     @Test
     fun testExactInterpolant() {
-        val buffer = TurretAngleInterpolatableBuffer(2.seconds, timeSource = { 2.seconds })
+        val buffer = InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(2.seconds, source = { 2.seconds })
         buffer[0.5.seconds] = 7.degrees
         buffer[1.5.seconds] = 9.degrees
 
@@ -25,7 +27,7 @@ class TurretAngleInterpolatableBufferTest {
 
     @Test
     fun testInterpolation() {
-        val buffer = TurretAngleInterpolatableBuffer(2.seconds, timeSource = { 2.seconds })
+        val buffer = InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(2.seconds, source = { 2.seconds })
         buffer[0.5.seconds] = 7.degrees
         buffer[1.5.seconds] = 11.degrees
 

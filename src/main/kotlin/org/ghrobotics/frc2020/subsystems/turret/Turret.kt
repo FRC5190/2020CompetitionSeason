@@ -33,6 +33,7 @@ import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
+import org.ghrobotics.lib.utils.InterpolatingTreeMapBuffer
 
 /**
  * Represents the turret on the robot.
@@ -52,7 +53,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     private val periodicIO = PeriodicIO()
 
     // Buffer to store previous turret angles for latency compensation.
-    private val buffer = TurretAngleInterpolatableBuffer()
+    private val buffer =
+        InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(1.seconds) { Timer.getFPGATimestamp().seconds }
 
     // Getters
     val speed get() = periodicIO.velocity
