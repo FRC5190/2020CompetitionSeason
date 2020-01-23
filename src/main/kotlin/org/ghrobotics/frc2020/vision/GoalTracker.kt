@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
+import org.ghrobotics.lib.vision.TargetTracker
 
 /**
  * Uses the FalconLibrary TargetTracker class to track the 2020 high-goal

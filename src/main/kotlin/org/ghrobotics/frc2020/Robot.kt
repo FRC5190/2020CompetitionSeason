@@ -13,11 +13,9 @@ import org.ghrobotics.frc2020.auto.Paths
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
-import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
-import org.ghrobotics.frc2020.vision.GoalLocalizer
 import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 

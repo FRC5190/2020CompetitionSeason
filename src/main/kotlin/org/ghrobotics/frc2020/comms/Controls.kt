@@ -9,7 +9,6 @@
 package org.ghrobotics.frc2020.comms
 
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
-import org.ghrobotics.frc2020.subsystems.shooter.ManualShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.ManualTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.VisionTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
