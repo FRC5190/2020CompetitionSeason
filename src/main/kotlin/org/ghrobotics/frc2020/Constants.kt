@@ -51,6 +51,8 @@ object TurretConstants {
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
     val kAcceptableRange = (-200).degrees..200.degrees
 
+    val kAlignDelay = 0.25.seconds
+
     val kS = 0.0.volts
 
     const val kP = 2.50E-5
