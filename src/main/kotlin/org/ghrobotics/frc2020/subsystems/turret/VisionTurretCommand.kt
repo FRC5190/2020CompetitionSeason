@@ -8,6 +8,7 @@
 
 package org.ghrobotics.frc2020.subsystems.turret
 
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.frc2020.vision.VisionProcessing
@@ -33,7 +34,8 @@ class VisionTurretCommand : FalconCommand(Turret) {
 
         if (target != null) {
             // Find the angle to the target.
-            val angle = target.averagePose.relativeTo(robotPose + Turret.getRobotToTurret().toTransform()).rotation
+            val transform = target.averagePose.relativeTo(robotPose + Turret.getRobotToTurret().toTransform())
+            val angle = Rotation2d(transform.translation.x, transform.translation.y)
             Turret.setAngle(Turret.getAngle() + SIUnit(angle.radians))
         } else {
             // If there is no target, hold the current robot-relative angle.

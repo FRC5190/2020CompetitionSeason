@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.comms
 
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.shooter.ManualShooterCommand
+import org.ghrobotics.frc2020.subsystems.turret.ManualTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.VisionTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -32,7 +33,7 @@ object Controls {
         button(kY).change(AutoShooterCommand { 360.degrees / 1.minutes * 5000 })
 
         axisButton(5, 0.04) {
-            change(ManualShooterCommand(source))
+            change(ManualTurretCommand(source))
         }
     }
 
