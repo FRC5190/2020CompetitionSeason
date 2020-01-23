@@ -70,7 +70,7 @@ object Superstructure {
         }
 
         // Get the distance to the target.
-        val distance = turretPose.translation.norm
+        val distance = turretToGoal.translation.norm
 
         // Get the angle to the target.
         val angle = Rotation2d(turretToGoal.translation.x, turretToGoal.translation.y)
