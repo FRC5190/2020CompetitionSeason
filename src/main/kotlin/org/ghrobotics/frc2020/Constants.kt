@@ -53,11 +53,11 @@ object TurretConstants {
 
     val kS = 0.0.volts
 
-    const val kP = 1.50E-5
+    const val kP = 2.50E-5
     const val kF = 1.041667E-4
 
     val kMaxVelocity = 720.degrees / 1.seconds
-    val kMaxAcceleration = 550.degrees / 1.seconds / 1.seconds
+    val kMaxAcceleration = 800.degrees / 1.seconds / 1.seconds
 
     val kBadTurretOffset = 3.0.degrees
 
@@ -124,7 +124,7 @@ object VisionConstants {
 
     val kGoalFieldRelativeAngle = Rotation2d()
 
-    val kMaxTargetTrackingLifetime = 0.5.seconds
+    val kMaxTargetTrackingLifetime = 1.5.seconds
     val kTargetTrackingDistanceErrorTolerance = 6.inches
     const val kMedianWindowSize = 10
 }
