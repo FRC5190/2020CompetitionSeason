@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
@@ -38,6 +39,9 @@ object Superstructure {
     fun aimTurret(): Command = sequential {
         // Turn on the LEDs so that we can start looking for the target.
         +InstantCommand(Runnable { VisionProcessing.turnOnLEDs() })
+        // Add a slight delay so that we can register the target.
+        +WaitCommand(0.2)
+        // Turn the turret.
         +AutoTurretCommand { SIUnit(latestAimingParameters.turretAngle.radians) }
         // Turn off LEDs.
     }.andThen(InstantCommand(Runnable { VisionProcessing.turnOffLEDs() }))
