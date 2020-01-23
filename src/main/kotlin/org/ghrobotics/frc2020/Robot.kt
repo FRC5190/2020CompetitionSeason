@@ -39,7 +39,6 @@ object Robot : FalconTimedRobot() {
         +Drivetrain
         +Shooter
         +Turret
-//        +FortuneWheel
     }
 
     // Runs once when robot boots up
