@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.subsystems.turret
 
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
+import com.revrobotics.ControlType
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
@@ -18,19 +19,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.lib.commands.FalconSubsystem
-import org.ghrobotics.lib.mathematics.units.Ampere
-import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.Second
-import org.ghrobotics.lib.mathematics.units.amps
-import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
-import org.ghrobotics.lib.mathematics.units.derived.Radian
-import org.ghrobotics.lib.mathematics.units.derived.Volt
-import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.derived.radians
-import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
-import org.ghrobotics.lib.mathematics.units.derived.volts
+import org.ghrobotics.lib.mathematics.units.*
+import org.ghrobotics.lib.mathematics.units.derived.*
 import org.ghrobotics.lib.mathematics.units.operations.div
-import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 import org.ghrobotics.lib.utils.InterpolatingTreeMapBuffer
@@ -150,16 +141,17 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      *
      * @param angle The angle of the turret.
      */
-    fun setAngle(angle: SIUnit<Radian>) {
+    fun setAngle(angle: SIUnit<Radian>, profile: Boolean = true) {
         periodicIO.desiredOutput =
             Output.Position(
-                TurretPlanner.constrainToAcceptableRange(angle)
+                TurretPlanner.constrainToAcceptableRange(angle), profile
             )
         periodicIO.feedforward = TurretConstants.kS
     }
 
     override fun enableClosedLoopControl() {
         master.controller.p = TurretConstants.kP
+        master.controller.setP(18.0 / TurretConstants.kGearRatio, 1)
         master.controller.ff = TurretConstants.kF
     }
 
@@ -184,7 +176,16 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> master.setNeutral()
             is Output.Percent -> master.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-            is Output.Position -> master.setPosition(desiredOutput.angle, periodicIO.feedforward)
+            is Output.Position -> {
+                if (desiredOutput.profile)
+                    master.setPosition(desiredOutput.angle, periodicIO.feedforward)
+                else {
+                    master.controller.setReference(
+                        TurretConstants.kNativeUnitModel.toNativeUnitPosition(desiredOutput.angle).value,
+                        ControlType.kPosition, 1
+                    )
+                }
+            }
         }
     }
 
@@ -203,7 +204,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     private sealed class Output {
         object Nothing : Output()
         class Percent(val percent: Double) : Output()
-        class Position(val angle: SIUnit<Radian>) : Output()
+        class Position(val angle: SIUnit<Radian>, val profile: Boolean = true) : Output()
     }
 
     enum class Status {

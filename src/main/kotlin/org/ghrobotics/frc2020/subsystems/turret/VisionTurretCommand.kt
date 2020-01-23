@@ -36,7 +36,8 @@ class VisionTurretCommand : FalconCommand(Turret) {
             // Find the angle to the target.
             val transform = target.averagePose.relativeTo(robotPose + Turret.getRobotToTurret().toTransform())
             val angle = Rotation2d(transform.translation.x, transform.translation.y)
-            Turret.setAngle(Turret.getAngle() + SIUnit(angle.radians))
+            println(angle.degrees)
+            Turret.setAngle(Turret.getAngle() + SIUnit(angle.radians), false)
         } else {
             // If there is no target, hold the current robot-relative angle.
             Turret.setAngle(Turret.getAngle())
