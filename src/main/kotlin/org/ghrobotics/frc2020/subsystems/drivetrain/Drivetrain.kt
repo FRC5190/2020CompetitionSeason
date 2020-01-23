@@ -119,7 +119,7 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         val dx = (leftVelocity + rightVelocity) / 2.0 * lookahead
 
         // Get the predicted change in the angle.
-        val dtheta = -navx.rate * lookahead.value
+        val dtheta = -Math.toRadians(navx.rate) * lookahead.value
 
         // Integrate the pose forward in time.
         return getPose().exp(Twist2d(dx.value, 0.0, dtheta))
