@@ -13,6 +13,7 @@ import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
+import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
@@ -129,4 +130,6 @@ object VisionConstants {
     val kMaxTargetTrackingLifetime = 1.5.seconds
     val kTargetTrackingDistanceErrorTolerance = 6.inches
     const val kMedianWindowSize = 10
+
+    val kGoalLocation = Pose2d(54.feet, 94.66.inches, Rotation2d())
 }

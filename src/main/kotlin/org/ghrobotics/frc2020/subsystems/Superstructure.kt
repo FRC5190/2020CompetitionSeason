@@ -8,40 +8,85 @@
 
 package org.ghrobotics.frc2020.subsystems
 
+import edu.wpi.first.wpilibj.geometry.Rotation2d
+import edu.wpi.first.wpilibj.geometry.Transform2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
+import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
-import org.ghrobotics.frc2020.subsystems.turret.VisionTurretCommand
 import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.commands.sequential
+import org.ghrobotics.lib.mathematics.units.Meter
+import org.ghrobotics.lib.mathematics.units.SIUnit
 
 /**
  * Represents the overall superstructure of the robot, including the turret,
  * shooter, intake, and climbing mechanisms.
  */
 object Superstructure {
+    // Latest aiming parameters for the superstructure.
+    private var latestAimingParameters = AimingParameters(Rotation2d(), SIUnit(0.0))
+
     /**
      * Aims the turret at the goal.
      *
-     * @param isAuto Whether we are in the autonomous period.
      * @return The command.
      */
-    fun aimTurret(isAuto: Boolean = false): Command = sequential {
+    fun aimTurret(): Command = sequential {
         // Turn on the LEDs so that we can start looking for the target.
         +InstantCommand(Runnable { VisionProcessing.turnOnLEDs() })
+        +AutoTurretCommand { SIUnit(latestAimingParameters.turretAngle.radians) }
+        // Turn off LEDs.
+    }.andThen(InstantCommand(Runnable { VisionProcessing.turnOffLEDs() }))
 
-        // Turn the turret into the general area of the target, and cancel
-        // when we see the target.
-        if (isAuto) {
-            TODO("Create field oriented command using odometry and angle to target")
+    /**
+     * Returns the latest aiming parameters for the shooter and the turret.
+     *
+     * @return The latest aiming parameters for the shooter and the turret.
+     */
+    private fun getAimingParameters(): AimingParameters {
+        // Get the predicted field-relative robot pose.
+        val robotPose = Drivetrain.getPredictedPose(TurretConstants.kAlignDelay)
+
+        // Get the turret pose, assuming the turret is locked to 0 degrees.
+        val turretPose = robotPose + Transform2d(TurretConstants.kTurretRelativeToRobotCenter, Rotation2d())
+
+        // Get the target that is closest to the turret pose.
+        val target = GoalTracker.getClosestTarget(turretPose)
+
+        val turretToGoal = if (target != null) {
+            // Get the goal's pose in turret's coordinates.
+            target.averagePose.relativeTo(turretPose)
         } else {
-            +AutoTurretCommand.createFromFieldOrientedAngle(VisionConstants.kGoalFieldRelativeAngle)
-                .withInterrupt(GoalTracker::isTrackingTargets)
+            // Get an approximation from the current robot pose and the known target pose.
+            VisionConstants.kGoalLocation.relativeTo(turretPose)
         }
 
-        // Make the turret track the goal position.
-        +VisionTurretCommand()
-    }.andThen(InstantCommand(Runnable { VisionProcessing.turnOffLEDs() }))
+        // Get the distance to the target.
+        val distance = turretPose.translation.norm
+
+        // Get the angle to the target.
+        val angle = Rotation2d(turretToGoal.translation.x, turretToGoal.translation.y)
+
+        // Return the distance and angle.
+        return AimingParameters(angle, SIUnit(distance))
+    }
+
+    /**
+     * Updates all superstructure states.
+     */
+    fun update() {
+        latestAimingParameters = getAimingParameters()
+    }
+
+    /**
+     * Aiming parameters for the shooter and the turret.
+     */
+    data class AimingParameters(
+        val turretAngle: Rotation2d,
+        val distance: SIUnit<Meter>
+    )
 }

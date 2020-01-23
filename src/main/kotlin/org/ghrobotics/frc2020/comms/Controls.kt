@@ -8,9 +8,9 @@
 
 package org.ghrobotics.frc2020.comms
 
+import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.ManualTurretCommand
-import org.ghrobotics.frc2020.subsystems.turret.VisionTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.minutes
@@ -28,7 +28,7 @@ object Controls {
     val driverController = xboxController(0) {
 
         button(kA).change(ZeroTurretCommand())
-        button(kB).change(VisionTurretCommand())
+        button(kB).change(Superstructure.aimTurret())
         button(kY).change(AutoShooterCommand { 360.degrees / 1.minutes * 5000 })
 
         axisButton(5, 0.04) {
