@@ -12,6 +12,7 @@ import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.auto.Paths
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
+import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
@@ -65,6 +66,7 @@ object Robot : FalconTimedRobot() {
     // Runs every 20 ms when robot is on
     override fun robotPeriodic() {
         Controls.update()
+        Superstructure.update()
     }
 
     // Runs every 20 ms when autonomous is enabled

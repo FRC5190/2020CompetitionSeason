@@ -13,6 +13,7 @@ import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
+import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
@@ -51,17 +52,19 @@ object TurretConstants {
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
     val kAcceptableRange = (-200).degrees..200.degrees
 
+    val kAlignDelay = 0.25.seconds
+
     val kS = 0.0.volts
 
     const val kP = 2.50E-5
     const val kF = 1.041667E-4
 
     val kMaxVelocity = 720.degrees / 1.seconds
-    val kMaxAcceleration = 800.degrees / 1.seconds / 1.seconds
+    val kMaxAcceleration = 560.degrees / 1.seconds / 1.seconds
 
     val kBadTurretOffset = 3.0.degrees
 
-    val kTurretRelativeToRobotCenter = Translation2d((-6).inches, 0.inches)
+    val kTurretRelativeToRobotCenter = Translation2d((6).inches, 0.inches)
 }
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -79,7 +82,7 @@ object ShooterConstants {
 
     val kS = 0.volts
 
-    const val kP = 1.5E-4
+    const val kP = 3.5E-4
     const val kF = 2.0E-4
 }
 
@@ -118,7 +121,7 @@ object VisionConstants {
 
     val kGoalHeight = 92.inches
     val kCameraHeight = 22.5.inches
-    val kCameraAngle = Rotation2d.fromDegrees(15.0)
+    val kCameraAngle = Rotation2d.fromDegrees(35.0)
 
     val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d())
 
@@ -127,4 +130,6 @@ object VisionConstants {
     val kMaxTargetTrackingLifetime = 1.5.seconds
     val kTargetTrackingDistanceErrorTolerance = 6.inches
     const val kMedianWindowSize = 10
+
+    val kGoalLocation = Pose2d(54.feet, 94.66.inches, Rotation2d())
 }

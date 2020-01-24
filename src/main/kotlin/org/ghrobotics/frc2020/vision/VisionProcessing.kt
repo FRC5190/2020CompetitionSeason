@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.vision
 
 import edu.wpi.first.wpilibj.DigitalOutput
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import kotlin.math.tan
 import org.ghrobotics.frc2020.Robot
@@ -17,6 +18,7 @@ import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.commands.FalconSubsystem
+import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.seconds
@@ -65,9 +67,11 @@ object VisionProcessing : FalconSubsystem() {
         // Update camera.
         camera.update()
 
+        // Substitute (albeit very accurate) for solvePnP until solvePnP is fixed.
+        val cameraToTarget = Transform2d(Translation2d(distance * angle.cos, distance * angle.sin), Rotation2d())
+
         // Add solvePnP pose to GoalTracker.
-        val cameraToTarget: Transform2d? = camera.transform
-        if (cameraToTarget != null) {
+        if (cameraToTarget != Transform2d() && camera.isValid) {
             val latency = camera.latency
             val timestamp = Timer.getFPGATimestamp().seconds - latency
 
