@@ -48,8 +48,6 @@ object Robot : FalconTimedRobot() {
     // Runs once when robot boots up
     override fun robotInit() {
         ZeroTurretCommand().schedule()
-        Drivetrain.resetPosition(Paths.frontOfGoalToTrench.initialPose +
-        Transform2d(-1.meters, 0.meters, Rotation2d()))
     }
 
     // Runs once when autonomous period starts
@@ -60,8 +58,6 @@ object Robot : FalconTimedRobot() {
 
     // Runs once when teleop period starts
     override fun teleopInit() {
-
-        Drivetrain.resetPosition(Paths.frontOfGoalToTrench.initialPose)
         Drivetrain.setBrakeMode(true)
     }
 
