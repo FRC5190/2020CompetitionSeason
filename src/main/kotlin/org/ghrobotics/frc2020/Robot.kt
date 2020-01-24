@@ -8,6 +8,7 @@
 
 package org.ghrobotics.frc2020
 
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.auto.Paths
 import org.ghrobotics.frc2020.comms.Controls
@@ -18,6 +19,8 @@ import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
 import org.ghrobotics.frc2020.vision.VisionProcessing
+import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
+import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
@@ -45,6 +48,8 @@ object Robot : FalconTimedRobot() {
     // Runs once when robot boots up
     override fun robotInit() {
         ZeroTurretCommand().schedule()
+        Drivetrain.resetPosition(Paths.frontOfGoalToTrench.initialPose +
+        Transform2d(-1.meters, 0.meters, Rotation2d()))
     }
 
     // Runs once when autonomous period starts
@@ -55,6 +60,8 @@ object Robot : FalconTimedRobot() {
 
     // Runs once when teleop period starts
     override fun teleopInit() {
+
+        Drivetrain.resetPosition(Paths.frontOfGoalToTrench.initialPose)
         Drivetrain.setBrakeMode(true)
     }
 

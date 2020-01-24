@@ -32,7 +32,7 @@ class ChameleonCamera(private val cameraName: String) {
     private val pitchEntry = subtable["targetPitch"]
     private val yawEntry = subtable["targetYaw"]
     private val latencyEntry = subtable["latency"]
-    private val isValidEntry = subtable["is_valid"]
+    private val isValidEntry = subtable["isValid"]
     private val poseEntry = subtable["targetPose"]
 
     private val periodicIO = PeriodicIO()
