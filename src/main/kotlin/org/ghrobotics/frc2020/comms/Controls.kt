@@ -8,6 +8,7 @@
 
 package org.ghrobotics.frc2020.comms
 
+import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
@@ -18,7 +19,12 @@ import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
-import org.ghrobotics.lib.wrappers.hid.*
+import org.ghrobotics.lib.wrappers.hid.button
+import org.ghrobotics.lib.wrappers.hid.kA
+import org.ghrobotics.lib.wrappers.hid.kB
+import org.ghrobotics.lib.wrappers.hid.kY
+import org.ghrobotics.lib.wrappers.hid.triggerAxisButton
+import org.ghrobotics.lib.wrappers.hid.xboxController
 
 /**
  * Contains all the teleop controls for the robot.
@@ -28,7 +34,7 @@ object Controls {
 
         button(kA).change(ZeroTurretCommand())
         button(kB).change(AutoTurretCommand { 0.degrees })
-        triggerAxisButton(edu.wpi.first.wpilibj.GenericHID.Hand.kLeft) {
+        triggerAxisButton(GenericHID.Hand.kLeft) {
             change(Superstructure.aimTurret())
             changeOff(InstantCommand(Runnable { VisionProcessing.turnOffLEDs() }))
         }

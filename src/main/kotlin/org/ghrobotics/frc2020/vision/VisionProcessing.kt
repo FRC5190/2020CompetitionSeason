@@ -67,10 +67,11 @@ object VisionProcessing : FalconSubsystem() {
         // Update camera.
         camera.update()
 
+        // Substitute (albeit very accurate) for solvePnP until solvePnP is fixed.
         val cameraToTarget = Transform2d(Translation2d(distance * angle.cos, distance * angle.sin), Rotation2d())
 
         // Add solvePnP pose to GoalTracker.
-        if (cameraToTarget != null && cameraToTarget != Transform2d() && camera.isValid) {
+        if (cameraToTarget != Transform2d() && camera.isValid) {
             val latency = camera.latency
             val timestamp = Timer.getFPGATimestamp().seconds - latency
 

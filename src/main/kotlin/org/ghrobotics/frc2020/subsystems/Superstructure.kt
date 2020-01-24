@@ -17,13 +17,11 @@ import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
-import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.utils.toTransform
 
 /**
  * Represents the overall superstructure of the robot, including the turret,
