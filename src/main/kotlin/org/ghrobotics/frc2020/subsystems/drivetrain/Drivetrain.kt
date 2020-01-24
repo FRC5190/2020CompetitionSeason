@@ -13,10 +13,15 @@ import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.SPI
 import edu.wpi.first.wpilibj.controller.RamseteController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
+import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Twist2d
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.DriveConstants
+import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.Second
+import org.ghrobotics.lib.mathematics.units.operations.times
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.drive.FalconWestCoastDrivetrain
 import org.ghrobotics.lib.utils.asSource
@@ -100,5 +105,23 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         leftSlave1.brakeMode = brakeMode
         rightMotor.brakeMode = brakeMode
         rightSlave1.brakeMode = brakeMode
+    }
+
+    /**
+     * Returns the predicted pose at some point in the future
+     * based on current movements.
+     *
+     * @param lookahead The amount of time to lookahead to.
+     * @return The predicted pose.
+     */
+    fun getPredictedPose(lookahead: SIUnit<Second>): Pose2d {
+        // Get the predicted distance traveled.
+        val dx = (leftVelocity + rightVelocity) / 2.0 * lookahead
+
+        // Get the predicted change in the angle.
+        val dtheta = -Math.toRadians(navx.rate) * lookahead.value
+
+        // Integrate the pose forward in time.
+        return getPose().exp(Twist2d(dx.value, 0.0, dtheta))
     }
 }

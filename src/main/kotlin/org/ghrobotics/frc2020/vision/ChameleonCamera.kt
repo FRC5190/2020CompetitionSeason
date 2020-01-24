@@ -29,11 +29,11 @@ class ChameleonCamera(private val cameraName: String) {
     private val subtable: NetworkTable = table.getSubTable(cameraName)
 
     // Entries for the NetworkTable
-    private val pitchEntry = subtable["pitch"]
-    private val yawEntry = subtable["yaw"]
+    private val pitchEntry = subtable["targetPitch"]
+    private val yawEntry = subtable["targetYaw"]
     private val latencyEntry = subtable["latency"]
-    private val isValidEntry = subtable["is_valid"]
-    private val poseEntry = subtable["pose"]
+    private val isValidEntry = subtable["isValid"]
+    private val poseEntry = subtable["targetPose"]
 
     private val periodicIO = PeriodicIO()
 
