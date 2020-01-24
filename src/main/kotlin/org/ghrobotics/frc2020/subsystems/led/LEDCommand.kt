@@ -6,12 +6,11 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.commands
+package org.ghrobotics.frc2020.subsystems.led
 
-import org.ghrobotics.frc2020.subsystems.LEDSubsystem
 import org.ghrobotics.lib.commands.FalconCommand
 
-class LEDCommand : FalconCommand(LEDSubsystem) {
+class LEDCommand : FalconCommand(LED) {
 
     override fun execute() {
     }

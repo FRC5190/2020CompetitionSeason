@@ -6,15 +6,14 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems
+package org.ghrobotics.frc2020.subsystems.led
 
 import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
 import org.ghrobotics.frc2020.StatusColor
-import org.ghrobotics.frc2020.commands.LEDCommand
 import org.ghrobotics.lib.commands.FalconSubsystem
 
-object LEDSubsystem : FalconSubsystem() {
+object LED : FalconSubsystem() {
     var m_led = AddressableLED(9)
     var m_ledBuffer: AddressableLEDBuffer = AddressableLEDBuffer(60)
     var m_rainbowFirstPixelHue = 0
