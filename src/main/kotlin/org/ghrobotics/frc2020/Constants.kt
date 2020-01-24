@@ -99,7 +99,7 @@ object FortuneWheelConstants {
     // Spinner
     const val kSpinnerSpeed = 0.2
     const val kSpinnerMotorId = 8
-    val kSpinnerRadius = 15.inches // Radius of wheel connected to the spinner motor
+    val kSpinnerRadius = 3.inches // Radius of wheel connected to the spinner motor
     val kSpinnerUnitModel = NativeUnitLengthModel(42.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
 
     // Accuracy
