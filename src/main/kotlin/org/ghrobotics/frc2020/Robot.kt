@@ -8,7 +8,6 @@
 
 package org.ghrobotics.frc2020
 
-import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.auto.Paths
 import org.ghrobotics.frc2020.comms.Controls
@@ -19,8 +18,6 @@ import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
 import org.ghrobotics.frc2020.vision.VisionProcessing
-import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
-import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
