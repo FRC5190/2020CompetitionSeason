@@ -53,6 +53,7 @@ object TurretConstants {
     val kAcceptableRange = (-200).degrees..200.degrees
 
     val kAlignDelay = 0.25.seconds
+    val kDefaultJogAmount = 1.degrees
 
     val kS = 0.0.volts
 

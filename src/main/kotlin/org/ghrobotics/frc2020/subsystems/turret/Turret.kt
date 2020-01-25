@@ -128,6 +128,15 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     }
 
     /**
+     * Jogs the zero of the turret by a certain amount.
+     *
+     * @param jogAmount The amount to jog the zero by.
+     */
+    fun jogZero(jogAmount: SIUnit<Radian>) {
+        master.encoder.resetPosition(periodicIO.position - jogAmount)
+    }
+
+    /**
      * Sets the duty cycle of the turret motor.
      *
      * @param percent The desired duty cycle.
