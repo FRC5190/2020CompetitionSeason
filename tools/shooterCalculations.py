@@ -76,7 +76,6 @@ while motorSpeed <= 6000:
     while launchAngle <= 80:
         my1, my2, my3, my4 = trajectory(motorSpeed, launchAngle)
         if abs(my4 - 2.49) < .02:
-            #print(my1, my2, my3, round(my4, 3))
             motorSpeedArr[i] = my1
             launchAngleArr[i] = my2
             distanceArr[i] = my3
@@ -84,9 +83,6 @@ while motorSpeed <= 6000:
         launchAngle += 1
     motorSpeed += 10
 
-# index = distanceArr.index(0.54)
-# print(motorSpeedArr[index])
-# print(launchAngleArr[index])
 myLength = 0
 while myLength < len(distanceArr) - 1:
     if distanceArr[myLength] is not None:
