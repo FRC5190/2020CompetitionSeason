@@ -108,11 +108,6 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         rightSlave1.brakeMode = brakeMode
     }
 
-    override fun lateInit() {
-        super.lateInit()
-        resetPosition(Paths.frontOfGoalToTrench.initialPose)
-    }
-
     /**
      * Returns the predicted pose at some point in the future
      * based on current movements.
