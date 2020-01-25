@@ -4,10 +4,10 @@ transmissionRatio = 1.0
 pulleyRatio = 1.0
 flyWheelDia = 4.0
 launchHeight = 26.0
-motorSpeedArr = [None] * 1000
-launchAngleArr = [None] * 1000
-distanceArr = [None] * 1000
-i = 0
+trajectories = []
+
+def distance(t, d):
+    return math.sqrt((t['d'] - d)*(t['d'] - d) + (t['h'] - 2.49)*(t['h'] - 2.49))
 
 def trajectory(motorSpeed, launchAngle):
     wheelCircumference = math.pi * flyWheelDia
@@ -49,10 +49,6 @@ def trajectory(motorSpeed, launchAngle):
     while True:
         vx += ax * dt
         vy += ay * dt
-        # print(vy)
-        if abs(vy) < 0.05:
-            distance = x
-            height = y
         v = math.sqrt(vx * vx + vy * vy)
         ax = -(v / powerCellMass) * (mum * vy + mud * vx)
         ay = v / powerCellMass * (mum * vx - mud * vy) + gravity
@@ -61,30 +57,42 @@ def trajectory(motorSpeed, launchAngle):
         y += vy * dt
         t += dt
 
-        if (y < previousY ) & h < 0:
+        if (y < previousY ) & (h < 0):
             h = y
             d = x
 
         if y < 0:
             break
 
-    return motorSpeed, launchAngle, round(distance, 2), height
+    ret = dict()
+    ret['h'] = h
+    ret['d'] = d
+    ret['x'] = x
+    ret['y'] = y
+    ret['vx'] = vx
+    ret['vy'] = vy
+    ret['v'] = v
+    ret['ax'] = ax
+    ret['ay'] = ay
+    ret['t'] = t
+    ret['motorSpeed'] = motorSpeed
+    ret['launchAngle'] = launchAngle
+
+    return ret
 
 motorSpeed = 2000
 while motorSpeed <= 6000:
     launchAngle = 10
     while launchAngle <= 80:
-        my1, my2, my3, my4 = trajectory(motorSpeed, launchAngle)
-        if abs(my4 - 2.49) < .02:
-            motorSpeedArr[i] = my1
-            launchAngleArr[i] = my2
-            distanceArr[i] = my3
-            i += 1
-        launchAngle += 1
+        trajectories.append(trajectory(motorSpeed, launchAngle))
+        launchAngle += 2
     motorSpeed += 10
 
-myLength = 0
-while myLength < len(distanceArr) - 1:
-    if distanceArr[myLength] is not None:
-        print("distance: " + str(distanceArr[myLength]) + " motorSpeed: " + str(motorSpeedArr[myLength]) + " launchAngle: " + str(launchAngleArr[myLength]))
-    myLength += 1
+d = 1
+while d <= 10:
+    updatedTrajectories = list(map(lambda t: t.update({'distance': distance(t, d)}) or t, trajectories))
+    sortedTrajectories = sorted(updatedTrajectories, key = lambda t: t['distance'])
+    filteredTrajectories = list(filter(lambda t: t['distance'] < 0.05, sortedTrajectories))
+    if len(filteredTrajectories) > 0:
+        print("%.2f,%4d,%.2f,%2d,%.2f" %(d, filteredTrajectories[0]['motorSpeed'], filteredTrajectories[0]['motorSpeed'] / 60 * 2 * math.pi, filteredTrajectories[0]['launchAngle'], filteredTrajectories[0]['x']))
+    d += 0.1

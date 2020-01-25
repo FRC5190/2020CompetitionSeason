@@ -93,4 +93,4 @@ for (d = 1; d <= 10; d += 0.1) {
     }
 }
 
-// console.log(trajectory(300 * 30 / Math.PI, 25));
+// console.log(trajectory(300 * 30 / Math.PI, 40));
