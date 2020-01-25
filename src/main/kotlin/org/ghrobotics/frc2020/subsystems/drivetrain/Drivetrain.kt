@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.DriveConstants
+import org.ghrobotics.frc2020.auto.Paths
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
 import org.ghrobotics.lib.mathematics.units.operations.times
@@ -105,6 +106,11 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         leftSlave1.brakeMode = brakeMode
         rightMotor.brakeMode = brakeMode
         rightSlave1.brakeMode = brakeMode
+    }
+
+    override fun lateInit() {
+        super.lateInit()
+        resetPosition(Paths.frontOfGoalToTrench.initialPose)
     }
 
     /**
