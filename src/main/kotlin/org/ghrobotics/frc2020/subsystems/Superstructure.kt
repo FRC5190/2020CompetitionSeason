@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
@@ -19,7 +20,6 @@ import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.frc2020.vision.VisionProcessing
-import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 
@@ -36,14 +36,21 @@ object Superstructure {
      *
      * @return The command.
      */
-    fun aimTurret(): Command = sequential {
-        // Turn on the LEDs so that we can start looking for the target.
-        +InstantCommand(Runnable { VisionProcessing.turnOnLEDs() })
-        // Add a slight delay so that we can register the target.
-        +WaitCommand(0.2)
-        // Turn the turret.
-        +AutoTurretCommand { SIUnit(latestAimingParameters.turretAngle.radians) }
-        // Turn off LEDs.
+    fun aimTurret(): Command = object : SequentialCommandGroup() {
+        init {
+            addCommands(
+                // Turn on the LEDs so that we can start looking for the target.
+                InstantCommand(Runnable { VisionProcessing.turnOnLEDs() }),
+                // Add a slight delay so that we can register the target.
+                WaitCommand(0.2),
+                // Turn the turret.
+                AutoTurretCommand { SIUnit(latestAimingParameters.turretAngle.radians) }
+            )
+        }
+
+        override fun end(interrupted: Boolean) {
+            VisionProcessing.turnOffLEDs()
+        }
     }
 
     /**

@@ -25,6 +25,9 @@ import org.ghrobotics.lib.wrappers.FalconTimedRobot
  */
 object Robot : FalconTimedRobot() {
 
+    // Whether the robot is in climb mode.
+    var isClimbMode = false
+
     // Constructor of the Robot class.
     init {
         // Initialize auto paths
