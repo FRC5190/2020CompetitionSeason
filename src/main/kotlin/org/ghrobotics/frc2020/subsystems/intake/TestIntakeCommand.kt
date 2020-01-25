@@ -20,10 +20,12 @@ class TestIntakeCommand : FalconCommand(Intake) {
     }
 
     override fun execute() {
+        Intake.extendPiston(true)
         Intake.setPercent(.75)
     }
 
     override fun end(interrupted: Boolean) {
+        Intake.extendPiston(false)
         success = Intake.position > 2.nativeUnits
         Intake.setNeutral()
         SubsystemTestManager.intakeCheck = success

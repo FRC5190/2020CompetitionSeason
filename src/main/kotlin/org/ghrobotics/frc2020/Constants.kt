@@ -89,6 +89,8 @@ object ShooterConstants {
 
 object IntakeConstants {
     const val kIntakeId = 9
+    const val kIntakeModuleId = 14
+    const val kIntakePistonId = 15
 }
 
 object FortuneWheelConstants {
