@@ -15,12 +15,12 @@ import org.ghrobotics.lib.mathematics.units.SIUnit
 class AutoClimberCommand(private val desiredHeight: SIUnit<Meter>) : FalconCommand(Climber) {
 
     override fun initialize() {
-        Climber.setBrake(false)
+        Climber.extend(true)
         Climber.setHeight(desiredHeight)
     }
 
     override fun end(interrupted: Boolean) {
-        Climber.setBrake(true)
+        Climber.extend(false)
         Climber.setNeutral()
     }
 }

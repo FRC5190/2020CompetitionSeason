@@ -16,7 +16,7 @@ class TestClimberCommand : FalconCommand(Climber) {
     private var success = true
 
     override fun initialize() {
-        Climber.setBrake(false)
+        Climber.extend(true)
         Climber.resetPosition(0.meters)
     }
 
@@ -25,7 +25,7 @@ class TestClimberCommand : FalconCommand(Climber) {
     }
 
     override fun end(interrupted: Boolean) {
-        Climber.setBrake(true)
+        Climber.extend(false)
         success = Climber.position > 2.meters
         Climber.setNeutral()
         SubsystemTestManager.climberCheck = success

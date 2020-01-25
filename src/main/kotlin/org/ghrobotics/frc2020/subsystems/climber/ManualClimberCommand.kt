@@ -14,12 +14,12 @@ import org.ghrobotics.lib.utils.DoubleSource
 class ManualClimberCommand(private val percentSource: DoubleSource) : FalconCommand(Climber) {
 
     override fun execute() {
-        Climber.setBrake(false)
+        Climber.extend(true)
         Climber.setPercent(percentSource())
     }
 
     override fun end(interrupted: Boolean) {
-        Climber.setBrake(true)
+        Climber.extend(false)
         Climber.setNeutral()
     }
 }

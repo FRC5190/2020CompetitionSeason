@@ -115,6 +115,12 @@ object ClimberConstants {
     const val kClimberSlaveId = 11
     const val kPistonBrakeId = 12
     const val kPistonBrakeModuleId = 13
+    const val kWinchId = 16
+    const val kFrontPistonId = 18
+    const val kFrontPistonModuleId = 19
+    const val kBackPistonId = 20
+    const val kBackPistonModuleId = 21
+    const val kHookId = 22
 
     val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }

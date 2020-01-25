@@ -11,11 +11,17 @@ package org.ghrobotics.frc2020.subsystems.climber
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj2.command.Command
+import org.ghrobotics.frc2020.ClimberConstants.kBackPistonId
+import org.ghrobotics.frc2020.ClimberConstants.kBackPistonModuleId
 import org.ghrobotics.frc2020.ClimberConstants.kClimberMasterId
 import org.ghrobotics.frc2020.ClimberConstants.kClimberNativeUnitModel
 import org.ghrobotics.frc2020.ClimberConstants.kClimberSlaveId
+import org.ghrobotics.frc2020.ClimberConstants.kFrontPistonId
+import org.ghrobotics.frc2020.ClimberConstants.kFrontPistonModuleId
+import org.ghrobotics.frc2020.ClimberConstants.kHookId
 import org.ghrobotics.frc2020.ClimberConstants.kPistonBrakeId
 import org.ghrobotics.frc2020.ClimberConstants.kPistonBrakeModuleId
+import org.ghrobotics.frc2020.ClimberConstants.kWinchId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.Meter
@@ -28,8 +34,23 @@ import org.ghrobotics.lib.motors.rev.FalconMAX
 
 object Climber : FalconSubsystem() {
 
-    private val pistonBrake = Solenoid(kPistonBrakeModuleId, kPistonBrakeId)
+    //private val pistonBrake = Solenoid(kPistonBrakeModuleId, kPistonBrakeId)
+    private val frontPiston = Solenoid(kFrontPistonModuleId, kFrontPistonId)
+    private val backPiston  = Solenoid(kBackPistonModuleId, kBackPistonId)
 
+    private val winchMotor = FalconMAX(
+            id = kWinchId,
+            type = CANSparkMaxLowLevel.MotorType.kBrushless,
+            model = kClimberNativeUnitModel
+    )
+
+    private val hookMotor = FalconMAX(
+            id = kHookId,
+            type = CANSparkMaxLowLevel.MotorType.kBrushless,
+            model = kClimberNativeUnitModel
+    )
+
+    /*
     private val climberMasterMotor = FalconMAX(
         id = kClimberMasterId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
@@ -41,6 +62,8 @@ object Climber : FalconSubsystem() {
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = kClimberNativeUnitModel
     )
+    */
+
 
     private val periodicIO = PeriodicIO()
     val position get() = periodicIO.position
@@ -58,23 +81,27 @@ object Climber : FalconSubsystem() {
         object Nothing : Output()
         class Percent(val percent: Double) : Output()
         class Position(val position: SIUnit<Meter>) : Output()
+        class HookPercent(val percent: Double) : Output()
     }
 
     override fun periodic() {
-        periodicIO.voltage = climberMasterMotor.voltageOutput
-        periodicIO.current = climberMasterMotor.drawnCurrent
-        periodicIO.position = climberMasterMotor.encoder.position
+        periodicIO.voltage = winchMotor.voltageOutput
+        periodicIO.current = winchMotor.drawnCurrent
+        periodicIO.position = winchMotor.encoder.position
 
         when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing -> {
-                climberMasterMotor.setNeutral()
+            is Output.Nothing ->{
+                winchMotor.setNeutral()
+                hookMotor.setNeutral()
             }
-            is Output.Percent -> {
-                climberMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-            }
-            is Output.Position -> {
-                climberMasterMotor.setPosition(desiredOutput.position, periodicIO.feedforward)
-            }
+            is Output.Percent ->
+                winchMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+
+            is Output.Position ->
+                winchMotor.setPosition(desiredOutput.position, periodicIO.feedforward)
+
+            is Output.HookPercent ->
+                hookMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
         }
     }
 
@@ -93,18 +120,25 @@ object Climber : FalconSubsystem() {
         periodicIO.desiredOutput = Output.Percent(percent)
     }
 
-    fun setBrake(brake: Boolean) {
-        pistonBrake.set(brake)
+    fun extend(extend: Boolean) {
+        frontPiston.set(extend)
+        backPiston.set(extend)
     }
 
     fun resetPosition(position: SIUnit<Meter>) {
-        climberMasterMotor.encoder.resetPosition(position)
+        winchMotor.encoder.resetPosition(position)
+    }
+
+    fun hookPercent(percent: Double){
+        periodicIO.feedforward = 0.volts
+        periodicIO.desiredOutput = Output.HookPercent(percent)
     }
 
     init {
-        climberSlaveMotor.follow(climberMasterMotor)
+        //climberSlaveMotor.follow(climberMasterMotor)
         defaultCommand = ManualClimberCommand { 0.0 }
-        pistonBrake.set(true)
+        extend(false)
+        //pistonBrake.set(true)
     }
 
     override fun checkSubsystem(): Command {
