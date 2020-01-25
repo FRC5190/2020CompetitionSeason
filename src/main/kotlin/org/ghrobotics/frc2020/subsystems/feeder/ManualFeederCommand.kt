@@ -9,9 +9,10 @@
 package org.ghrobotics.frc2020.subsystems.feeder
 
 import org.ghrobotics.lib.commands.FalconCommand
+import org.ghrobotics.lib.utils.DoubleSource
 
-class ManualFeederCommand(val percent: Double) : FalconCommand(Feeder) {
+class ManualFeederCommand(val percent: DoubleSource) : FalconCommand(Feeder) {
     override fun execute() {
-        Feeder.setPercent(percent)
+        Feeder.setPercent(percent())
     }
 }
