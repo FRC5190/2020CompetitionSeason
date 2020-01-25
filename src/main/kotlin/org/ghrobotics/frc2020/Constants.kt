@@ -114,7 +114,7 @@ object ClimberConstants {
 }
 
 object FeederConstants {
-    const val kFeederMasterId = 0
+    const val kFeederMasterId = 10
     val kFeederRadius = 1.inches
     val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
 }
