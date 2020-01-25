@@ -113,6 +113,12 @@ object ClimberConstants {
     val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }
 
+object FeederConstants {
+    const val kFeederMasterId = 0
+    val kFeederRadius = 1.inches
+    val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
+}
+
 object VisionConstants {
     const val kLEDId = 0
 

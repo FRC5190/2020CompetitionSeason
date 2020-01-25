@@ -13,6 +13,7 @@ import org.ghrobotics.frc2020.auto.Paths
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.feeder.Feeder
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
@@ -39,6 +40,7 @@ object Robot : FalconTimedRobot() {
         +Drivetrain
         +Shooter
         +Turret
+        +Feeder
     }
 
     // Runs once when robot boots up
