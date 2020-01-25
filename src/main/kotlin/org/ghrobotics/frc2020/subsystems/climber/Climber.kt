@@ -38,7 +38,7 @@ object Climber : FalconSubsystem() {
     private val frontPiston = Solenoid(kFrontPistonModuleId, kFrontPistonId)
     private val backPiston  = Solenoid(kBackPistonModuleId, kBackPistonId)
 
-    private val winchMotor = FalconMAX(
+    val winchMotor = FalconMAX(
             id = kWinchId,
             type = CANSparkMaxLowLevel.MotorType.kBrushless,
             model = kClimberNativeUnitModel
