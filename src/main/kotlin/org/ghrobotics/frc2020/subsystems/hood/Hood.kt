@@ -55,12 +55,12 @@ object Hood : FalconSubsystem() {
             }
             is Output.Percent -> {
                 servoA.speed = desiredOutput.percent
-                servoB.speed = desiredOutput.percent
+                servoB.speed = -desiredOutput.percent
             }
             is Output.Position -> {
                 val output = controller.calculate(periodicIO.angle.value, desiredOutput.angle.value)
                 servoA.speed = output
-                servoB.speed = output
+                servoB.speed = -output
             }
         }
     }
