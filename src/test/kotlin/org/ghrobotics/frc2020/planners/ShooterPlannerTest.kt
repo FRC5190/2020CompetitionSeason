@@ -15,12 +15,12 @@ class ShooterPlannerTest {
     @Test
     fun testValueInTable() {
         val params = ShooterPlanner[SIUnit(2.80)]
-        assert(params == ShooterPlanner.ShooterParams(SIUnit(343.48), SIUnit(Math.toRadians(48.0))))
+        assert(params == ShooterPlanner.ShooterParameters(SIUnit(343.48), SIUnit(Math.toRadians(48.0))))
     }
 
     @Test
     fun testInterpolation() {
         val params = ShooterPlanner[SIUnit(5.25)]
-        assert(params == ShooterPlanner.ShooterParams(SIUnit(517.315), SIUnit(Math.toRadians(30.0))))
+        assert(params == ShooterPlanner.ShooterParameters(SIUnit(517.315), SIUnit(Math.toRadians(30.0))))
     }
 }

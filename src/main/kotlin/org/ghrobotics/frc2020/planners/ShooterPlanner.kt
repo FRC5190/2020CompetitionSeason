@@ -25,7 +25,7 @@ import org.ghrobotics.lib.utils.InterpolatingTreeMap
  */
 object ShooterPlanner {
     // Map to store distance to ShooterPlanner values.
-    private val map = InterpolatingTreeMap.createFromInterpolatable<Meter, ShooterParams>()
+    private val map = InterpolatingTreeMap.createFromInterpolatable<Meter, ShooterParameters>()
 
     init {
         // Load table from CSV.
@@ -33,7 +33,7 @@ object ShooterPlanner {
             InputStreamReader(stream).readLines().forEach { line ->
                 val data = line.split(",").map { it.trim() }
                 map[SIUnit(data[0].toDouble())] =
-                    ShooterParams(SIUnit(data[2].toDouble()), SIUnit(Math.toRadians(data[3].toDouble())))
+                    ShooterParameters(SIUnit(data[2].toDouble()), SIUnit(Math.toRadians(data[3].toDouble())))
             }
         }
     }
@@ -44,25 +44,25 @@ object ShooterPlanner {
      */
     operator fun get(distance: SIUnit<Meter>) = map[distance]!!
 
-    data class ShooterParams(
+    data class ShooterParameters(
         val speed: SIUnit<AngularVelocity>,
         val angle: SIUnit<Radian>
-    ) : Interpolatable<ShooterParams> {
+    ) : Interpolatable<ShooterParameters> {
         /**
          * Interpolates between two ShooterParam objects.
          *
          * @param endValue The end value for interpolation (when t = 1).
          * @param t The interpolation fraction.
          */
-        override fun interpolate(endValue: ShooterParams, t: Double): ShooterParams {
-            return ShooterParams(
+        override fun interpolate(endValue: ShooterParameters, t: Double): ShooterParameters {
+            return ShooterParameters(
                 speed.lerp(endValue.speed, t),
                 angle.lerp(endValue.angle, t)
             )
         }
 
         override fun equals(other: Any?): Boolean {
-            return other is ShooterParams && speed epsilonEquals other.speed &&
+            return other is ShooterParameters && speed epsilonEquals other.speed &&
                 angle epsilonEquals other.angle
         }
 

@@ -8,6 +8,7 @@
 
 package org.ghrobotics.frc2020.subsystems
 
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import edu.wpi.first.wpilibj2.command.Command
@@ -16,12 +17,26 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
+import org.ghrobotics.frc2020.planners.ShooterPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.feeder.ManualFeederCommand
+import org.ghrobotics.frc2020.subsystems.hood.AutoHoodCommand
+import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.frc2020.vision.VisionProcessing
+import org.ghrobotics.lib.commands.FalconCommand
+import org.ghrobotics.lib.commands.parallel
+import org.ghrobotics.lib.commands.parallelDeadline
+import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.inSeconds
+import org.ghrobotics.lib.mathematics.units.inches
+import org.ghrobotics.lib.mathematics.units.operations.div
+import org.ghrobotics.lib.mathematics.units.seconds
 
 /**
  * Represents the overall superstructure of the robot, including the turret,
@@ -31,20 +46,73 @@ object Superstructure {
     // Latest aiming parameters for the superstructure.
     private var latestAimingParameters = AimingParameters(Rotation2d(), SIUnit(0.0))
 
+    // Latest shooting parameters for the hood and the shooter.
+    private var latestShootingParameters = ShooterPlanner.ShooterParameters(SIUnit(0.0), SIUnit(0.0))
+
+    // Variables to store speeds and angles.
+    private var turretHoldAngle = 0.degrees
+    private var shooterHoldSpeed = 0.radians / 1.seconds
+    private var hoodHoldAngle = 0.degrees
+
+    private val kVelocityTreshold = 0.25.inches / 1.seconds
+    private val kStopTimeTreshold = 0.6.seconds
+
     /**
-     * Aims the turret at the goal.
+     * Shoots power cells into the goal.
      *
      * @return The command.
      */
-    fun aimTurret(): Command = object : SequentialCommandGroup() {
+    fun shootPowerCells(): Command = object : SequentialCommandGroup() {
         init {
             addCommands(
-                // Turn on the LEDs so that we can start looking for the target.
+                // Turn on LEDs so that we can start aiming.
                 InstantCommand(Runnable { VisionProcessing.turnOnLEDs() }),
-                // Add a slight delay so that we can register the target.
-                WaitCommand(0.2),
-                // Turn the turret.
-                AutoTurretCommand { SIUnit(latestAimingParameters.turretAngle.radians) }
+
+                // Aim turret, shooter, and hood until the drivetrain is stopped for
+                // at least 0.7 seconds.
+                parallelDeadline(
+                    object : FalconCommand() {
+                        val timer = Timer()
+
+                        override fun initialize() = timer.start()
+                        override fun execute() {
+                            if (Drivetrain.averageVelocity > kVelocityTreshold) {
+                                timer.reset()
+                            }
+                        }
+
+                        override fun isFinished() = timer.hasPeriodPassed(kStopTimeTreshold.inSeconds())
+                    }
+                ) {
+                    // Turret Alignment
+                    +sequential {
+                        // Add a slight delay so that we can register the target.
+                        +WaitCommand(0.2)
+                        // Turn the turret.
+                        +AutoTurretCommand { SIUnit(latestAimingParameters.turretAngle.radians) }
+                    }
+                    // Shooter and Hood
+                    +AutoShooterCommand { latestShootingParameters.speed }
+                    +AutoHoodCommand { latestShootingParameters.angle }
+                },
+
+                // Store the current values for relevant subsystems and turn off camera.
+                InstantCommand(Runnable {
+                    VisionProcessing.turnOffLEDs()
+                    turretHoldAngle = SIUnit(latestAimingParameters.turretAngle.radians)
+                    shooterHoldSpeed = latestShootingParameters.speed
+                    hoodHoldAngle = latestShootingParameters.angle
+                }),
+
+                parallel {
+                    // Respective subsystems should hold state.
+                    +AutoTurretCommand { turretHoldAngle }
+                    +AutoShooterCommand { shooterHoldSpeed }
+                    +AutoHoodCommand { hoodHoldAngle }
+
+                    // Feed balls
+                    +ManualFeederCommand { 0.3 }
+                }
             )
         }
 
@@ -91,6 +159,7 @@ object Superstructure {
      */
     fun update() {
         latestAimingParameters = getAimingParameters()
+        latestShootingParameters = ShooterPlanner[latestAimingParameters.distance]
     }
 
     /**

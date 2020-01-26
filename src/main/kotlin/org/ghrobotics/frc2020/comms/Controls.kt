@@ -33,7 +33,7 @@ object Controls {
          * The turret and shooter will aim and the feeder will feed all balls
          * to the shooter when the drivetrain comes to a complete stop.
          */
-        button(kBumperRight).change(Superstructure.aimTurret())
+        button(kBumperRight).change(Superstructure.shootPowerCells())
 
         /**
          * Jogs the turret zero a certain amount. This is useful when vision
