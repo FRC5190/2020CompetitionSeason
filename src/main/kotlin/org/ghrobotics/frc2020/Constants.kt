@@ -73,18 +73,27 @@ object ShooterConstants {
     const val kMasterId = 6
     const val kSlaveId = 7
 
-    const val kHoodServoAId = 3
-    const val kHoodServoBId = 4
-
     const val kGearRatio = 1.0 / 2.0
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
-    val kStowedHoodAngle = 10.degrees
 
     val kS = 0.volts
 
     const val kP = 3.5E-4
     const val kF = 2.0E-4
+}
+
+object HoodConstants {
+    const val kServoAId = 0
+    const val kServoBId = 1
+
+    const val kEncoderAId = 2
+    const val kEncoderBId = 3
+
+    const val kP = 0.0
+
+    const val kGearRatio = 0.5
+    val kNativeUnitModel = NativeUnitRotationModel(4096.nativeUnits * kGearRatio)
 }
 
 object IntakeConstants {
