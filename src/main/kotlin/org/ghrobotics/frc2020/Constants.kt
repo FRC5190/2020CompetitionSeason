@@ -53,6 +53,7 @@ object TurretConstants {
     val kAcceptableRange = (-200).degrees..200.degrees
 
     val kAlignDelay = 0.25.seconds
+    val kDefaultJogAmount = 1.degrees
 
     val kS = 0.0.volts
 
@@ -116,12 +117,18 @@ object ClimberConstants {
     val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }
 
+object FeederConstants {
+    const val kFeederMasterId = 10
+    val kFeederRadius = 1.inches
+    val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
+}
+
 object VisionConstants {
     const val kLEDId = 0
 
     val kGoalHeight = 92.inches
     val kCameraHeight = 22.5.inches
-    val kCameraAngle = Rotation2d.fromDegrees(35.0)
+    val kCameraAngle = Rotation2d.fromDegrees(25.0)
 
     val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d())
 
