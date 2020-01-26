@@ -41,4 +41,12 @@ class TurretPlannerTest {
         val constrainedAngle = TurretPlanner.constrainToAcceptableRange(angle)
         assert(constrainedAngle.inDegrees() epsilonEquals 200.0)
     }
+
+    @Test
+    fun testOptimization() {
+        val desiredAngle = (-170).degrees
+        val currentAngle = 170.degrees
+        val optimizedAngle = TurretPlanner.getOptimizedAngle(desiredAngle, currentAngle)
+        assert(optimizedAngle.inDegrees() epsilonEquals 190.0)
+    }
 }

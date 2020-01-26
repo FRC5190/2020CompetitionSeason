@@ -128,7 +128,7 @@ object VisionConstants {
 
     val kGoalHeight = 92.inches
     val kCameraHeight = 22.5.inches
-    val kCameraAngle = Rotation2d.fromDegrees(35.0)
+    val kCameraAngle = Rotation2d.fromDegrees(25.0)
 
     val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d())
 

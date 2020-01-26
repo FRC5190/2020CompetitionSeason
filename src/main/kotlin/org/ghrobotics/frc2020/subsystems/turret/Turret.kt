@@ -161,7 +161,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun setAngle(angle: SIUnit<Radian>) {
         periodicIO.desiredOutput =
-            Output.Position(TurretPlanner.constrainToAcceptableRange(angle))
+            Output.Position(TurretPlanner.getOptimizedAngle(angle, periodicIO.position))
         periodicIO.feedforward = TurretConstants.kS
     }
 

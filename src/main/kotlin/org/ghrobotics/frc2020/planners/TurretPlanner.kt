@@ -12,6 +12,7 @@ import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 
 /**
  * An object that is used to perform calculations for turret mechanics.
@@ -33,5 +34,20 @@ object TurretPlanner {
             goal -= 360.degrees
         }
         return goal
+    }
+
+    /**
+     * Returns the best angle that the turret can go to, taking into account
+     * constraints and the nearest equivalent angle on the unit circle.
+     *
+     * @param desiredAngle The desired angle.
+     * @param currentAngle The current angle.
+     *
+     * @return The optimized angle.
+     */
+    fun getOptimizedAngle(desiredAngle: SIUnit<Radian>, currentAngle: SIUnit<Radian>): SIUnit<Radian> {
+        val angleDifference = desiredAngle.toRotation2d() - currentAngle.toRotation2d()
+        val optimizedDesiredAngle = currentAngle + SIUnit(angleDifference.radians)
+        return constrainToAcceptableRange(optimizedDesiredAngle)
     }
 }
