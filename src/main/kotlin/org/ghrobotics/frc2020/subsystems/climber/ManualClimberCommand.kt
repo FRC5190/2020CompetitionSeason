@@ -12,9 +12,11 @@ import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
 class ManualClimberCommand(private val percentSource: DoubleSource) : FalconCommand(Climber) {
+    override fun initialize() {
+        Climber.extend(true)
+    }
 
     override fun execute() {
-        Climber.extend(true)
         Climber.setPercent(percentSource())
     }
 

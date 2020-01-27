@@ -31,17 +31,16 @@ import org.ghrobotics.lib.motors.rev.FalconMAX
 
 object Climber : FalconSubsystem() {
 
-    //private val pistonBrake = Solenoid(kPistonBrakeModuleId, kPistonBrakeId)
     private val frontPiston = Solenoid(kFrontPistonModuleId, kFrontPistonId)
     private val backPiston  = Solenoid(kBackPistonModuleId, kBackPistonId)
 
-    val winchMasterMotor = FalconMAX(
+    private val winchMasterMotor = FalconMAX(
             id = kWinchMasterId,
             type = CANSparkMaxLowLevel.MotorType.kBrushless,
             model = kClimberNativeUnitModel
     )
 
-    val winchSlaverMotor = FalconMAX(
+    private val winchSlaverMotor = FalconMAX(
             id = kWinchSlaveId,
             type = CANSparkMaxLowLevel.MotorType.kBrushless,
             model = kClimberNativeUnitModel
@@ -55,12 +54,14 @@ object Climber : FalconSubsystem() {
 
 
     private val periodicIO = PeriodicIO()
-    val position get() = periodicIO.position
+    val winchPosition get() = periodicIO.winchPosition
+    val hookPosition get() = periodicIO.hookPosition
 
     private class PeriodicIO() {
         var current: SIUnit<Ampere> = 0.amps
         var voltage: SIUnit<Volt> = 0.volts
-        var position: SIUnit<Meter> = 0.meters
+        var winchPosition: SIUnit<Meter> = 0.meters
+        var hookPosition: SIUnit<Meter> = 0.meters
 
         var feedforward: SIUnit<Volt> = 0.volts
         var desiredOutput: Output = Output.Nothing
@@ -76,7 +77,8 @@ object Climber : FalconSubsystem() {
     override fun periodic() {
         periodicIO.voltage = winchMasterMotor.voltageOutput
         periodicIO.current = winchMasterMotor.drawnCurrent
-        periodicIO.position = winchMasterMotor.encoder.position
+        periodicIO.winchPosition = winchMasterMotor.encoder.position
+        periodicIO.hookPosition = hookMotor.encoder.position
 
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing ->{
@@ -121,10 +123,6 @@ object Climber : FalconSubsystem() {
     fun hookPercent(percent: Double){
         periodicIO.feedforward = 0.volts
         periodicIO.desiredOutput = Output.HookPercent(percent)
-    }
-
-    fun checkPosition(): SIUnit<Meter>{
-        return winchMasterMotor.encoder.position
     }
 
     init {

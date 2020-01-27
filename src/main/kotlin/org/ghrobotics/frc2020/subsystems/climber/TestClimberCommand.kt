@@ -26,7 +26,7 @@ class TestClimberCommand : FalconCommand(Climber) {
 
     override fun end(interrupted: Boolean) {
         Climber.extend(false)
-        success = Climber.position > 2.meters
+        success = Climber.winchPosition > 2.meters
         Climber.setNeutral()
         SubsystemTestManager.climberCheck = success
     }

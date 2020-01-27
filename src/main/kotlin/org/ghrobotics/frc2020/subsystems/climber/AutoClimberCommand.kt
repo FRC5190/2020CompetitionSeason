@@ -11,15 +11,19 @@ package org.ghrobotics.frc2020.subsystems.climber
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.utils.DoubleSource
 
 class AutoClimberCommand(private val desiredHeight: SIUnit<Meter>, private val percentSource: DoubleSource) : FalconCommand(Climber) {
 
-    override fun execute() {
+    override fun initialize() {
         Climber.extend(true)
+    }
+
+    override fun execute() {
         Climber.setHeight(desiredHeight)
-        if (Climber.checkPosition() == desiredHeight){
-            HookCommand(percentSource) //need to add finish condition
+        if (Climber.hookPosition < 1.meters) {
+            HookCommand(percentSource)
         }
     }
 
