@@ -16,11 +16,11 @@ class TestIntakeCommand : FalconCommand(Intake) {
     private var success = true
 
     override fun initialize() {
-        Intake.intakeMotor.encoder.resetPosition(0.nativeUnits)
+        Intake.resetPosition(0.nativeUnits)
+        Intake.extendPiston(true)
     }
 
     override fun execute() {
-        Intake.extendPiston(true)
         Intake.setPercent(.75)
     }
 

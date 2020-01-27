@@ -14,8 +14,10 @@ import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.IntakeConstants
 import org.ghrobotics.frc2020.IntakeConstants.kIntakeModuleId
 import org.ghrobotics.frc2020.IntakeConstants.kIntakePistonId
+import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
+import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.Volt
@@ -80,6 +82,10 @@ object Intake : FalconSubsystem() {
 
     fun extendPiston(extend: Boolean) {
         intakePiston.set(extend)
+    }
+
+    fun resetPosition(position: SIUnit<NativeUnit>) {
+        intakeMotor.encoder.resetPosition(position)
     }
 
     init {
