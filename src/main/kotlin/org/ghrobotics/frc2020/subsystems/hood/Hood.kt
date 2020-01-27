@@ -38,8 +38,8 @@ object Hood : FalconSubsystem() {
     // Initialize PWM Continuous Servos.
     init {
         // Set pulse width bounds.
-        servoA.setBounds(2.5, 1.52, 1.5, 1.48, 0.5)
-        servoB.setBounds(2.5, 1.52, 1.5, 1.48, 0.5)
+        servoA.setBounds(2.0, 1.52, 1.5, 1.48, 1.0)
+        servoB.setBounds(2.0, 1.52, 1.5, 1.48, 1.0)
 
         // Remove deadbands.
         servoA.enableDeadbandElimination(true)
