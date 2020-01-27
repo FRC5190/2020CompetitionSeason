@@ -18,7 +18,7 @@ class AutoClimberCommand(private val desiredHeight: SIUnit<Meter>, private val p
     override fun execute() {
         Climber.extend(true)
         Climber.setHeight(desiredHeight)
-        if (Climber.winchMotor.encoder.position == desiredHeight){
+        if (Climber.checkPosition() == desiredHeight){
             HookCommand(percentSource) //need to add finish condition
         }
     }

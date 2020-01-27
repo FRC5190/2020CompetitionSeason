@@ -111,11 +111,8 @@ object FortuneWheelConstants {
 }
 
 object ClimberConstants {
-    const val kClimberMasterId = 10
-    const val kClimberSlaveId = 11
-    const val kPistonBrakeId = 12
-    const val kPistonBrakeModuleId = 13
-    const val kWinchId = 16
+    const val kWinchMasterId = 11
+    const val kWinchSlaveId = 12
     const val kFrontPistonId = 18
     const val kFrontPistonModuleId = 19
     const val kBackPistonId = 20
