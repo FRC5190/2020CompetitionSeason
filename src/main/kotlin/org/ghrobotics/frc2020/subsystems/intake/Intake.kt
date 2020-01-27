@@ -9,8 +9,11 @@
 package org.ghrobotics.frc2020.subsystems.intake
 
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.IntakeConstants
+import org.ghrobotics.frc2020.IntakeConstants.kIntakeModuleId
+import org.ghrobotics.frc2020.IntakeConstants.kIntakePistonId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -24,11 +27,13 @@ import org.ghrobotics.lib.motors.rev.FalconMAX
 
 object Intake : FalconSubsystem() {
 
-    val intakeMotor = FalconMAX(
+    private val intakeMotor = FalconMAX(
         id = IntakeConstants.kIntakeId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = DefaultNativeUnitModel
     )
+
+    private val intakePiston = Solenoid(kIntakeModuleId, kIntakePistonId)
 
     private val periodicIO = PeriodicIO()
     val position get() = periodicIO.position
@@ -73,8 +78,17 @@ object Intake : FalconSubsystem() {
         periodicIO.feedforward = 0.volts
     }
 
+    fun extendPiston(extend: Boolean) {
+        intakePiston.set(extend)
+    }
+
+    fun resetPosition(position: SIUnit<NativeUnit>) {
+        intakeMotor.encoder.resetPosition(position)
+    }
+
     init {
         defaultCommand = IntakeCommand { 0.0 }
+        extendPiston(false)
     }
 
     override fun checkSubsystem(): Command {
