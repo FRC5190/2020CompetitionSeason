@@ -16,7 +16,8 @@ class TestIntakeCommand : FalconCommand(Intake) {
     private var success = true
 
     override fun initialize() {
-        Intake.intakeMotor.encoder.resetPosition(0.nativeUnits)
+        Intake.resetPosition(0.nativeUnits)
+        Intake.extendPiston(true)
     }
 
     override fun execute() {
@@ -24,6 +25,7 @@ class TestIntakeCommand : FalconCommand(Intake) {
     }
 
     override fun end(interrupted: Boolean) {
+        Intake.extendPiston(false)
         success = Intake.position > 2.nativeUnits
         Intake.setNeutral()
         SubsystemTestManager.intakeCheck = success
