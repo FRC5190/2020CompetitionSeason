@@ -32,7 +32,7 @@ import org.ghrobotics.lib.motors.rev.FalconMAX
 object Climber : FalconSubsystem() {
 
     private val frontPiston = Solenoid(kFrontPistonModuleId, kFrontPistonId)
-    private val backPiston  = Solenoid(kBackPistonModuleId, kBackPistonId)
+    private val backPiston = Solenoid(kBackPistonModuleId, kBackPistonId)
 
     private val winchMasterMotor = FalconMAX(
             id = kWinchMasterId,
@@ -51,7 +51,6 @@ object Climber : FalconSubsystem() {
             type = CANSparkMaxLowLevel.MotorType.kBrushless,
             model = kClimberNativeUnitModel
     )
-
 
     private val periodicIO = PeriodicIO()
     val winchPosition get() = periodicIO.winchPosition
@@ -81,7 +80,7 @@ object Climber : FalconSubsystem() {
         periodicIO.hookPosition = hookMotor.encoder.position
 
         when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing ->{
+            is Output.Nothing -> {
                 winchMasterMotor.setNeutral()
                 hookMotor.setNeutral()
             }
@@ -120,7 +119,7 @@ object Climber : FalconSubsystem() {
         winchMasterMotor.encoder.resetPosition(position)
     }
 
-    fun hookPercent(percent: Double){
+    fun hookPercent(percent: Double) {
         periodicIO.feedforward = 0.volts
         periodicIO.desiredOutput = Output.HookPercent(percent)
     }
