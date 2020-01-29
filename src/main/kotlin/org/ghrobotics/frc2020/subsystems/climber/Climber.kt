@@ -38,7 +38,7 @@ object Climber : FalconSubsystem() {
             model = kClimberNativeUnitModel
     )
 
-    private val winchSlaverMotor = FalconMAX(
+    private val winchSlaveMotor = FalconMAX(
             id = kWinchSlaveId,
             type = CANSparkMaxLowLevel.MotorType.kBrushless,
             model = kClimberNativeUnitModel
@@ -123,7 +123,7 @@ object Climber : FalconSubsystem() {
     }
 
     init {
-        winchSlaverMotor.follow(winchMasterMotor)
+        winchSlaveMotor.follow(winchMasterMotor)
         defaultCommand = ManualClimberCommand { 0.0 }
         extend(false)
     }
