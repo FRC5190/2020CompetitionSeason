@@ -11,12 +11,10 @@ package org.ghrobotics.frc2020.subsystems.climber
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.ClimberConstants.kBackPistonId
-import org.ghrobotics.frc2020.ClimberConstants.kBackPistonModuleId
 import org.ghrobotics.frc2020.ClimberConstants.kClimberNativeUnitModel
-import org.ghrobotics.frc2020.ClimberConstants.kFrontPistonId
-import org.ghrobotics.frc2020.ClimberConstants.kFrontPistonModuleId
 import org.ghrobotics.frc2020.ClimberConstants.kHookId
+import org.ghrobotics.frc2020.ClimberConstants.kPistonId
+import org.ghrobotics.frc2020.ClimberConstants.kPneumaticModuleId
 import org.ghrobotics.frc2020.ClimberConstants.kWinchMasterId
 import org.ghrobotics.frc2020.ClimberConstants.kWinchSlaveId
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -31,8 +29,8 @@ import org.ghrobotics.lib.motors.rev.FalconMAX
 
 object Climber : FalconSubsystem() {
 
-    private val frontPiston = Solenoid(kFrontPistonModuleId, kFrontPistonId)
-    private val backPiston = Solenoid(kBackPistonModuleId, kBackPistonId)
+    private val frontPiston = Solenoid(kPneumaticModuleId, kPistonId)
+    private val backPiston = Solenoid(kPneumaticModuleId, kPistonId)
 
     private val winchMasterMotor = FalconMAX(
             id = kWinchMasterId,

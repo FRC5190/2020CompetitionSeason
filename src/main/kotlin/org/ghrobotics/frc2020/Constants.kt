@@ -89,8 +89,8 @@ object ShooterConstants {
 
 object IntakeConstants {
     const val kIntakeId = 9
-    const val kIntakeModuleId = 14
-    const val kIntakePistonId = 15
+    const val kIntakeModuleId = 41
+    const val kIntakePistonId = 0
 }
 
 object FortuneWheelConstants {
@@ -113,11 +113,9 @@ object FortuneWheelConstants {
 object ClimberConstants {
     const val kWinchMasterId = 11
     const val kWinchSlaveId = 12
-    const val kFrontPistonId = 18
-    const val kFrontPistonModuleId = 19
-    const val kBackPistonId = 20
-    const val kBackPistonModuleId = 21
-    const val kHookId = 22
+    const val kPistonId = 1
+    const val kHookId = 13
+    const val kPneumaticModuleId = 41
 
     val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }
