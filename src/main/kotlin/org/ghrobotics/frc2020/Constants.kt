@@ -142,3 +142,8 @@ object VisionConstants {
 
     val kGoalLocation = Pose2d(54.feet, 94.66.inches, Rotation2d())
 }
+
+object LEDConstants {
+    const val kPort = 9
+    const val kBufferSize = 60
+}
