@@ -29,11 +29,10 @@ object LED : FalconSubsystem() {
         println("LED Subsystem reset")
         setStatus(LEDStatus.RESET)
     }
+//    activates rainbow mode,
+//    should be used when all sensors are connected
+//    but when robot is disabled
 
-    /*activates rainbow mode,
-    should be used when all sensors are connected
-    but when robot is disabled
-     */
     fun rainbow() {
         println("LED Subsystem rainbow")
 
@@ -73,6 +72,7 @@ object LED : FalconSubsystem() {
                 for (i in 0 until letBuffer.length) { // Sets the specified LED to the RGB values for green
                     letBuffer.setRGB(i, statusCode.r, statusCode.g, statusCode.b)
                 }
+
 //                Timer.delay(0.5)
 //                for (i in 0 until letBuffer.length) { // Sets the specified LED to the RGB values for green
 //                    letBuffer.setRGB(i, 0, 0, 0)
