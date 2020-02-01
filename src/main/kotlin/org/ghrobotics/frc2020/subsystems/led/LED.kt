@@ -18,7 +18,7 @@ object LED : FalconSubsystem() {
     var letBuffer: AddressableLEDBuffer = AddressableLEDBuffer(LEDConstants.kBufferSize)
     var rainbowFirstPixelHue = 0
 
-    var blinkColor: LEDStatus.StatusColor = LEDStatus.StatusColor(0,0,0,false)
+    var blinkColor: LEDStatus.StatusColor = LEDStatus.StatusColor(0, 0, 0, false)
     var doBlink: Boolean = false
     var blinkCount: Int = 0
 
@@ -36,14 +36,14 @@ object LED : FalconSubsystem() {
 
     override fun periodic() {
         super.periodic()
-        if(doBlink){
-            if(0 == blinkCount % 2  ){
+        if (doBlink) {
+            if (0 == blinkCount % 2) {
                 setStatus(blinkColor)
             } else {
-                setStatus(LEDStatus.StatusColor(0,0,0,false))
+                setStatus(LEDStatus.StatusColor(0, 0, 0, false))
             }
             blinkCount ++
-            if(blinkCount >= 10){
+            if (blinkCount >= 10) {
                 blinkCount = 0
                 doBlink = false
             }
@@ -79,7 +79,7 @@ object LED : FalconSubsystem() {
 
         if (statusCode.blink) {
             // will run code to flash led color using Periodic
-            blinkColor = LEDStatus.StatusColor(statusCode.r, statusCode.g,statusCode.b,false)
+            blinkColor = LEDStatus.StatusColor(statusCode.r, statusCode.g, statusCode.b, false)
             blinkCount = 0
             doBlink = true
         } else {
