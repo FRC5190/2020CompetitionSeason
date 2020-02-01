@@ -114,10 +114,14 @@ object ClimberConstants {
     const val kWinchMasterId = 11
     const val kWinchSlaveId = 12
     const val kPistonId = 1
-    const val kHookId = 13
     const val kPneumaticModuleId = 41
-
     val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
+}
+
+
+object HookConstants{
+    const val kHookId = 13
+    val kHookNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }
 
 object FeederConstants {
