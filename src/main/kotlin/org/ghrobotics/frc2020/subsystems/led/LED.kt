@@ -18,6 +18,10 @@ object LED : FalconSubsystem() {
     var letBuffer: AddressableLEDBuffer = AddressableLEDBuffer(LEDConstants.kBufferSize)
     var rainbowFirstPixelHue = 0
 
+    var blinkColor: LEDStatus.StatusColor = LEDStatus.StatusColor(0,0,0,false)
+    var doBlink: Boolean = false
+    var blinkCount: Int = 0
+
     init {
         println("LED Subsystem init")
         led.setLength(letBuffer.length)
@@ -28,6 +32,22 @@ object LED : FalconSubsystem() {
     fun reset() {
         println("LED Subsystem reset")
         setStatus(LEDStatus.RESET)
+    }
+
+    override fun periodic() {
+        super.periodic()
+        if(doBlink){
+            if(0 == blinkCount % 2  ){
+                setStatus(blinkColor)
+            } else {
+                setStatus(LEDStatus.StatusColor(0,0,0,false))
+            }
+            blinkCount ++
+            if(blinkCount >= 10){
+                blinkCount = 0
+                doBlink = false
+            }
+        }
     }
 //    activates rainbow mode,
 //    should be used when all sensors are connected
@@ -57,28 +77,17 @@ object LED : FalconSubsystem() {
     fun setStatus(statusCode: LEDStatus.StatusColor) {
         println("LED Subsystem Set Status")
 
-        if (!statusCode.blink) {
+        if (statusCode.blink) {
+            // will run code to flash led color using Periodic
+            blinkColor = LEDStatus.StatusColor(statusCode.r, statusCode.g,statusCode.b,false)
+            blinkCount = 0
+            doBlink = true
+        } else {
+            blinkCount = 0
+            doBlink = false
             for (i in 0 until letBuffer.length) { // Sets the specified LED to the RGB values for green
                 letBuffer.setRGB(i, statusCode.r, statusCode.g, statusCode.b)
             }
-            led.setData((letBuffer))
-        } else {
-            // will run code to flash led color
-            // currently untested and may break when switching led modes
-            // try rerunning the function with blink off if you encounter issues
-            // involving changing the LED color after
-
-//            while (statusCode.blink) {
-                for (i in 0 until letBuffer.length) { // Sets the specified LED to the RGB values for green
-                    letBuffer.setRGB(i, statusCode.r, statusCode.g, statusCode.b)
-                }
-
-//                Timer.delay(0.5)
-//                for (i in 0 until letBuffer.length) { // Sets the specified LED to the RGB values for green
-//                    letBuffer.setRGB(i, 0, 0, 0)
-//                }
-//                Timer.delay(0.5)
-//            }
             led.setData(letBuffer)
         }
     }
