@@ -9,7 +9,7 @@
 package org.ghrobotics.frc2020
 
 import org.ghrobotics.frc2020.auto.Autonomous
-import org.ghrobotics.frc2020.auto.Paths
+import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Superstructure
@@ -36,7 +36,7 @@ object Robot : FalconTimedRobot() {
     // Runs once when robot boots up
     override fun robotInit() {
         // Initialize auto paths
-        Paths
+        TrajectoryManager
 
         // Initialize Network
         Network

@@ -149,4 +149,10 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         // Integrate the pose forward in time.
         return getPose().exp(Twist2d(dx.value, 0.0, dtheta))
     }
+
+    /**
+     * Returns the feedforward for the drivetrain. We can use the left
+     * side as an approximation for the entire chassis.
+     */
+    fun getFeedforward() = leftCharacterization
 }

@@ -15,7 +15,7 @@ import org.ghrobotics.frc2020.auto.AutoRoutine
 /**
  * Tests all subsystems by running their respective checks.
  */
-class TestSubsystemsRoutine : AutoRoutine {
+class CheckSubsystemsRoutine : AutoRoutine {
     /**
      * Return the test subsystem routine. There is nothing in here because
      * we are manually starting the test routine in the startRoutine() method.
