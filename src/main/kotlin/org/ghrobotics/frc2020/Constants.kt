@@ -118,8 +118,7 @@ object ClimberConstants {
     val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }
 
-
-object HookConstants{
+object HookConstants {
     const val kHookId = 13
     val kHookNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }

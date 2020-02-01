@@ -43,7 +43,6 @@ object Climber : FalconSubsystem() {
             model = kClimberNativeUnitModel
     )
 
-
     private val periodicIO = PeriodicIO()
     val winchPosition get() = periodicIO.winchPosition
 
@@ -102,7 +101,6 @@ object Climber : FalconSubsystem() {
     fun resetPosition(position: SIUnit<Meter>) {
         winchMasterMotor.encoder.resetPosition(position)
     }
-
 
     init {
         winchSlaveMotor.follow(winchMasterMotor)

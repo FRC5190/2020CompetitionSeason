@@ -5,7 +5,11 @@ import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.HookConstants.kHookId
 import org.ghrobotics.frc2020.HookConstants.kHookNativeUnitModel
 import org.ghrobotics.lib.commands.FalconSubsystem
-import org.ghrobotics.lib.mathematics.units.*
+import org.ghrobotics.lib.mathematics.units.Ampere
+import org.ghrobotics.lib.mathematics.units.Meter
+import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.amps
+import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.motors.rev.FalconMAX

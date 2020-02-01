@@ -9,13 +9,9 @@
 package org.ghrobotics.frc2020.subsystems.climber
 
 import org.ghrobotics.frc2020.subsystems.hook.AutoHookCommand
-import org.ghrobotics.frc2020.subsystems.hook.Hook
-import org.ghrobotics.frc2020.subsystems.hook.ManualHookCommand
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.meters
-import org.ghrobotics.lib.utils.DoubleSource
 
 class AutoClimberCommand(private val desiredHeight: SIUnit<Meter>, private val desiredPosition: SIUnit<Meter>) : FalconCommand(Climber) {
 
