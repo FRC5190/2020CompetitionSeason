@@ -30,6 +30,7 @@ object Climber : FalconSubsystem() {
 
     private val frontPiston = Solenoid(kPneumaticModuleId, kPistonId)
     private val backPiston = Solenoid(kPneumaticModuleId, kPistonId)
+    private val winchBrake = Solenoid(kPneumaticModuleId, kPistonId)
 
     private val winchMasterMotor = FalconMAX(
             id = kWinchMasterId,
@@ -96,6 +97,7 @@ object Climber : FalconSubsystem() {
     fun extend(extend: Boolean) {
         frontPiston.set(extend)
         backPiston.set(extend)
+        winchBrake.set(extend)
     }
 
     fun resetPosition(position: SIUnit<Meter>) {
