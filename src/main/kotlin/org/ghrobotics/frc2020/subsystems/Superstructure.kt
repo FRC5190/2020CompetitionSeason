@@ -40,6 +40,7 @@ import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
+import kotlin.math.abs
 
 /**
  * Represents the overall superstructure of the robot, including the turret,
@@ -47,7 +48,7 @@ import org.ghrobotics.lib.mathematics.units.seconds
  */
 object Superstructure {
     // Latest aiming parameters for the superstructure.
-    private var latestAimingParameters = AimingParameters(Rotation2d(), SIUnit(0.0))
+    private var latestAimingParameters = AimingParameters(Rotation2d(), Rotation2d(), SIUnit(0.0))
 
     // Latest shooting parameters for the hood and the shooter.
     private var latestShootingParameters = ShooterPlanner.ShooterParameters(SIUnit(0.0), SIUnit(0.0))
@@ -59,6 +60,7 @@ object Superstructure {
 
     private val kVelocityTreshold = 0.25.inches / 1.seconds
     private val kStopTimeTreshold = 0.6.seconds
+    private val kGoodToAimToInnerTolerance = Math.toRadians(20.0)
 
     // Positions
     private val kTurretStowedPosition = 90.degrees
@@ -66,9 +68,11 @@ object Superstructure {
     /**
      * Shoots power cells into the goal.
      *
+     * @param attemptInner Attempts to reach the inner goal if possible.
+     *
      * @return The command.
      */
-    fun shootPowerCells(): Command = object : SequentialCommandGroup() {
+    fun shootPowerCells(attemptInner: Boolean = true): Command = object : SequentialCommandGroup() {
         init {
             addCommands(
                 // Turn on LEDs so that we can start aiming.
@@ -95,7 +99,11 @@ object Superstructure {
                         // Add a slight delay so that we can register the target.
                         +WaitCommand(0.2)
                         // Turn the turret.
-                        +AutoTurretCommand { SIUnit(latestAimingParameters.turretAngle.radians) }
+                        +AutoTurretCommand {
+                            if (abs(latestAimingParameters.turretAngleOuterGoal.radians) < kGoodToAimToInnerTolerance) {
+                                SIUnit(latestAimingParameters.turretAngleInnerGoal.radians)
+                            } else SIUnit(latestAimingParameters.turretAngleOuterGoal.radians)
+                        }
                     }
                     // Shooter and Hood
                     +AutoShooterCommand { latestShootingParameters.speed }
@@ -105,7 +113,7 @@ object Superstructure {
                 // Store the current values for relevant subsystems and turn off camera.
                 InstantCommand(Runnable {
                     VisionProcessing.turnOffLEDs()
-                    turretHoldAngle = SIUnit(latestAimingParameters.turretAngle.radians)
+                    turretHoldAngle = SIUnit(latestAimingParameters.turretAngleOuterGoal.radians)
                     shooterHoldSpeed = latestShootingParameters.speed
                     hoodHoldAngle = latestShootingParameters.angle
                 }),
@@ -165,22 +173,25 @@ object Superstructure {
         // Get the target that is closest to the turret pose.
         val target = GoalTracker.getClosestTarget(turretPose)
 
-        val turretToGoal = if (target != null) {
+        val (turretToOuterGoal, turretToInnerGoal) = if (target != null) {
             // Get the goal's pose in turret's coordinates.
-            target.averagePose.relativeTo(turretPose)
+            target.averagePose.relativeTo(turretPose) to
+                (target.averagePose + VisionConstants.kOuterToInnerGoalTransform).relativeTo(turretPose)
         } else {
             // Get an approximation from the current robot pose and the known target pose.
-            VisionConstants.kGoalLocation.relativeTo(turretPose)
+            VisionConstants.kGoalLocation.relativeTo(turretPose) to
+                (VisionConstants.kGoalLocation + VisionConstants.kOuterToInnerGoalTransform).relativeTo(turretPose)
         }
 
         // Get the distance to the target.
-        val distance = turretToGoal.translation.norm
+        val distance = turretToOuterGoal.translation.norm
 
         // Get the angle to the target.
-        val angle = Rotation2d(turretToGoal.translation.x, turretToGoal.translation.y)
+        val angleOuter = Rotation2d(turretToOuterGoal.translation.x, turretToOuterGoal.translation.y)
+        val angleInner = Rotation2d(turretToInnerGoal.translation.x, turretToInnerGoal.translation.y)
 
         // Return the distance and angle.
-        return AimingParameters(angle, SIUnit(distance))
+        return AimingParameters(angleOuter, angleInner, SIUnit(distance))
     }
 
     /**
@@ -195,7 +206,8 @@ object Superstructure {
      * Aiming parameters for the shooter and the turret.
      */
     data class AimingParameters(
-        val turretAngle: Rotation2d,
+        val turretAngleOuterGoal: Rotation2d,
+        val turretAngleInnerGoal: Rotation2d,
         val distance: SIUnit<Meter>
     )
 }

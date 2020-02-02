@@ -13,6 +13,7 @@ package org.ghrobotics.frc2020
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.subsystems.hood.HoodNativeUnitModel
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -175,6 +176,7 @@ object VisionConstants {
     const val kMedianWindowSize = 10
 
     val kGoalLocation = Pose2d(54.feet, 94.66.inches, Rotation2d())
+    val kOuterToInnerGoalTransform = Transform2d(27.inches, 0.inches, Rotation2d())
 }
 
 object ForkConstants {
