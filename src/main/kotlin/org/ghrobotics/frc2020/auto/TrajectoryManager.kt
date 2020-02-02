@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator
 import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.twodim.trajectory.FalconTrajectoryConfig
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
@@ -52,10 +53,27 @@ object TrajectoryManager {
 
 
     // Trajectories
-    val startToOpenScoringLocation = generate(
-        WaypointManager.kDefaultStartingLocation, WaypointManager.kOpenScoringLocation,
-        kFwdConfig
-    )
+    // Steal Autos
+    val stealStartToOpponentTrenchBalls: Trajectory =
+        generate(WaypointManager.kStealStart, WaypointManager.kOpponentTrenchBalls, kFwdConfig)
+
+    val opponentTrenchBallsToScore: Trajectory =
+        TrajectoryGenerator.generateTrajectory(
+            WaypointManager.kOpponentTrenchBalls, listOf(Translation2d(x = 38.69.feet, y = 13.18.feet)),
+            WaypointManager.kScoreAfterSteal, kRevConfig
+        )
+
+    val scoreToShortTrench: Trajectory =
+        generate(WaypointManager.kScoreAfterSteal, WaypointManager.kShortTrenchAfterSteal, kFwdConfig)
+
+    val scoreToLongTrench: Trajectory =
+        TrajectoryGenerator.generateTrajectory(
+            WaypointManager.kScoreAfterSteal, listOf(Translation2d(x = 30.63.feet, y = 02.71.feet)),
+            WaypointManager.kLongTrenchAfterSteal, kFwdConfig
+        )
+
+    val longTrenchToShortTrench: Trajectory =
+        generate(WaypointManager.kLongTrenchAfterSteal, WaypointManager.kShortTrenchAfterSteal, kRevConfig)
 
     /**
      * Generates a trajectory from a start and end waypoint.
