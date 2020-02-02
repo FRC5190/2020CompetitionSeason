@@ -15,7 +15,7 @@ import org.ghrobotics.lib.commands.FalconSubsystem
 
 object LED : FalconSubsystem() {
     var led = AddressableLED(LEDConstants.kPort)
-    var letBuffer: AddressableLEDBuffer = AddressableLEDBuffer(LEDConstants.kBufferSize)
+    var ledBuffer: AddressableLEDBuffer = AddressableLEDBuffer(LEDConstants.kBufferSize)
     var rainbowFirstPixelHue = 0
 
     var blinkColor: LEDStatus.StatusColor = LEDStatus.StatusColor(0, 0, 0, false)
@@ -24,7 +24,7 @@ object LED : FalconSubsystem() {
 
     init {
         println("LED Subsystem init")
-        led.setLength(letBuffer.length)
+        led.setLength(ledBuffer.length)
         reset()
         led.start()
     }
@@ -56,12 +56,12 @@ object LED : FalconSubsystem() {
     fun rainbow() {
         println("LED Subsystem rainbow")
 
-        for (i in 0..letBuffer.length) {
+        for (i in 0..ledBuffer.length) {
             // Calculate the hue - hue is easier for rainbows because the color
             // shape is a circle so only one value needs to precess
-            var hue = (rainbowFirstPixelHue + (i * 180 / letBuffer.length)) % 180
+            var hue = (rainbowFirstPixelHue + (i * 180 / ledBuffer.length)) % 180
             // Set the value
-            letBuffer.setHSV(i, hue, 255, 128)
+            ledBuffer.setHSV(i, hue, 255, 128)
         }
         // Increase by to make the rainbow "move"
         rainbowFirstPixelHue += 3
@@ -85,10 +85,10 @@ object LED : FalconSubsystem() {
         } else {
             blinkCount = 0
             doBlink = false
-            for (i in 0 until letBuffer.length) { // Sets the specified LED to the RGB values for green
-                letBuffer.setRGB(i, statusCode.r, statusCode.g, statusCode.b)
+            for (i in 0 until ledBuffer.length) { // Sets the specified LED to the RGB values for green
+                ledBuffer.setRGB(i, statusCode.r, statusCode.g, statusCode.b)
             }
-            led.setData(letBuffer)
+            led.setData(ledBuffer)
         }
     }
 }
