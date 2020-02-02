@@ -10,80 +10,64 @@
 
 package org.ghrobotics.frc2020.planners
 
-import edu.wpi.first.wpilibj.geometry.Rotation2d
-import kotlin.math.hypot
-import kotlin.math.sin
-import kotlin.math.sqrt
+import java.io.InputStreamReader
+import java.util.Objects
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.derived.LinearVelocity
+import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
+import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.types.Interpolatable
+import org.ghrobotics.lib.utils.InterpolatingTreeMap
 
 /**
- * An object that is used to perform calculations for shooter mechanics.
+ * An object that reads the trajectory.csv file from the filesystem and
+ * returns interpolated values.
  */
 object ShooterPlanner {
-    // Constants
-    private const val kAccelerationDueToGravity = 9.81
+    // Map to store distance to ShooterPlanner values.
+    private val map = InterpolatingTreeMap.createFromInterpolatable<Meter, ShooterParameters>()
 
-    /**
-     * Calculates the initial velocity of the power cell such that it reaches
-     * the goal when shot at this specific angle.
-     *
-     * @param theta The angle at which the power cell is shot.
-     * @param shooterHeight The height from which the power cell is shot.
-     * @param targetHeight The height of the target.
-     * @param distanceToTarget The distance to the target (in the x direction).
-     */
-    fun calculatePowerCellInitialVelocity(
-        theta: Rotation2d,
-        shooterHeight: SIUnit<Meter>,
-        targetHeight: SIUnit<Meter>,
-        distanceToTarget: SIUnit<Meter>
-    ): SIUnit<LinearVelocity> {
-        // Calculate the delta z
-        val deltaZ = targetHeight - shooterHeight
-
-        // Calculate trigonometric angles required.
-        val sin2Theta = sin(theta.radians * 2.0)
-        val cosThetaSquared = theta.cos * theta.cos
-
-        return SIUnit(
-            distanceToTarget.value * sqrt(
-                kAccelerationDueToGravity /
-                    distanceToTarget.value * sin2Theta - 2 * deltaZ.value * cosThetaSquared
-            )
-        )
+    init {
+        // Load table from CSV.
+        javaClass.classLoader.getResourceAsStream("trajectory.csv").use { stream ->
+            InputStreamReader(stream).readLines().forEach { line ->
+                val data = line.split(",").map { it.trim() }
+                map[SIUnit(data[0].toDouble())] =
+                    ShooterParameters(SIUnit(data[2].toDouble()), SIUnit(Math.toRadians(data[3].toDouble())))
+            }
+        }
     }
 
     /**
-     * Calculates the initial velocity of the power cell such that it reaches
-     * the goal when shot at this specific angle, while accounting for the
-     * robot's motion toward (or away) from the target.
-     *
-     * @param theta The angle at which the power cell is shot.
-     * @param shooterHeight The height from which the power cell is shot.
-     * @param targetHeight The height of the target.
-     * @param distanceToTarget The distance to the target (in the x direction).
+     * Returns the shooter parameters for a given distance to the
+     * goal.
      */
-    fun calculatePowerCellInitialVelocity(
-        theta: Rotation2d,
-        shooterHeight: SIUnit<Meter>,
-        targetHeight: SIUnit<Meter>,
-        distanceToTarget: SIUnit<Meter>,
-        robotXVelocity: SIUnit<LinearVelocity>
-    ): SIUnit<LinearVelocity> {
-        // Get the initial velocity when there is no robot motion.
-        val noRobotMotionIntialVelocity =
-            calculatePowerCellInitialVelocity(theta, shooterHeight, targetHeight, distanceToTarget)
+    operator fun get(distance: SIUnit<Meter>) = map[distance]!!
 
-        // Get the x and z components of that initial velocity.
-        val xComponent = noRobotMotionIntialVelocity.value * theta.cos
-        val zComponent = noRobotMotionIntialVelocity.value * theta.sin
+    data class ShooterParameters(
+        val speed: SIUnit<AngularVelocity>,
+        val angle: SIUnit<Radian>
+    ) : Interpolatable<ShooterParameters> {
+        /**
+         * Interpolates between two ShooterParam objects.
+         *
+         * @param endValue The end value for interpolation (when t = 1).
+         * @param t The interpolation fraction.
+         */
+        override fun interpolate(endValue: ShooterParameters, t: Double): ShooterParameters {
+            return ShooterParameters(
+                speed.lerp(endValue.speed, t),
+                angle.lerp(endValue.angle, t)
+            )
+        }
 
-        // Add the robot's x component velocity to the x component.
-        val newXComponent = xComponent + robotXVelocity.value
+        override fun equals(other: Any?): Boolean {
+            return other is ShooterParameters && speed epsilonEquals other.speed &&
+                angle epsilonEquals other.angle
+        }
 
-        // Pythagorean theorem and return.
-        return SIUnit(hypot(newXComponent, zComponent))
+        override fun hashCode(): Int {
+            return Objects.hash(speed, angle)
+        }
     }
 }

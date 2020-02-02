@@ -70,6 +70,9 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     val leftCurrent get() = periodicIO.leftCurrent
     val rightCurrent get() = periodicIO.rightCurrent
 
+    // Getter for average velocity
+    val averageVelocity get() = (leftVelocity + rightVelocity) / 2.0
+
     override fun disableClosedLoopControl() {
         leftMotor.controller.p = 0.0
         rightMotor.controller.p = 0.0

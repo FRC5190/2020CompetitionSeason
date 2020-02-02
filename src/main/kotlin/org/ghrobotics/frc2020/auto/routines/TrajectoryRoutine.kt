@@ -22,9 +22,9 @@ class TrajectoryRoutine : AutoRoutine {
         return sequential {
             +InstantCommand(Runnable { Drivetrain.resetPosition(Paths.frontOfGoalToTrench.initialPose) })
             +parallelDeadline(Drivetrain.followTrajectory(Paths.frontOfGoalToTrench)) {
-                +Superstructure.aimTurret()
+                +Superstructure.shootPowerCells()
             }
-            +Superstructure.aimTurret()
+            +Superstructure.shootPowerCells()
         }
     }
 }

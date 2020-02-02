@@ -9,7 +9,6 @@
 package org.ghrobotics.frc2020.subsystems.shooter
 
 import com.revrobotics.CANSparkMaxLowLevel
-import edu.wpi.first.wpilibj.Servo
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.ShooterConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -17,7 +16,6 @@ import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
-import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.derived.volts
@@ -37,10 +35,6 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = ShooterConstants.kNativeUnitModel
     )
-
-    // Servos for the adjustable hood.
-    private val hoodServoA = Servo(ShooterConstants.kHoodServoAId)
-    private val hoodServoB = Servo(ShooterConstants.kHoodServoBId)
 
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
@@ -95,11 +89,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * @param percent The desired duty cycle.
      */
     fun setPercent(percent: Double) {
-        periodicIO.desiredOutput =
-            Output.Percent(
-                percent,
-                ShooterConstants.kStowedHoodAngle
-            )
+        periodicIO.desiredOutput = Output.Percent(percent)
         periodicIO.feedforward = 0.volts
     }
 
@@ -107,14 +97,9 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * Sets the speed of the shooter.
      *
      * @param speed The desired speed.
-     * @param hoodAngle The desired hood angle.
      */
-    fun setSpeed(
-        speed: SIUnit<AngularVelocity>,
-        hoodAngle: SIUnit<Radian> = ShooterConstants.kStowedHoodAngle
-    ) {
-        periodicIO.desiredOutput =
-            Output.Velocity(speed, hoodAngle)
+    fun setSpeed(speed: SIUnit<AngularVelocity>) {
+        periodicIO.desiredOutput = Output.Velocity(speed)
         periodicIO.feedforward = ShooterConstants.kS
     }
 
@@ -131,22 +116,11 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         periodicIO.velocity = masterMotor.encoder.velocity
         periodicIO.voltage = masterMotor.voltageOutput
         periodicIO.current = masterMotor.drawnCurrent
-        periodicIO.hoodAngle = SIUnit(
-            hoodServoA.angle
-        )
 
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> masterMotor.setNeutral()
-            is Output.Percent -> {
-                masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-                hoodServoA.angle = desiredOutput.hoodAngle.value
-                hoodServoB.angle = desiredOutput.hoodAngle.value
-            }
-            is Output.Velocity -> {
-                masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
-                hoodServoA.angle = desiredOutput.hoodAngle.value
-                hoodServoB.angle = desiredOutput.hoodAngle.value
-            }
+            is Output.Percent -> masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+            is Output.Velocity -> masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
         }
     }
 
@@ -154,7 +128,6 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         var velocity: SIUnit<AngularVelocity> = 0.radians / 1.seconds
         var voltage: SIUnit<Volt> = 0.volts
         var current: SIUnit<Ampere> = 0.amps
-        var hoodAngle: SIUnit<Radian> = 10.radians
 
         var feedforward: SIUnit<Volt> = 0.volts
         var desiredOutput: Output =
@@ -163,7 +136,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     private sealed class Output {
         object Nothing : Output()
-        class Velocity(val velocity: SIUnit<AngularVelocity>, val hoodAngle: SIUnit<Radian>) : Output()
-        class Percent(val percent: Double, val hoodAngle: SIUnit<Radian>) : Output()
+        class Velocity(val velocity: SIUnit<AngularVelocity>) : Output()
+        class Percent(val percent: Double) : Output()
     }
 }
