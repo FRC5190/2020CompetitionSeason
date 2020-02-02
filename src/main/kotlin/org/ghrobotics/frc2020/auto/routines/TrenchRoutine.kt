@@ -13,54 +13,40 @@ import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.seconds
 
-class StealRoutine(private val type: Type) : AutoRoutine {
+class TrenchRoutine(private val type: Type) : AutoRoutine {
 
     // Constants
     private val kIntakeDelayTolerance = 0.3.seconds
 
     // Paths
-    private val path1 = TrajectoryManager.stealStartToOpponentTrenchBalls
-    private val path2 = TrajectoryManager.opponentTrenchBallsToStealScore
-    private val path3 =
-        if (type == Type.EIGHT_BALL) TrajectoryManager.stealScoreToShortPickup else TrajectoryManager.stealScoreToLongPickup
-    private val path4 = TrajectoryManager.longPickupToShortPickup
+    private val path1 =
+        if (type == Type.SIX_BALL) TrajectoryManager.trenchStartToShortPickup else TrajectoryManager.trenchStartToLongPickup
+    private val path2 = TrajectoryManager.longPickupToShortPickup
 
     /**
      * Returns the command that runs the auto routine.
      * @return The command that runs the auto routine.
      */
     override fun getRoutine(): Command = sequential {
-        // Reset odometry to current location.
-        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kStealStart) })
+        // Reset odometry
+        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchStart) })
 
-        // Drive and pickup balls from opponent trench.
+        // Shoot existing power cells from current location.
+        +Superstructure.shootPowerCells()
+
+        // Pickup more power cells.
         +parallel {
             +Drivetrain.followTrajectory(path1)
             +Superstructure.intakePowerCells()
         }.withTimeout(path1.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
 
-        // Drive back to the scoring position and score.
-        +parallel {
-            +Drivetrain.followTrajectory(path2)
-            +sequential {
-                +WaitCommand(0.2)
-                +Superstructure.shootPowerCells()
-            }
-        }
-
-        // Pickup more balls.
-        +parallel {
-            +Drivetrain.followTrajectory(path3)
-            +Superstructure.intakePowerCells()
-        }.withTimeout(path3.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
-
-        // Score immediately if 8 ball auto, or come back into range
-        // if 10 ball auto.
-        if (type == Type.EIGHT_BALL) {
+        // Shot the power cells if it's a 6 ball auto. Come back and
+        // shoot and if 8 ball.
+        if (type == Type.SIX_BALL) {
             +Superstructure.shootPowerCells()
         } else {
             +parallel {
-                +Drivetrain.followTrajectory(path4)
+                +Drivetrain.followTrajectory(path2)
                 +sequential {
                     +WaitCommand(0.2)
                     +Superstructure.shootPowerCells()
@@ -70,6 +56,6 @@ class StealRoutine(private val type: Type) : AutoRoutine {
     }
 
     enum class Type {
-        EIGHT_BALL, TEN_BALL
+        SIX_BALL, EIGHT_BALL
     }
 }

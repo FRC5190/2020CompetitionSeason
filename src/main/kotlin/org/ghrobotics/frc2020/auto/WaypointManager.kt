@@ -18,7 +18,9 @@ object WaypointManager {
     private val kBumperThickness = 3.inches
 
     // Field Constants
+    private val kMinFieldX = 0.feet
     private val kMaxFieldX = 54.feet
+    private val kMinFieldY = 0.feet
     private val kMaxFieldY = 27.feet
 
     private val kInitiationLineX = kMaxFieldX - 10.feet
@@ -37,11 +39,24 @@ object WaypointManager {
     val kScoreAfterSteal = Pose2d(
         x = 41.78.feet, y = 03.26.feet, angle = Rotation2d.fromDegrees(134.0)
     )
-    val kShortTrenchAfterSteal = Pose2d(
+    val kShortPickupAfterSteal = Pose2d(
         x = 27.46.feet, y = 02.18.feet, angle = Rotation2d.fromDegrees(165.0)
     )
-    val kLongTrenchAfterSteal = Pose2d(
+    val kLongPickupAfterSteal = Pose2d(
         x = 22.56.feet, y = 02.13.feet, angle = Rotation2d.fromDegrees(173.0)
+    )
+
+    // Trench Autos
+    val kTrenchStart = Pose2d(
+        x = kInitiationLineX,
+        y = kMinFieldY + kBumperThickness + kRobotWidth / 2.0,
+        angle = Rotation2d.fromDegrees(180.0)
+    )
+    val kShortPickupAfterTrench = Pose2d(
+        x = 28.12.feet, y = 2.18.feet, angle = Rotation2d.fromDegrees(180.0)
+    )
+    val kLongPickupAfterTrench = Pose2d(
+        x = 22.59.feet, y = 2.27.feet, angle = Rotation2d.fromDegrees(175.0)
     )
 
     val kOpenScoringLocation = Pose2d(38.21.feet, 4.75.feet, Rotation2d.fromDegrees(-132.0))

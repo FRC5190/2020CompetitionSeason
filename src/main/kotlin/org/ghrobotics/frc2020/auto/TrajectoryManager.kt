@@ -57,23 +57,30 @@ object TrajectoryManager {
     val stealStartToOpponentTrenchBalls: Trajectory =
         generate(WaypointManager.kStealStart, WaypointManager.kOpponentTrenchBalls, kFwdConfig)
 
-    val opponentTrenchBallsToScore: Trajectory =
+    val opponentTrenchBallsToStealScore: Trajectory =
         TrajectoryGenerator.generateTrajectory(
             WaypointManager.kOpponentTrenchBalls, listOf(Translation2d(x = 38.69.feet, y = 13.18.feet)),
             WaypointManager.kScoreAfterSteal, kRevConfig
         )
 
-    val scoreToShortTrench: Trajectory =
-        generate(WaypointManager.kScoreAfterSteal, WaypointManager.kShortTrenchAfterSteal, kFwdConfig)
+    val stealScoreToShortPickup: Trajectory =
+        generate(WaypointManager.kScoreAfterSteal, WaypointManager.kShortPickupAfterSteal, kFwdConfig)
 
-    val scoreToLongTrench: Trajectory =
+    val stealScoreToLongPickup: Trajectory =
         TrajectoryGenerator.generateTrajectory(
             WaypointManager.kScoreAfterSteal, listOf(Translation2d(x = 30.63.feet, y = 02.71.feet)),
-            WaypointManager.kLongTrenchAfterSteal, kFwdConfig
+            WaypointManager.kLongPickupAfterSteal, kFwdConfig
         )
 
-    val longTrenchToShortTrench: Trajectory =
-        generate(WaypointManager.kLongTrenchAfterSteal, WaypointManager.kShortTrenchAfterSteal, kRevConfig)
+    val longPickupToShortPickup: Trajectory =
+        generate(WaypointManager.kLongPickupAfterSteal, WaypointManager.kShortPickupAfterSteal, kRevConfig)
+
+    // Trench Autos
+    val trenchStartToShortPickup: Trajectory =
+        generate(WaypointManager.kTrenchStart, WaypointManager.kShortPickupAfterTrench, kFwdConfig)
+
+    val trenchStartToLongPickup: Trajectory =
+        generate(WaypointManager.kTrenchStart, WaypointManager.kLongPickupAfterTrench, kFwdConfig)
 
     /**
      * Generates a trajectory from a start and end waypoint.

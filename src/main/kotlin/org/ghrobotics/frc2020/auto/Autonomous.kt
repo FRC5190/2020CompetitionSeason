@@ -12,8 +12,9 @@ import org.ghrobotics.frc2020.auto.routines.CharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.CheckSubsystemsRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
 import org.ghrobotics.frc2020.auto.routines.LineCrossRoutine
+import org.ghrobotics.frc2020.auto.routines.StealRoutine
 import org.ghrobotics.frc2020.auto.routines.TestingRoutine
-import org.ghrobotics.frc2020.auto.routines.ThreeBallRoutine
+import org.ghrobotics.frc2020.auto.routines.TrenchRoutine
 import org.ghrobotics.frc2020.comms.Network
 
 /**
@@ -29,16 +30,16 @@ object Autonomous {
 
             Mode.LINE_CROSS -> LineCrossRoutine()
 
-            Mode.THREE_BALL -> ThreeBallRoutine()
+            Mode.THREE_BALL -> TODO()
 
             Mode.SIX_BALL_RENDEZVOUS -> TODO()
-            Mode.SIX_BALL_TRENCH -> TODO()
+            Mode.SIX_BALL_TRENCH -> TrenchRoutine(TrenchRoutine.Type.SIX_BALL)
 
             Mode.EIGHT_BALL_RENDEZVOUS -> TODO()
-            Mode.EIGHT_BALL_TRENCH -> TODO()
-            Mode.EIGHT_BALL_STEAL -> TODO()
+            Mode.EIGHT_BALL_TRENCH -> TrenchRoutine(TrenchRoutine.Type.EIGHT_BALL)
+            Mode.EIGHT_BALL_STEAL -> StealRoutine(StealRoutine.Type.EIGHT_BALL)
 
-            Mode.TEN_BALL_STEAL -> TODO()
+            Mode.TEN_BALL_STEAL -> StealRoutine(StealRoutine.Type.TEN_BALL)
 
             null -> DefaultRoutine()
         }.startRoutine()
