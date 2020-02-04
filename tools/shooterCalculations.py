@@ -6,6 +6,22 @@ flyWheelDia = 4.0
 launchHeight = 26.0
 trajectories = []
 
+measuredTerminalVelocity = 35.0  # ft/s
+dragCoefficient = 0.79
+airDensity = 1.23  # kg/m3
+liftCoefficient = 0.2
+
+gravity = -9.8  # m/s2
+ballDiameter = 7.0  # in
+powerCellMass = 0.14  # kg
+dt = 0.005
+
+measuredTerminalVelocityMs = measuredTerminalVelocity * 12 * 2.54 / 100  # m/s
+ballDiameterMet = ballDiameter * 2.54 / 100  # m
+frontalArea = math.pi * ballDiameterMet * ballDiameterMet / 4  # m2
+mud = airDensity * frontalArea * dragCoefficient / 2  # kg/m
+mum = airDensity * frontalArea * liftCoefficient / 2  # kg/m
+
 def distance(t, d):
     return math.sqrt((t['d'] - d)*(t['d'] - d) + (t['h'] - 2.49)*(t['h'] - 2.49))
 
@@ -18,19 +34,6 @@ def trajectory(motorSpeed, launchAngle):
     launchAngleRad = launchAngle * math.pi / 180  # rad
     launchHeightMet = launchHeight * 2.54 / 100  # m
 
-    measuredTerminalVelocity = 35.30  # ft/s
-    measuredTerminalVelocityMs = measuredTerminalVelocity * 12 * 2.54 / 100  # m/s
-    dragCoefficient = 0.39
-    gravity = -9.8  # m/s2
-    ballDiameter = 7.0  # in
-    ballDiameterMet = ballDiameter * 2.54 / 100  # m
-    frontalArea = math.pi * ballDiameterMet * ballDiameterMet / 4  # m2
-    airDensity = 1.23  # kg/m3
-    mud = airDensity * frontalArea * dragCoefficient / 2  # kg/m
-    powerCellMass = 0.07  # kg
-    dt = 0.005
-    liftCoefficient = 0.1
-    mum = airDensity * frontalArea * liftCoefficient / 2  # kg/m
 
     x = 0.0
     y = launchHeightMet
@@ -88,7 +91,7 @@ while motorSpeed <= 6000:
         launchAngle += 2
     motorSpeed += 10
 
-d = 1
+d = 0.2
 while d <= 10:
     updatedTrajectories = list(map(lambda t: t.update({'distance': distance(t, d)}) or t, trajectories))
     sortedTrajectories = sorted(updatedTrajectories, key = lambda t: t['distance'])
