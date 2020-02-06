@@ -34,13 +34,13 @@ object Climber : FalconSubsystem() {
 
     private val winchMasterMotor = FalconMAX(
             id = kWinchMasterId,
-            type = CANSparkMaxLowLevel.MotorType.kBrushless,
+            type = CANSparkMaxLowLevel.MotorType.kBrushed,
             model = kClimberNativeUnitModel
     )
 
     private val winchSlaveMotor = FalconMAX(
             id = kWinchSlaveId,
-            type = CANSparkMaxLowLevel.MotorType.kBrushless,
+            type = CANSparkMaxLowLevel.MotorType.kBrushed,
             model = kClimberNativeUnitModel
     )
 
