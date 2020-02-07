@@ -143,6 +143,9 @@ object LED : FalconSubsystem() {
             snakeMultiplier = -1
         }
 
+        // Make everything clear first.
+        setSolidColor(Color.kBlack)
+
         // Set LEDs.
         for (i in 0 until kNumLEDsInSnake) {
             ledBuffer.setLED(snakeFirstIndex + i, color)
