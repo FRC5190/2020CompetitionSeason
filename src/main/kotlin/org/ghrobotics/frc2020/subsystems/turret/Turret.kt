@@ -87,7 +87,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     }
 
     // Status (zeroing or ready)
-    var status = Status.ZEROING
+    var status = Status.NOT_ZEROED
         private set
 
     init {
@@ -123,8 +123,14 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun zero() {
         master.encoder.resetPosition(0.radians)
-        status =
-            Status.READY
+        setStatus(Status.READY)
+    }
+
+    /**
+     * Sets the status of the turret.
+     */
+    fun setStatus(status: Status) {
+        this.status = status
     }
 
     /**
@@ -214,6 +220,6 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     }
 
     enum class Status {
-        ZEROING, READY
+        NOT_ZEROED, ZEROING, READY
     }
 }
