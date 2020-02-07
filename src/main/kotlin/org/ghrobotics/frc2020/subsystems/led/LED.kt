@@ -10,56 +10,117 @@ package org.ghrobotics.frc2020.subsystems.led
 
 import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.util.Color
 import org.ghrobotics.frc2020.LEDConstants
+import org.ghrobotics.frc2020.Robot
+import org.ghrobotics.frc2020.subsystems.turret.Turret
+import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.commands.FalconSubsystem
+import org.ghrobotics.lib.mathematics.units.inMilliseconds
+import org.ghrobotics.lib.mathematics.units.seconds
+import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
+/**
+ * Represents the addressable LEDs on the robot. These LEDs are
+ * used to relay information to the driver and drive coach about
+ * the status of various subsystems and the overall health of the
+ * robot.
+ */
 object LED : FalconSubsystem() {
-    var led = AddressableLED(LEDConstants.kPort)
-    var ledBuffer: AddressableLEDBuffer = AddressableLEDBuffer(LEDConstants.kBufferSize)
-    var rainbowFirstPixelHue = 0
 
-    var blinkColor: LEDStatus.StatusColor = LEDStatus.StatusColor(0, 0, 0, false)
-    var doBlink: Boolean = false
-    var blinkCount: Int = 0
+    // LED and its buffer.
+    private val led = AddressableLED(LEDConstants.kPort)
+    private val ledBuffer = AddressableLEDBuffer(LEDConstants.kBufferSize)
+
+    // LED Colors
+    private val kFault = Color.kRed
+    private val kWaitingForCamera = Color.kLimeGreen
+    private val kZeroingTurret = Color.kGreen
+    private val kClimb = Color.kOrange
+
+    // Current time
+    private var currentTime = Timer.getFPGATimestamp().seconds
+
+    // Variables to store status for rainbow mode and snake mode.
+    private var rainbowFirstPixelHue = 0
+    private var snakeFirstIndex = 0
+    private var snakeMultiplier = 1
+
+    // Constants for snake pattern
+    private const val kNumLEDsInSnake = 5
+    private const val kSnakeAdvancement = 1
 
     init {
-        println("LED Subsystem init")
+        // Set the length from the LED buffer.
         led.setLength(ledBuffer.length)
-        reset()
+
+        // Start streaming.
         led.start()
     }
 
-    fun reset() {
-        println("LED Subsystem reset")
-        setStatus(LEDStatus.RESET)
+    override fun periodic() {
+        // Update current time.
+        currentTime = Timer.getFPGATimestamp().seconds
+
+        when {
+            // Blink red when turret is not zeroed.
+            Turret.status == Turret.Status.NOT_ZEROED -> {
+                if (currentTime.inMilliseconds() % 1000 > 500) {
+                    setSolidColor(kFault)
+                } else {
+                    setSolidColor(Color.kBlack)
+                }
+            }
+
+            // Blink rapid green when turret is being zeroed.
+            Turret.status == Turret.Status.ZEROING -> {
+                if (currentTime.inMilliseconds() % 250 > 125) {
+                    setSolidColor(kZeroingTurret)
+                } else {
+                    setSolidColor(Color.kBlack)
+                }
+            }
+
+            // Snake pattern when waiting for camera.
+            !VisionProcessing.isConnected -> setSnakePattern(kWaitingForCamera)
+
+            // Blink orange in climb mode.
+            Robot.isClimbMode -> {
+                if (currentTime.inMilliseconds() % 1000 > 500) {
+                    setSolidColor(kClimb)
+                } else {
+                    setSolidColor(Color.kBlack)
+                }
+            }
+
+            // Rainbow when robot is disabled and everything is ready.
+            Robot.currentMode == FalconTimedRobot.Mode.DISABLED -> setRainbow()
+        }
+
+        // Update with new data.
+        led.setData(ledBuffer)
     }
 
-    override fun periodic() {
-        super.periodic()
-        if (doBlink) {
-            if (0 == blinkCount % 2) {
-                setStatus(blinkColor)
-            } else {
-                setStatus(LEDStatus.StatusColor(0, 0, 0, false))
-            }
-            blinkCount ++
-            if (blinkCount >= 10) {
-                blinkCount = 0
-                doBlink = false
-            }
+    /**
+     * Sets all LEDs in the LED strip to a solid color.
+     *
+     * @param color The color.
+     */
+    private fun setSolidColor(color: Color) {
+        for (i in 0 until ledBuffer.length) {
+            ledBuffer.setLED(i, color)
         }
     }
-//    activates rainbow mode,
-//    should be used when all sensors are connected
-//    but when robot is disabled
 
-    fun rainbow() {
-        println("LED Subsystem rainbow")
-
+    /**
+     * Sets a rainbow pattern on the LED buffer.
+     */
+    private fun setRainbow() {
         for (i in 0..ledBuffer.length) {
             // Calculate the hue - hue is easier for rainbows because the color
             // shape is a circle so only one value needs to precess
-            var hue = (rainbowFirstPixelHue + (i * 180 / ledBuffer.length)) % 180
+            val hue = (rainbowFirstPixelHue + (i * 180 / ledBuffer.length)) % 180
             // Set the value
             ledBuffer.setHSV(i, hue, 255, 128)
         }
@@ -69,26 +130,28 @@ object LED : FalconSubsystem() {
         rainbowFirstPixelHue %= 180
     }
 
-    // Function for settings the colors of all RGB lights
-    // You can manually input RGB values and a true or false statement for making the lights blink
-    // THIS FUNCTION IS LIKELY TO CHANGE IN THE FUTURE, INCLUDING THE ARGUMENTS THE WILL BE PASSED TO IT
-    // You can use a list of predefined enums to set colors, Enums are in the LEDStatus class within the same package
-    // LEDSTATUS color enums default to no blinking, manually inputted colors blink by default
-    fun setStatus(statusCode: LEDStatus.StatusColor) {
-        println("LED Subsystem Set Status")
-
-        if (statusCode.blink) {
-            // will run code to flash led color using Periodic
-            blinkColor = LEDStatus.StatusColor(statusCode.r, statusCode.g, statusCode.b, false)
-            blinkCount = 0
-            doBlink = true
-        } else {
-            blinkCount = 0
-            doBlink = false
-            for (i in 0 until ledBuffer.length) { // Sets the specified LED to the RGB values for green
-                ledBuffer.setRGB(i, statusCode.r, statusCode.g, statusCode.b)
-            }
-            led.setData(ledBuffer)
+    /**
+     * Sets a snake pattern on the LED buffer.
+     *
+     * @param color The color to use for the snake pattern.
+     */
+    private fun setSnakePattern(color: Color) {
+        // Set multiplier.
+        if (snakeFirstIndex == 0) {
+            snakeMultiplier = 1
+        } else if (snakeFirstIndex == ledBuffer.length - kNumLEDsInSnake) {
+            snakeMultiplier = -1
         }
+
+        // Make everything clear first.
+        setSolidColor(Color.kBlack)
+
+        // Set LEDs.
+        for (i in 0 until kNumLEDsInSnake) {
+            ledBuffer.setLED(snakeFirstIndex + i, color)
+        }
+
+        // Advance first index.
+        snakeFirstIndex += kSnakeAdvancement * snakeMultiplier
     }
 }

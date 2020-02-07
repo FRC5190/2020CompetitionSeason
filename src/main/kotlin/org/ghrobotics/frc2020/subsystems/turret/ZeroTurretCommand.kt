@@ -20,7 +20,12 @@ class ZeroTurretCommand : FalconCommand(Turret) {
     override fun initialize() = timer.start()
 
     override fun execute() {
-        if (!Turret.hallEffectEngaged) timer.reset()
+        if (!Turret.hallEffectEngaged) {
+            timer.reset()
+            Turret.setStatus(Turret.Status.NOT_ZEROED)
+        } else {
+            Turret.setStatus(Turret.Status.ZEROING)
+        }
     }
 
     override fun end(interrupted: Boolean) {

@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import kotlin.math.tan
-import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.Turret
@@ -23,7 +22,6 @@ import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.utils.toTransform
-import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
  * Object that handles Vision Processing on the robot.
@@ -51,6 +49,11 @@ object VisionProcessing : FalconSubsystem() {
      * Returns whether the camera sees a valid target.
      */
     val isValid get() = camera.isValid
+
+    /**
+     * Returns whether the camera is connected.
+     */
+    val isConnected get() = camera.isConnected
 
     /**
      * Returns the distance along the ground to the goal.
@@ -85,13 +88,7 @@ object VisionProcessing : FalconSubsystem() {
         // Update GoalTracker.
         GoalTracker.update()
 
-        if (Robot.currentMode == FalconTimedRobot.Mode.DISABLED) {
-            periodicIO.desiredLEDState = !camera.isConnected
-        }
-        if (periodicIO.desiredLEDState != lastDesiredOutput) {
-            led.set(!periodicIO.desiredLEDState)
-            lastDesiredOutput = periodicIO.desiredLEDState
-        }
+        led.set(!periodicIO.desiredLEDState)
     }
 
     /**
