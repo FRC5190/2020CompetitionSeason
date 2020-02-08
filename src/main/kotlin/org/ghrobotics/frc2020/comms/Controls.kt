@@ -86,7 +86,6 @@ object Controls {
             pov(90).changeOn { Turret.jogZero(-TurretConstants.kDefaultJogAmount) }
         }
 
-
         /**
          * Toggles climb mode. When climb mode is active, buttons which
          * allow operation of the climb subsystem are activated.
@@ -95,7 +94,6 @@ object Controls {
             Robot.isClimbMode = !Robot.isClimbMode
             Superstructure.goToStowedPosition()
         }
-
 
         /**
          * These are just buttons for debugging, will be removed for competition.
