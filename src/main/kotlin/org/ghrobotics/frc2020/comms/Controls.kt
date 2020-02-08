@@ -14,6 +14,7 @@ import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
 import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
+import org.ghrobotics.frc2020.subsystems.forks.DropsForkCommand
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.shooter.ManualShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
@@ -23,6 +24,7 @@ import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.utils.map
 import org.ghrobotics.lib.utils.not
 import org.ghrobotics.lib.wrappers.hid.button
+import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.kB
 import org.ghrobotics.lib.wrappers.hid.kBumperLeft
 import org.ghrobotics.lib.wrappers.hid.kBumperRight
@@ -63,6 +65,11 @@ object Controls {
             triggerAxisButton(GenericHID.Hand.kRight) {
                 change(ManualClimberCommand(source.map { it * -1.0 }))
             }
+
+            /**
+             * Extends the buddy climb platform
+             */
+            button(kA).change(DropsForkCommand(true))
         }
 
         /**
