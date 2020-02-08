@@ -96,6 +96,9 @@ object LED : FalconSubsystem() {
 
             // Rainbow when robot is disabled and everything is ready.
             Robot.currentMode == FalconTimedRobot.Mode.DISABLED -> setRainbow()
+
+            // Off when none of the above conditions are met.
+            else -> setSolidColor(Color.kBlack)
         }
 
         // Update with new data.
