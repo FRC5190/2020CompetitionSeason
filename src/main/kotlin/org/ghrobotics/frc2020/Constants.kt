@@ -6,6 +6,8 @@
  * Copyright 2019, Green Hope Falcons
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package org.ghrobotics.frc2020
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d
@@ -23,10 +25,15 @@ import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 
-/**
- * Contains constants for the drivetrain.
- */
-@Suppress("MemberVisibilityCanBePrivate", "unused")
+object ClimberConstants {
+    const val kWinchMasterId = 11
+    const val kWinchSlaveId = 12
+
+    const val kPCMId = 41
+    const val kExtensionPistonId = 1
+    const val kWinchBrakeId = 4
+}
+
 object DriveConstants {
     const val kLeftMasterId = 1
     const val kLeftSlave1Id = 2
@@ -42,7 +49,72 @@ object DriveConstants {
     const val kP = 0.0003
 }
 
-@Suppress("MemberVisibilityCanBePrivate", "unused")
+object FeederConstants {
+    const val kFeederMasterId = 10
+    val kFeederRadius = 1.inches
+    val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
+}
+
+object FortuneWheelConstants {
+    // Determines the bit-depth of colors when being compared.
+    // The bit-depth determines the amount of possible colors.
+    // Ex: '255' would result in an 8bit color spectrum.
+    const val kColorBitDepth = 9
+
+    // Spinner
+    const val kSpinnerSpeed = 0.2
+    const val kSpinnerMotorId = 8
+    val kSpinnerRadius = 3.inches // Radius of wheel connected to the spinner motor
+    val kSpinnerUnitModel = NativeUnitLengthModel(42.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
+
+    // Accuracy
+    const val kDataAccuracy = 4
+    const val kCompletion = 10
+}
+
+object HoodConstants {
+    const val kServoAId = 0
+    const val kServoBId = 1
+
+    const val kEncoderAId = 2
+    const val kEncoderBId = 3
+
+    const val kP = 0.0
+
+    const val kGearRatio = 0.5
+    val kNativeUnitModel = NativeUnitRotationModel(4096.nativeUnits * kGearRatio)
+}
+
+object HookConstants {
+    const val kHookId = 13
+    val kHookNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
+}
+
+object IntakeConstants {
+    const val kIntakeId = 9
+    const val kIntakeModuleId = 41
+    const val kIntakePistonId = 0
+}
+
+object LEDConstants {
+    const val kPort = 9
+    const val kBufferSize = 60
+}
+
+object ShooterConstants {
+    const val kMasterId = 6
+    const val kSlaveId = 7
+
+    const val kGearRatio = 1.0 / 2.0
+
+    val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
+
+    val kS = 0.volts
+
+    const val kP = 3.5E-4
+    const val kF = 2.0E-4
+}
+
 object TurretConstants {
     const val kTurretId = 5
     const val kHallEffectSensorId = 1
@@ -68,82 +140,12 @@ object TurretConstants {
     val kTurretRelativeToRobotCenter = Translation2d((6).inches, 0.inches)
 }
 
-@Suppress("MemberVisibilityCanBePrivate", "unused")
-object ShooterConstants {
-    const val kMasterId = 6
-    const val kSlaveId = 7
-
-    const val kGearRatio = 1.0 / 2.0
-
-    val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
-
-    val kS = 0.volts
-
-    const val kP = 3.5E-4
-    const val kF = 2.0E-4
-}
-
-object HoodConstants {
-    const val kServoAId = 0
-    const val kServoBId = 1
-
-    const val kEncoderAId = 2
-    const val kEncoderBId = 3
-
-    const val kP = 0.0
-
-    const val kGearRatio = 0.5
-    val kNativeUnitModel = NativeUnitRotationModel(4096.nativeUnits * kGearRatio)
-}
-
-object IntakeConstants {
-    const val kIntakeId = 9
-    const val kIntakeModuleId = 41
-    const val kIntakePistonId = 0
-}
-
-object FortuneWheelConstants {
-    // Determines the bit-depth of colors when being compared.
-    // The bit-depth determines the amount of possible colors.
-    // Ex: '255' would result in an 8bit color spectrum.
-    const val kColorBitDepth = 9
-
-    // Spinner
-    const val kSpinnerSpeed = 0.2
-    const val kSpinnerMotorId = 8
-    val kSpinnerRadius = 3.inches // Radius of wheel connected to the spinner motor
-    val kSpinnerUnitModel = NativeUnitLengthModel(42.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
-
-    // Accuracy
-    val kDataAccuracy = 4
-    val kCompletion = 10
-}
-
-object ClimberConstants {
-    const val kWinchMasterId = 11
-    const val kWinchSlaveId = 12
-    const val kPistonId = 1
-    const val kPneumaticModuleId = 41
-    val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
-}
-
-object HookConstants {
-    const val kHookId = 13
-    val kHookNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
-}
-
-object FeederConstants {
-    const val kFeederMasterId = 10
-    val kFeederRadius = 1.inches
-    val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
-}
-
 object VisionConstants {
     const val kLEDId = 0
 
     val kGoalHeight = 92.inches
     val kCameraHeight = 22.5.inches
-    val kCameraAngle = Rotation2d.fromDegrees(25.0)
+    val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(25.0)
 
     val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d())
 
@@ -154,9 +156,4 @@ object VisionConstants {
     const val kMedianWindowSize = 10
 
     val kGoalLocation = Pose2d(54.feet, 94.66.inches, Rotation2d())
-}
-
-object LEDConstants {
-    const val kPort = 9
-    const val kBufferSize = 60
 }
