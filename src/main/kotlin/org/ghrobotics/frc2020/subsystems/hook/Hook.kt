@@ -9,9 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.hook
 
 import com.revrobotics.CANSparkMaxLowLevel
-import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.HookConstants.kHookId
-import org.ghrobotics.frc2020.HookConstants.kHookNativeUnitModel
+import org.ghrobotics.frc2020.HookConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.Meter
@@ -22,18 +20,56 @@ import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.motors.rev.FalconMAX
 
+/**
+ * Represents the hook which can slide across the climbing bar.
+ */
 object Hook : FalconSubsystem() {
 
-    private val hookMotor = FalconMAX(
-            id = kHookId,
-            type = CANSparkMaxLowLevel.MotorType.kBrushless,
-            model = kHookNativeUnitModel
+    // Motor
+    private val masterMotor = FalconMAX(
+        id = HookConstants.kHookId,
+        type = CANSparkMaxLowLevel.MotorType.kBrushless,
+        model = HookConstants.kNativeUnitModel
     )
 
     private val periodicIO = PeriodicIO()
-    val hookPosition get() = periodicIO.position
 
-    private class PeriodicIO() {
+    init {
+        defaultCommand = ManualHookCommand { 0.0 }
+    }
+
+    override fun periodic() {
+        periodicIO.voltage = masterMotor.voltageOutput
+        periodicIO.current = masterMotor.drawnCurrent
+        periodicIO.position = masterMotor.encoder.position
+
+        when (val desiredOutput = periodicIO.desiredOutput) {
+            is Output.Nothing ->
+                masterMotor.setNeutral()
+            is Output.Percent ->
+                masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+        }
+    }
+
+    /**
+     * Zeros the motor output.
+     */
+    override fun setNeutral() {
+        periodicIO.feedforward = 0.volts
+        periodicIO.desiredOutput = Output.Nothing
+    }
+
+    /**
+     * Commands a percent output to the motor.
+     *
+     * @param percent The percent output to command.
+     */
+    fun setPercent(percent: Double) {
+        periodicIO.feedforward = 0.volts
+        periodicIO.desiredOutput = Output.Percent(percent)
+    }
+
+    private class PeriodicIO {
         var current: SIUnit<Ampere> = 0.amps
         var voltage: SIUnit<Volt> = 0.volts
         var position: SIUnit<Meter> = 0.meters
@@ -42,51 +78,8 @@ object Hook : FalconSubsystem() {
         var desiredOutput: Output = Output.Nothing
     }
 
-    override fun periodic() {
-        periodicIO.voltage = hookMotor.voltageOutput
-        periodicIO.current = hookMotor.drawnCurrent
-        periodicIO.position = hookMotor.encoder.position
-
-        when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing ->
-                hookMotor.setNeutral()
-            is Output.Percent ->
-                hookMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-            is Output.Position ->
-                hookMotor.setPosition(desiredOutput.position, periodicIO.feedforward)
-        }
-    }
-
-    override fun setNeutral() {
-        periodicIO.feedforward = 0.volts
-        periodicIO.desiredOutput = Output.Nothing
-    }
-
-    fun setPercent(percent: Double) {
-        periodicIO.feedforward = 0.volts
-        periodicIO.desiredOutput = Output.Percent(percent)
-    }
-
-    fun resetPosition(position: SIUnit<Meter>) {
-        hookMotor.encoder.resetPosition(position)
-    }
-
-    fun setPosition(position: SIUnit<Meter>) {
-        periodicIO.feedforward = 0.volts
-        periodicIO.desiredOutput = Output.Position(position)
-    }
-
-    init {
-        defaultCommand = ManualHookCommand { 0.0 }
-    }
-
-    sealed class Output {
+    private sealed class Output {
         object Nothing : Output()
         class Percent(val percent: Double) : Output()
-        class Position(val position: SIUnit<Meter>) : Output()
-    }
-
-    override fun checkSubsystem(): Command {
-        return TestHookCommand().withTimeout(3.0)
     }
 }
