@@ -72,7 +72,6 @@ object FortuneWheelConstants {
     const val kCompletion = 10
 }
 
-
 object HoodConstants {
     const val kServoAId = 0
     const val kServoBId = 1
@@ -91,7 +90,6 @@ object HookConstants {
     val kHookNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }
 
-
 object IntakeConstants {
     const val kIntakeId = 9
     const val kIntakeModuleId = 41
@@ -102,7 +100,6 @@ object LEDConstants {
     const val kPort = 9
     const val kBufferSize = 60
 }
-
 
 object ShooterConstants {
     const val kMasterId = 6
