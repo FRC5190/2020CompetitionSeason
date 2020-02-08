@@ -8,17 +8,21 @@
 
 package org.ghrobotics.frc2020.subsystems.hook
 
-import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
-class ManualHookCommand(private val percentSource: DoubleSource) : FalconCommand(Climber) {
+/**
+ * Moves the hook using a manual percent command.
+ *
+ * @param percentSource The percent command.
+ */
+class ManualHookCommand(private val percentSource: DoubleSource) : FalconCommand(Hook) {
 
     override fun execute() {
-        Climber.setPercent(percentSource())
+        Hook.setPercent(percentSource())
     }
 
     override fun end(interrupted: Boolean) {
-        Climber.setNeutral()
+        Hook.setNeutral()
     }
 }

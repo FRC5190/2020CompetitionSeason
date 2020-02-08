@@ -17,10 +17,8 @@ import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inches
-import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
-import org.ghrobotics.lib.mathematics.units.nativeunit.SlopeNativeUnitModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
@@ -87,7 +85,10 @@ object HoodConstants {
 
 object HookConstants {
     const val kHookId = 13
-    val kHookNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
+    const val kGearRatio = 50.0
+
+    val kWheelRadius = 2.inches
+    val kNativeUnitModel = NativeUnitLengthModel(kGearRatio.nativeUnits, kWheelRadius)
 }
 
 object IntakeConstants {
