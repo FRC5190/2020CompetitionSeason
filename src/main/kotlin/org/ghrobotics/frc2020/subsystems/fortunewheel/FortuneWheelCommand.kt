@@ -12,99 +12,124 @@ import kotlin.math.absoluteValue
 import kotlin.math.pow
 import org.ghrobotics.frc2020.FortuneWheelConstants
 import org.ghrobotics.lib.commands.FalconCommand
+import org.ghrobotics.lib.mathematics.units.derived.inInchesPerSecond
+import org.ghrobotics.lib.mathematics.units.inInches
+import org.ghrobotics.lib.mathematics.units.inches
+import org.ghrobotics.lib.mathematics.units.meters
+import kotlin.math.ceil
+import kotlin.math.floor
 
 class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
-    private var colorTarget = FortuneColor.BLACK
-    private var cycleTarget = 0
-    private var cycle = 0
-    private var direction = 0
-    private var speed = 0.0
-    private var correctCount = 0
-    private var success = false
+    private var status = Status.INITIALIZING
 
-    // Rotate X number of cycles
+    private var targetColor = FortuneColor.BLACK
+    private var targetCycles = 0
+    private var targetDistance = 0.meters
+
+    private var lastCompletion = -0.1
+
+    private var accuracy = ColorAccuracy()
+
     constructor(cycles: Int) : this() {
-        colorTarget = FortuneWheel.sensorColor + cycles
-        cycleTarget = cycles
+        targetCycles = cycles
+        targetDistance = FortuneWheelConstants.kColorDistance * cycles
     }
 
-    // Rotate to color
-    constructor(color: FortuneColor) : this() {
-        var currentColor = FortuneWheel.sensorColor
-        cycleTarget = currentColor.findNearest(color + 2)
-        colorTarget = color + 2
+    constructor(color: FortuneColor) : this(){
+        targetColor = color + 2
     }
 
-    // Save data for comparisons
-    private var accuracy = Accuracy()
-
-    // Prep data class
-    override fun initialize() {
-        accuracy.confirmed = FortuneWheel.sensorColor
-        accuracy.lastConfirmed = FortuneWheel.sensorColor
+    init {
+        status = Status.INITIALIZING
+        FortuneWheel.resetPosition()
+        println("")
+        print("INITIALIZING > ")
     }
 
     override fun execute() {
-        var currentColor = FortuneWheel.sensorColor
-        if (accuracy.refresh(currentColor, direction)) {
-            update()
-        }
-        direction = when {
-            cycleTarget > cycle -> 1
-            cycleTarget < cycle -> -1
-            else -> 0
+        when (status) {
+            Status.INITIALIZING -> initializing()
+            Status.RUNNING -> running()
+            Status.CHECKING -> checking()
         }
     }
 
-    fun update() {
-        cycle = when {
-            accuracy.confirmed == accuracy.lastConfirmed + 1 -> cycle + 1
-            accuracy.confirmed == accuracy.lastConfirmed - 1 -> cycle - 1
-            else -> cycle
-        }
-
-        speed = 1 - (2.0.pow(cycle.absoluteValue - cycleTarget.absoluteValue))
-
-        println("    => " + accuracy.confirmed + " | $cycle -> $cycleTarget |")
-        FortuneWheel.setPercent(-FortuneWheelConstants.kSpinnerSpeed * speed * direction)
-
-        if (cycle == cycleTarget) {
-            if (accuracy.confirmed != accuracy.lastConfirmed) {
-                cycleTarget + accuracy.confirmed.findNearest(colorTarget)
+    fun initializing() {
+        var currentColor = accuracy.add(FortuneWheel.sensorColor)
+        if (currentColor != FortuneColor.BLACK) {
+            print("color: $currentColor ")
+            if (targetColor == FortuneColor.BLACK) {
+                targetColor = currentColor + targetCycles
             } else {
-                correctCount++
+                targetCycles = currentColor.findNearest(targetColor)
+                targetDistance = FortuneWheelConstants.kColorDistance * targetCycles
             }
-        } else {
-            correctCount = 0
-        }
 
-        if (correctCount > FortuneWheelConstants.kCompletion) {
-            FortuneWheel.setNeutral()
-            success = true
+            print("target: $targetColor")
+
+            FortuneWheel.resetPosition()
+            println("")
+            print("RUNNING > 0%")
+            status = Status.RUNNING
+        }
+    }
+
+    fun running() {
+        FortuneWheel.setPosition(-targetDistance)
+
+        var completion = FortuneWheel.spinnerPosition.value / targetDistance.value
+
+        if (FortuneWheel.spinnerVelocity.inInchesPerSecond() < 1 && completion > 0.5) {
+            print("CHECKING > $targetColor = ")
+            status = Status.CHECKING
+        }
+    }
+
+    fun checking() {
+        var currentColor = accuracy.add(FortuneWheel.sensorColor)
+        if (currentColor != FortuneColor.BLACK) {
+            print("$currentColor? ... ")
+            if (currentColor == targetColor) {
+                println("Yes!")
+                println("COMPLETE")
+                FortuneWheel.setNeutral()
+                status = Status.COMPLETE
+            } else {
+                println("No")
+                print("CORRECTING > 0%")
+                targetDistance += currentColor.findNearest(targetColor).inches * 2
+                status = Status.RUNNING
+            }
         }
     }
 
     override fun isFinished(): Boolean {
-        return success
+        return status == Status.COMPLETE
     }
 
-    private class Accuracy {
-        private var weights = mutableMapOf<String, Int>()
-        var confirmed = FortuneColor.BLACK
-        var lastConfirmed = FortuneColor.BLACK
+    private enum class Status {
+        INITIALIZING,
+        RUNNING,
+        CHECKING,
+        COMPLETE
+    }
 
-        // Update dataset and dump if max value reached
-        fun refresh(color: FortuneColor, direction: Int): Boolean {
-            weights.putIfAbsent(color.name, 0)
-            weights.computeIfPresent(color.name) { key, value -> value + 1 }
-            if (weights.getValue(color.name) == FortuneWheelConstants.kDataAccuracy && color != confirmed + 2 && color.name != "BLACK" && color != color - direction) {
-                weights.clear()
-                lastConfirmed = confirmed
-                confirmed = color
-                return true
+    private class ColorAccuracy {
+        private var colorMap: MutableMap<FortuneColor, Int> = mutableMapOf()
+
+        fun add(color: FortuneColor): FortuneColor {
+            colorMap.putIfAbsent(color, 0)
+            colorMap.computeIfPresent(color) { _, u -> u + 1}
+            return if (colorMap[color]!! >= 30) {
+                color
+            } else {
+                FortuneColor.BLACK
             }
-            return false
+        }
+
+        fun clear() {
+            colorMap.clear()
         }
     }
 }

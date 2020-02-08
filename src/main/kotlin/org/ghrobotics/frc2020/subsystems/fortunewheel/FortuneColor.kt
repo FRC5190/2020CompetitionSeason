@@ -15,51 +15,30 @@ import kotlin.math.floor
 import kotlin.math.roundToInt
 import org.ghrobotics.frc2020.FortuneWheelConstants
 
-enum class FortuneColor {
-    // Fortune Wheel colors
-    RED {
-        override val rgb = RGB(0.3559, 0.4287, 0.2153)
-    },
-    YELLOW {
-        override val rgb = RGB(0.2927, 0.5378, 0.1694)
-    },
-    BLUE {
-        override val rgb = RGB(0.1782, 0.4514, 0.3706)
-    },
-    GREEN {
-        override val rgb = RGB(0.2136, 0.5288, 0.2575)
-    },
-
+enum class FortuneColor(val red: Double, val green: Double, val blue: Double) {
     // Default color value
-    BLACK {
-        override val rgb = RGB(0.0, 0.0, 0.0)
-    };
+    BLACK(0.0, 0.0, 0.0),
 
-    // RGB Values
-    protected class RGB(var red: Double, var green: Double, var blue: Double)
-
-    protected abstract val rgb: RGB
-
-    val red get() = rgb.red
-    val green get() = rgb.green
-    val blue get() = rgb.blue
+    // Fortune Wheel colors
+    RED(0.3603,0.4282, 0.2116),
+    YELLOW(0.2941, 0.5395, 0.1662),
+    BLUE(0.17358, 0.45141, 0.375),
+    GREEN(0.2087, 0.5371, 0.2539);
 
     operator fun plus(increment: Int): FortuneColor {
         if (this == BLACK) {
             return BLACK
         }
-        var number = ordinal + increment
-        var color = number - (floor(number.toDouble() / 4).toInt() * 4)
-        return values()[color]
+        var number = (ordinal + increment) % 4
+        return values()[number]
     }
 
     operator fun minus(decrement: Int): FortuneColor {
         if (this == BLACK) {
             return BLACK
         }
-        var number = (ordinal - 4) - decrement
-        var color = number + (floor(number.absoluteValue.toDouble() / 4).toInt() * 4) + 4
-        return values()[color]
+        var number = (ordinal - decrement - 4) % 4 + 4
+        return values()[number]
     }
 
     // Find the position of a desired color relative to the current color

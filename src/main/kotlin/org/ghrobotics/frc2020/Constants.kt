@@ -53,23 +53,6 @@ object FeederConstants {
     val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
 }
 
-object FortuneWheelConstants {
-    // Determines the bit-depth of colors when being compared.
-    // The bit-depth determines the amount of possible colors.
-    // Ex: '255' would result in an 8bit color spectrum.
-    const val kColorBitDepth = 9
-
-    // Spinner
-    const val kSpinnerSpeed = 0.2
-    const val kSpinnerMotorId = 8
-    val kSpinnerRadius = 3.inches // Radius of wheel connected to the spinner motor
-    val kSpinnerUnitModel = NativeUnitLengthModel(42.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
-
-    // Accuracy
-    const val kDataAccuracy = 4
-    const val kCompletion = 10
-}
-
 object HoodConstants {
     const val kServoAId = 0
     const val kServoBId = 1
@@ -114,6 +97,25 @@ object ShooterConstants {
 
     const val kP = 3.5E-4
     const val kF = 2.0E-4
+}
+
+object FortuneWheelConstants {
+    // Determines the bit-depth of colors when being compared.
+    const val kColorBitDepth = 8
+
+    // Spinner
+    const val kSpinnerMotorId = 8
+    val kSpinnerRadius = 1.5.inches // Radius of wheel connected to the spinner motor
+    val kSpinnerUnitModel = NativeUnitLengthModel(5.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
+
+    // Fortunewheel
+    val kColorDistance = 10.inches
+
+    // Controller
+    const val kP = 3E-5
+    const val kF = 0.0
+    val kMaxVelocity = 100.inches / 1.seconds
+    val kMaxAcceleration = 200.inches / 1.seconds / 1.seconds
 }
 
 object TurretConstants {
