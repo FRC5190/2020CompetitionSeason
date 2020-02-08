@@ -10,10 +10,10 @@ package org.ghrobotics.frc2020.subsystems.forks
 
 import org.ghrobotics.lib.commands.FalconCommand
 
-class DropsForkCommand(private val drop: Boolean) : FalconCommand(Forks) {
+class DropForksCommand(private val drop: Boolean) : FalconCommand(Forks) {
 
     override fun initialize() {
-        Forks.dropFork(drop)
+        Forks.dropForks(drop)
     }
 
     override fun isFinished(): Boolean {

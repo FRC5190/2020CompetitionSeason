@@ -15,13 +15,13 @@ import org.ghrobotics.lib.commands.FalconSubsystem
 
 object Forks : FalconSubsystem() {
 
-    private val forkPiston = Solenoid(kPCMId, kForkId)
+    private val forksPiston = Solenoid(kPCMId, kForkId)
 
-    fun dropFork(drop: Boolean) {
-        forkPiston.set(drop)
+    fun dropForks(drop: Boolean) {
+        forksPiston.set(drop)
     }
 
     init {
-        defaultCommand = DropsForkCommand(false)
+        defaultCommand = DropForksCommand(false)
     }
 }

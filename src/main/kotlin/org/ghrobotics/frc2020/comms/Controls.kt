@@ -14,7 +14,7 @@ import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
 import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
-import org.ghrobotics.frc2020.subsystems.forks.DropsForkCommand
+import org.ghrobotics.frc2020.subsystems.forks.DropForksCommand
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.shooter.ManualShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
@@ -69,7 +69,7 @@ object Controls {
             /**
              * Extends the buddy climb platform
              */
-            button(kA).change(DropsForkCommand(true))
+            button(kA).change(DropForksCommand(true))
         }
 
         /**
