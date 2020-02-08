@@ -6,26 +6,19 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems.climber
+package org.ghrobotics.frc2020.subsystems.hook
 
-import org.ghrobotics.frc2020.subsystems.hook.AutoHookCommand
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 
-class AutoClimberCommand(private val desiredHeight: SIUnit<Meter>, private val desiredPosition: SIUnit<Meter>) : FalconCommand(Climber) {
-
-    override fun initialize() {
-        Climber.extend(true)
-    }
+class AutoHookCommand(private val desiredPosition: SIUnit<Meter>) : FalconCommand(Hook) {
 
     override fun execute() {
-        Climber.setHeight(desiredHeight)
-        AutoHookCommand(desiredPosition)
+        Hook.setPosition(desiredPosition)
     }
 
     override fun end(interrupted: Boolean) {
-        Climber.extend(false)
-        Climber.setNeutral()
+        Hook.setNeutral()
     }
 }

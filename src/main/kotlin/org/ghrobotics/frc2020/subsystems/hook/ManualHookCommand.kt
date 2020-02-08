@@ -6,22 +6,19 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems.climber
+package org.ghrobotics.frc2020.subsystems.hook
 
+import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
-class ManualClimberCommand(private val percentSource: DoubleSource) : FalconCommand(Climber) {
-    override fun initialize() {
-        Climber.extend(true)
-    }
+class ManualHookCommand(private val percentSource: DoubleSource) : FalconCommand(Climber) {
 
     override fun execute() {
         Climber.setPercent(percentSource())
     }
 
     override fun end(interrupted: Boolean) {
-        Climber.extend(false)
         Climber.setNeutral()
     }
 }

@@ -6,28 +6,26 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems.climber
+package org.ghrobotics.frc2020.subsystems.hook
 
 import org.ghrobotics.frc2020.subsystems.SubsystemTestManager
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.meters
 
-class TestClimberCommand : FalconCommand(Climber) {
-    private var success = true
+class TestHookCommand : FalconCommand(Hook) {
+    private var success = false
 
     override fun initialize() {
-        Climber.extend(true)
-        Climber.resetPosition(0.meters)
+        Hook.resetPosition(0.meters)
     }
 
     override fun execute() {
-        ManualClimberCommand { .75 }
+        Hook.setPercent(.75)
     }
 
     override fun end(interrupted: Boolean) {
-        Climber.extend(false)
-        success = Climber.winchPosition > 2.meters
-        Climber.setNeutral()
-        SubsystemTestManager.climberCheck = success
+        success = Hook.hookPosition > 1.meters
+        Hook.setNeutral()
+        SubsystemTestManager.hookCheck = success
     }
 }

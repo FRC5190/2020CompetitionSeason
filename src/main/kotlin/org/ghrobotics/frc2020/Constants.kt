@@ -98,8 +98,8 @@ object HoodConstants {
 
 object IntakeConstants {
     const val kIntakeId = 9
-    const val kIntakeModuleId = 14
-    const val kIntakePistonId = 15
+    const val kIntakeModuleId = 41
+    const val kIntakePistonId = 0
 }
 
 object FortuneWheelConstants {
@@ -120,12 +120,16 @@ object FortuneWheelConstants {
 }
 
 object ClimberConstants {
-    const val kClimberMasterId = 10
-    const val kClimberSlaveId = 11
-    const val kPistonBrakeId = 12
-    const val kPistonBrakeModuleId = 13
-
+    const val kWinchMasterId = 11
+    const val kWinchSlaveId = 12
+    const val kPistonId = 1
+    const val kPneumaticModuleId = 41
     val kClimberNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
+}
+
+object HookConstants {
+    const val kHookId = 13
+    val kHookNativeUnitModel = SlopeNativeUnitModel(1.meters, 150.nativeUnits)
 }
 
 object FeederConstants {
