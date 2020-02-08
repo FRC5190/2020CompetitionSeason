@@ -11,13 +11,18 @@ package org.ghrobotics.frc2020.subsystems.fortunewheel
 import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.ColorSensorV3
 import edu.wpi.first.wpilibj.I2C
-import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj.util.Color
 import org.ghrobotics.frc2020.FortuneWheelConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
+import org.ghrobotics.lib.mathematics.units.Frac
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.Second
 import org.ghrobotics.lib.mathematics.units.derived.volts
+import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.meters
+import org.ghrobotics.lib.mathematics.units.operations.div
+import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 
 object FortuneWheel : FalconSubsystem() {
@@ -31,12 +36,19 @@ object FortuneWheel : FalconSubsystem() {
 
     init {
         spinnerMotor.voltageCompSaturation = 12.volts
+        spinnerMotor.controller.p = FortuneWheelConstants.kP
+        spinnerMotor.controller.ff = FortuneWheelConstants.kF
+        spinnerMotor.motionProfileCruiseVelocity = FortuneWheelConstants.kMaxVelocity
+        spinnerMotor.motionProfileAcceleration = FortuneWheelConstants.kMaxAcceleration
+        spinnerMotor.useMotionProfileForPosition = true
     }
 
     // Create PeriodicIO
     private val periodicIO = PeriodicIO()
     val sensorColor get() = periodicIO.sensorColor
+    val rawColor get() = periodicIO.rawColor
     val spinnerPosition get() = periodicIO.spinnerPosition
+    val spinnerVelocity get() = periodicIO.spinnerVelocity
 
     override fun setNeutral() {
         periodicIO.desiredOutput = Output.Nothing
@@ -44,6 +56,10 @@ object FortuneWheel : FalconSubsystem() {
 
     fun setPercent(percent: Double) {
         periodicIO.desiredOutput = Output.Percent(percent)
+    }
+
+    fun setPosition(position: SIUnit<Meter>) {
+        periodicIO.desiredOutput = Output.Position(position)
     }
 
     // Resets 'position' of encoder
@@ -54,7 +70,9 @@ object FortuneWheel : FalconSubsystem() {
     override fun periodic() {
         // Update PeriodicIO variables
         periodicIO.sensorColor = FortuneColor.getFortune(colorSensor.color)
+        periodicIO.rawColor = colorSensor.color
         periodicIO.spinnerPosition = spinnerMotor.encoder.position
+        periodicIO.spinnerVelocity = spinnerMotor.encoder.velocity
 
         // Do stuff
         if (periodicIO.resetPosition) {
@@ -64,17 +82,16 @@ object FortuneWheel : FalconSubsystem() {
 
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> spinnerMotor.setNeutral()
-            is Output.Percent -> spinnerMotor.setDutyCycle(desiredOutput.speed)
+            is Output.Percent -> spinnerMotor.setDutyCycle(desiredOutput.speed, 0.0.volts)
+            is Output.Position -> spinnerMotor.setPosition(desiredOutput.position, 0.0.volts)
         }
-    }
-
-    override fun checkSubsystem(): Command {
-        return TestFortuneWheelCommand().withTimeout(2.0)
     }
 
     private class PeriodicIO {
         var sensorColor: FortuneColor = FortuneColor.BLACK
+        var rawColor: Color = Color(0.0, 0.0, 0.0)
         var spinnerPosition: SIUnit<Meter> = 0.meters
+        var spinnerVelocity: SIUnit<Frac<Meter, Second>> = 0.inches / 1.seconds
         var desiredOutput: Output = Output.Nothing
         var resetPosition: Boolean = false
     }
@@ -82,5 +99,6 @@ object FortuneWheel : FalconSubsystem() {
     private sealed class Output {
         object Nothing : Output()
         class Percent(val speed: Double) : Output()
+        class Position(val position: SIUnit<Meter>) : Output()
     }
 }
