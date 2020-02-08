@@ -57,6 +57,9 @@ object Superstructure {
     private val kVelocityTreshold = 0.25.inches / 1.seconds
     private val kStopTimeTreshold = 0.6.seconds
 
+    // Positions
+    private val kTurretStowedPosition = 90.degrees
+
     /**
      * Shoots power cells into the goal.
      *
@@ -120,6 +123,11 @@ object Superstructure {
             VisionProcessing.turnOffLEDs()
         }
     }
+
+    /**
+     * Goes to a safe stowed position.
+     */
+    fun goToStowedPosition() = AutoTurretCommand { kTurretStowedPosition }
 
     /**
      * Returns the latest aiming parameters for the shooter and the turret.
