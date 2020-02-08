@@ -10,8 +10,6 @@ package org.ghrobotics.frc2020.subsystems.fortunewheel
 
 import edu.wpi.first.wpilibj.util.Color
 import edu.wpi.first.wpilibj.util.Color8Bit
-import kotlin.math.absoluteValue
-import kotlin.math.floor
 import kotlin.math.roundToInt
 import org.ghrobotics.frc2020.FortuneWheelConstants
 
@@ -20,7 +18,7 @@ enum class FortuneColor(val red: Double, val green: Double, val blue: Double) {
     BLACK(0.0, 0.0, 0.0),
 
     // Fortune Wheel colors
-    RED(0.3603,0.4282, 0.2116),
+    RED(0.3603, 0.4282, 0.2116),
     YELLOW(0.2941, 0.5395, 0.1662),
     BLUE(0.17358, 0.45141, 0.375),
     GREEN(0.2087, 0.5371, 0.2539);

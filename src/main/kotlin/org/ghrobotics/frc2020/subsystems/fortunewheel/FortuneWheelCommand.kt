@@ -8,16 +8,11 @@
 
 package org.ghrobotics.frc2020.subsystems.fortunewheel
 
-import kotlin.math.absoluteValue
-import kotlin.math.pow
 import org.ghrobotics.frc2020.FortuneWheelConstants
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.derived.inInchesPerSecond
-import org.ghrobotics.lib.mathematics.units.inInches
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.meters
-import kotlin.math.ceil
-import kotlin.math.floor
 
 class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
@@ -36,7 +31,7 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
         targetDistance = FortuneWheelConstants.kColorDistance * cycles
     }
 
-    constructor(color: FortuneColor) : this(){
+    constructor(color: FortuneColor) : this() {
         targetColor = color + 2
     }
 
@@ -120,7 +115,7 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
         fun add(color: FortuneColor): FortuneColor {
             colorMap.putIfAbsent(color, 0)
-            colorMap.computeIfPresent(color) { _, u -> u + 1}
+            colorMap.computeIfPresent(color) { _, u -> u + 1 }
             return if (colorMap[color]!! >= 30) {
                 color
             } else {
