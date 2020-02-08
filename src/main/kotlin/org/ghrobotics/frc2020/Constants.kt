@@ -158,3 +158,9 @@ object VisionConstants {
 
     val kGoalLocation = Pose2d(54.feet, 94.66.inches, Rotation2d())
 }
+
+object ForkConstants {
+
+    const val kPCMId = 41
+    const val kForkId = 2
+}
