@@ -45,9 +45,9 @@ object Intake : FalconSubsystem() {
     val position get() = periodicIO.position
 
     // Connection Status
-    private val isConnected: Boolean
+    private var isConnected = false
 
-    init {
+    override fun lateInit() {
         isConnected = intakeMaster.isConnected()
 
         if (isConnected) {

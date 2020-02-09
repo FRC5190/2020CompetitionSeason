@@ -36,9 +36,9 @@ object FortuneWheel : FalconSubsystem() {
     )
 
     // Connection Status
-    private val isConnected: Boolean
+    private var isConnected = false
 
-    init {
+    override fun lateInit() {
         isConnected = spinnerMotor.isConnected()
 
         if (isConnected) {

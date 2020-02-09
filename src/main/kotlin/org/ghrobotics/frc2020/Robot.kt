@@ -13,8 +13,14 @@ import org.ghrobotics.frc2020.auto.Paths
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Superstructure
+import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder
+import org.ghrobotics.frc2020.subsystems.forks.Forks
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
+import org.ghrobotics.frc2020.subsystems.hood.Hood
+import org.ghrobotics.frc2020.subsystems.hook.Hook
+import org.ghrobotics.frc2020.subsystems.intake.Intake
 import org.ghrobotics.frc2020.subsystems.led.LED
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
@@ -30,8 +36,8 @@ object Robot : FalconTimedRobot() {
     // Whether the robot is in climb mode.
     var isClimbMode = false
 
-    // Constructor of the Robot class.
-    init {
+    // Runs once when robot boots up
+    override fun robotInit() {
         // Initialize auto paths
         Paths
 
@@ -42,15 +48,18 @@ object Robot : FalconTimedRobot() {
         +VisionProcessing
 
         // Add subsystems
+        +Climber
         +Drivetrain
+        +Feeder
+        +Forks
+        +FortuneWheel
+        +Hood
+        +Hook
+        +Intake
+        +LED
         +Shooter
         +Turret
-        +Feeder
-        +LED
-    }
 
-    // Runs once when robot boots up
-    override fun robotInit() {
         ZeroTurretCommand().schedule()
     }
 
