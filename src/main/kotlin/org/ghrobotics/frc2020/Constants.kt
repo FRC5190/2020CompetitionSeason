@@ -13,6 +13,7 @@ package org.ghrobotics.frc2020
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
+import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
@@ -51,6 +52,8 @@ object FeederConstants {
     const val kFeederMasterId = 10
     val kFeederRadius = 1.inches
     val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
+
+    val kCurrentLimit = 25.amps
 }
 
 object HoodConstants {
@@ -75,9 +78,13 @@ object HookConstants {
 }
 
 object IntakeConstants {
-    const val kIntakeId = 9
+    const val kMasterId = 9
+    const val kSlaveId = 14
+
     const val kIntakeModuleId = 41
     const val kIntakePistonId = 0
+
+    val kCurrentLimit = 25.amps
 }
 
 object LEDConstants {

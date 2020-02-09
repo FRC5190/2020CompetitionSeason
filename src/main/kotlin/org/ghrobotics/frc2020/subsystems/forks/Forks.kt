@@ -20,8 +20,4 @@ object Forks : FalconSubsystem() {
     fun dropForks(drop: Boolean) {
         forksPiston.set(drop)
     }
-
-    init {
-        defaultCommand = DropForksCommand(false)
-    }
 }

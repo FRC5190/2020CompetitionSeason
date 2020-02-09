@@ -30,6 +30,10 @@ object Feeder : FalconSubsystem() {
 
     init {
         isConnected = feederMotor.isConnected()
+        if (isConnected) {
+            feederMotor.outputInverted = true
+            feederMotor.smartCurrentLimit = FeederConstants.kCurrentLimit
+        }
     }
 
     fun setPercent(percent: Double) {

@@ -72,11 +72,11 @@ dependencies {
     compile "com.github.salomonbrys.kotson:kotson:2.5.0"
 
     // Falcon Library
-    compile "org.ghrobotics.FalconLibrary:core:2020.2.3"
-    compile "org.ghrobotics.FalconLibrary:wpi:2020.2.3"
-    compile "org.ghrobotics.FalconLibrary:vendorREV:2020.2.3"
-    compile "org.ghrobotics.FalconLibrary:vendorCTRE:2020.2.3"
-    compile "org.ghrobotics.FalconLibrary:vendorNAVX:2020.2.3"
+    compile "org.ghrobotics.FalconLibrary:core:44847aa"
+    compile "org.ghrobotics.FalconLibrary:wpi:44847aa"
+    compile "org.ghrobotics.FalconLibrary:vendorREV:44847aa"
+    compile "org.ghrobotics.FalconLibrary:vendorCTRE:44847aa"
+    compile "org.ghrobotics.FalconLibrary:vendorNAVX:44847aa"
 }
 
 spotless {
