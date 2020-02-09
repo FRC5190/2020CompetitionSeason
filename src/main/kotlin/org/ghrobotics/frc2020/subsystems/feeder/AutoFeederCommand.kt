@@ -9,7 +9,6 @@
 package org.ghrobotics.frc2020.subsystems.feeder
 
 import org.ghrobotics.lib.commands.FalconCommand
-import org.ghrobotics.lib.utils.DoubleSource
 
 class AutoFeederCommand(val buttonState: Boolean) : FalconCommand(Feeder) {
     var lastIntakeValue = false
