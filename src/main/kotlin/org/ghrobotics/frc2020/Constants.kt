@@ -49,7 +49,9 @@ object DriveConstants {
 }
 
 object FeederConstants {
-    const val kFeederMasterId = 10
+    const val kFeederId = 10
+    const val kBridgeId = 14
+
     val kFeederRadius = 1.inches
     val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
 
@@ -79,7 +81,6 @@ object HookConstants {
 
 object IntakeConstants {
     const val kMasterId = 9
-    const val kSlaveId = 14
 
     const val kIntakeModuleId = 0
     const val kIntakePistonId = 0

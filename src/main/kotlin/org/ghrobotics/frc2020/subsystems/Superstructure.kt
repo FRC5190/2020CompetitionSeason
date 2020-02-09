@@ -34,7 +34,6 @@ import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
-import org.ghrobotics.lib.mathematics.units.derived.velocity
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.minutes
@@ -117,7 +116,7 @@ object Superstructure {
                     +AutoHoodCommand { hoodHoldAngle }
 
                     // Feed balls
-                    +ManualFeederCommand { 0.3 }
+                    +ManualFeederCommand(0.9, 0.9)
                 }
             )
         }
@@ -128,20 +127,20 @@ object Superstructure {
     }
 
     fun intake() = parallel {
-        +IntakeCommand({ -0.5 }, { 0.7 })
-        +ManualFeederCommand { 0.6 }
+        +IntakeCommand(0.5)
+        +ManualFeederCommand(feederPercent = 0.6, bridgePercent = 0.75)
     }
 
     fun exhaust() = parallel {
-        +IntakeCommand({ -0.5 }, { -0.7 })
-        +ManualFeederCommand { -0.6 }
+        +IntakeCommand(-0.5)
+        +ManualFeederCommand(-0.6, -0.75)
     }
 
     fun shoot() = parallel {
-        +AutoShooterCommand { 360.degrees / 1.minutes * 4000}
+        +AutoShooterCommand { 360.degrees / 1.minutes * 4000 }
         +sequential {
             +WaitCommand(2.0)
-            +ManualFeederCommand { 0.9 }
+            +ManualFeederCommand(0.9, 0.9)
         }
     }
 

@@ -54,7 +54,6 @@ object Hood : FalconSubsystem() {
                 servoB.speed = 0.0
             }
             is Output.Percent -> {
-                println(desiredOutput.percent)
                 servoA.speed = desiredOutput.percent
                 servoB.speed = -desiredOutput.percent
             }
