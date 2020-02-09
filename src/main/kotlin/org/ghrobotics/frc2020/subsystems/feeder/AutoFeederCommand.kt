@@ -37,7 +37,7 @@ class AutoFeederCommand(val buttonState: Boolean) : FalconCommand(Feeder) {
 
         // When driver pushes button, switch feeder mode
         if (buttonState && buttonState != lastButtonState) {
-            Feeder.status = if (Feeder.status == Feeder.Status.INTAKE) {
+            Feeder.status = if (Feeder.status == Feeder.Status.INTAKE || Feeder.status == Feeder.Status.TOINTAKE) {
                 Feeder.Status.TURRET
             } else {
                 if (Feeder.ballCount == 0) {
