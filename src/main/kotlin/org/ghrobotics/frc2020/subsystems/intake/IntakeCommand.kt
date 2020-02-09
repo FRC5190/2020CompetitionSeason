@@ -13,6 +13,8 @@ import org.ghrobotics.lib.utils.DoubleSource
 
 class IntakeCommand(private val percentSource: DoubleSource) : FalconCommand(Intake) {
 
+    constructor(percent: Double) : this({ percent })
+
     override fun initialize() {
         Intake.extendPiston(true)
     }

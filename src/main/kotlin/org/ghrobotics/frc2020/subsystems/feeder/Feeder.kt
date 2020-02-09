@@ -11,15 +11,21 @@ package org.ghrobotics.frc2020.subsystems.feeder
 import com.revrobotics.CANSparkMaxLowLevel
 import org.ghrobotics.frc2020.FeederConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
+import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.utils.isConnected
 
 object Feeder : FalconSubsystem() {
     // Create objects
     private val feederMotor = FalconMAX(
-        id = FeederConstants.kFeederMasterId,
+        id = FeederConstants.kFeederId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = FeederConstants.kFeederUnitModel
+    )
+    private val bridgeMotor = FalconMAX(
+        id = FeederConstants.kBridgeId,
+        type = CANSparkMaxLowLevel.MotorType.kBrushless,
+        model = DefaultNativeUnitModel
     )
 
     // Create PeriodicIO
@@ -29,27 +35,42 @@ object Feeder : FalconSubsystem() {
     private var isConnected = false
 
     override fun lateInit() {
-        isConnected = feederMotor.isConnected()
+        isConnected = feederMotor.isConnected() && bridgeMotor.isConnected()
         if (isConnected) {
             feederMotor.canSparkMax.restoreFactoryDefaults()
+            bridgeMotor.canSparkMax.restoreFactoryDefaults()
+
             feederMotor.outputInverted = true
+            bridgeMotor.outputInverted = true
+
             feederMotor.smartCurrentLimit = FeederConstants.kCurrentLimit
+            bridgeMotor.smartCurrentLimit = FeederConstants.kCurrentLimit
         } else {
             println("Did not initialize Feeder")
         }
     }
 
-    fun setPercent(percent: Double) {
-        periodicIO.output = Output.Percent(percent)
+    fun setPercent(feederPercent: Double, bridgePercent: Double) {
+        periodicIO.output = Output.Percent(feederPercent, bridgePercent)
     }
 
     override fun periodic() {
         if (isConnected) {
             when (val output = periodicIO.output) {
-                is Output.Nothing -> feederMotor.setNeutral()
-                is Output.Percent -> feederMotor.setDutyCycle(output.percent)
+                is Output.Nothing -> {
+                    feederMotor.setNeutral()
+                    bridgeMotor.setNeutral()
+                }
+                is Output.Percent -> {
+                    feederMotor.setDutyCycle(output.feederPercent)
+                    bridgeMotor.setDutyCycle(output.bridgePercent)
+                }
             }
         }
+    }
+
+    override fun setNeutral() {
+        periodicIO.output = Output.Nothing
     }
 
     private class PeriodicIO {
@@ -58,6 +79,6 @@ object Feeder : FalconSubsystem() {
 
     private sealed class Output {
         object Nothing : Output()
-        class Percent(val percent: Double) : Output()
+        class Percent(val feederPercent: Double, val bridgePercent: Double) : Output()
     }
 }

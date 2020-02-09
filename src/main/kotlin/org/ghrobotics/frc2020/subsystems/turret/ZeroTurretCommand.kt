@@ -10,6 +10,8 @@ package org.ghrobotics.frc2020.subsystems.turret
 
 import edu.wpi.first.wpilibj.Timer
 import org.ghrobotics.lib.commands.FalconCommand
+import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.derived.velocity
 
 /**
  * A command that zeros the turret when the robot is being setup.
@@ -20,7 +22,9 @@ class ZeroTurretCommand : FalconCommand(Turret) {
     override fun initialize() = timer.start()
 
     override fun execute() {
-        if (!Turret.hallEffectEngaged) {
+        if (!Turret.hallEffectEngaged ||
+            Turret.speed.absoluteValue != 0.radians.velocity
+        ) {
             timer.reset()
             Turret.setStatus(Turret.Status.NOT_ZEROED)
         } else {

@@ -11,8 +11,30 @@ package org.ghrobotics.frc2020.subsystems.feeder
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
-class ManualFeederCommand(val percent: DoubleSource) : FalconCommand(Feeder) {
+/**
+ * Runs the feeder using manual inputs.
+ *
+ * @param feederPercent The percent to run the feeder at.
+ * @param bridgePercent The percent to run the bridge at.
+ */
+class ManualFeederCommand(
+    private val feederPercent: DoubleSource,
+    private val bridgePercent: DoubleSource
+) : FalconCommand(Feeder) {
+
+    /**
+     * Secondary constructor that uses doubles instead of double sources.
+     *
+     * @param feederPercent The percent to run the feeder at.
+     * @param bridgePercent The percent to run the bridge at.
+     */
+    constructor(feederPercent: Double, bridgePercent: Double) : this({ feederPercent }, { bridgePercent })
+
     override fun execute() {
-        Feeder.setPercent(percent())
+        Feeder.setPercent(feederPercent(), bridgePercent())
+    }
+
+    override fun end(interrupted: Boolean) {
+        Feeder.setNeutral()
     }
 }

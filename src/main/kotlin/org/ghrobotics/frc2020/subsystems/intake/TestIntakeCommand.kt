@@ -21,7 +21,7 @@ class TestIntakeCommand : FalconCommand(Intake) {
     }
 
     override fun execute() {
-        Intake.setPercent(.75)
+        Intake.setPercent(0.0)
     }
 
     override fun end(interrupted: Boolean) {

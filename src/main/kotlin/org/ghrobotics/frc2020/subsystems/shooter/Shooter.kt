@@ -61,7 +61,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
             masterMotor.canSparkMax.restoreFactoryDefaults()
             slaveMotor.canSparkMax.restoreFactoryDefaults()
 
-            slaveMotor.follow(masterMotor)
+            slaveMotor.canSparkMax.follow(masterMotor.canSparkMax, true)
 
             masterMotor.canSparkMax.closedLoopRampRate = 0.25
             masterMotor.canSparkMax.openLoopRampRate = 0.5
