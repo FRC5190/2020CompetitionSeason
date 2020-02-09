@@ -25,6 +25,7 @@ import org.ghrobotics.lib.mathematics.units.operations.times
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.drive.FalconWestCoastDrivetrain
 import org.ghrobotics.lib.utils.asSource
+import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the drivetrain of the robot.
@@ -51,6 +52,9 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         CANSparkMaxLowLevel.MotorType.kBrushless,
         DriveConstants.kNativeUnitModel
     )
+
+    // Connection status
+    private val isConnected: Boolean
 
     // Gyro
     private val navx = AHRS(SPI.Port.kMXP)
@@ -89,18 +93,29 @@ object Drivetrain : FalconWestCoastDrivetrain() {
 
     // Initialize follower motors and other motor configs
     init {
-        leftSlave1.follow(leftMotor)
-        rightSlave1.follow(rightMotor)
+        isConnected = leftMotor.isConnected() && rightMotor.isConnected() &&
+            leftSlave1.isConnected() && rightSlave1.isConnected()
 
-        leftMotor.outputInverted = false
-        leftSlave1.outputInverted = false
-        rightMotor.outputInverted = true
-        rightSlave1.outputInverted = true
+        if (isConnected) {
+            leftSlave1.follow(leftMotor)
+            rightSlave1.follow(rightMotor)
+
+            leftMotor.outputInverted = false
+            leftSlave1.outputInverted = false
+            rightMotor.outputInverted = true
+            rightSlave1.outputInverted = true
+
+            enableClosedLoopControl()
+        }
 
         // Set the default command
         defaultCommand = ManualDriveCommand()
+    }
 
-        enableClosedLoopControl()
+    override fun periodic() {
+        if (isConnected) {
+            super.periodic()
+        }
     }
 
     fun setBrakeMode(brakeMode: Boolean) {

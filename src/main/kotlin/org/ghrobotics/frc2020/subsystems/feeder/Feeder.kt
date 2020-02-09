@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel
 import org.ghrobotics.frc2020.FeederConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.motors.rev.FalconMAX
+import org.ghrobotics.lib.utils.isConnected
 
 object Feeder : FalconSubsystem() {
     // Create objects
@@ -24,14 +25,23 @@ object Feeder : FalconSubsystem() {
     // Create PeriodicIO
     private val periodicIO = PeriodicIO()
 
+    // Connection Status
+    private val isConnected: Boolean
+
+    init {
+        isConnected = feederMotor.isConnected()
+    }
+
     fun setPercent(percent: Double) {
         periodicIO.output = Output.Percent(percent)
     }
 
     override fun periodic() {
-        when (val output = periodicIO.output) {
-            is Output.Nothing -> feederMotor.setNeutral()
-            is Output.Percent -> feederMotor.setDutyCycle(output.percent)
+        if (isConnected) {
+            when (val output = periodicIO.output) {
+                is Output.Nothing -> feederMotor.setNeutral()
+                is Output.Percent -> feederMotor.setDutyCycle(output.percent)
+            }
         }
     }
 
