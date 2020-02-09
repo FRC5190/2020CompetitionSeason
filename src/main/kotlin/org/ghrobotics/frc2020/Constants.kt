@@ -57,8 +57,8 @@ object FeederConstants {
 }
 
 object HoodConstants {
-    const val kServoAId = 0
-    const val kServoBId = 1
+    const val kServoAId = 8
+    const val kServoBId = 9
 
     const val kEncoderAId = 2
     const val kEncoderBId = 3
@@ -81,14 +81,14 @@ object IntakeConstants {
     const val kMasterId = 9
     const val kSlaveId = 14
 
-    const val kIntakeModuleId = 41
+    const val kIntakeModuleId = 0
     const val kIntakePistonId = 0
 
     val kCurrentLimit = 25.amps
 }
 
 object LEDConstants {
-    const val kPort = 9
+    const val kPort = 5
     const val kBufferSize = 60
 }
 

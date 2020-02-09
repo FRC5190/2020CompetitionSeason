@@ -15,4 +15,8 @@ class ManualFeederCommand(val percent: DoubleSource) : FalconCommand(Feeder) {
     override fun execute() {
         Feeder.setPercent(percent())
     }
+
+    override fun end(interrupted: Boolean) {
+        Feeder.setPercent(0.0)
+    }
 }

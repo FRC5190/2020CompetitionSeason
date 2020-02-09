@@ -15,6 +15,7 @@ import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
 import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
 import org.ghrobotics.frc2020.subsystems.forks.DropForksCommand
+import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.shooter.ManualShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
@@ -41,36 +42,36 @@ object Controls {
         /**
          * Represents controls when the robot is in climb mode.
          */
-        state(Robot::isClimbMode) {
-            /**
-             * Retract the climber when the left bumper is pressed.
-             */
-            button(kBumperLeft).changeOn(ExtendClimberCommand(false))
-
-            /**
-             * Extend the climber the right bumper is pressed.
-             */
-            button(kBumperRight).changeOn(ExtendClimberCommand(true))
-
-            /**
-             * Pull the robot up when the left trigger is pressed.
-             */
-            triggerAxisButton(GenericHID.Hand.kLeft) {
-                change(ManualClimberCommand(source))
-            }
-
-            /**
-             * Pull the robot down when the right trigger is pressed.
-             */
-            triggerAxisButton(GenericHID.Hand.kRight) {
-                change(ManualClimberCommand(source.map { it * -1.0 }))
-            }
-
-            /**
-             * Extends the buddy climb platform
-             */
-            button(kA).change(DropForksCommand(true))
-        }
+//        state(Robot::isClimbMode) {
+//            /**
+//             * Retract the climber when the left bumper is pressed.
+//             */
+//            button(kBumperLeft).changeOn(ExtendClimberCommand(false))
+//
+//            /**
+//             * Extend the climber the right bumper is pressed.
+//             */
+//            button(kBumperRight).changeOn(ExtendClimberCommand(true))
+//
+//            /**
+//             * Pull the robot up when the left trigger is pressed.
+//             */
+//            triggerAxisButton(GenericHID.Hand.kLeft) {
+//                change(ManualClimberCommand(source))
+//            }
+//
+//            /**
+//             * Pull the robot down when the right trigger is pressed.
+//             */
+//            triggerAxisButton(GenericHID.Hand.kRight) {
+//                change(ManualClimberCommand(source.map { it * -1.0 }))
+//            }
+//
+//            /**
+//             * Extends the buddy climb platform
+//             */
+//            button(kA).change(DropForksCommand(true))
+//        }
 
         /**
          * Represents controls when the robot is not in climb mode.
@@ -81,7 +82,10 @@ object Controls {
              * The turret and shooter will aim and the feeder will feed all balls
              * to the shooter when the drivetrain comes to a complete stop.
              */
-            button(kBumperRight).change(Superstructure.shootPowerCells())
+            button(kBumperRight).change(Superstructure.shoot())
+
+            button(kBumperLeft).change(Superstructure.intake())
+            triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.exhaust())
 
             /**
              * Jogs the turret zero a certain amount. This is useful when vision
@@ -107,7 +111,7 @@ object Controls {
          */
         button(kY).change(AutoShooterCommand { 360.degrees / 1.minutes * 5000 })
         axisButton(5, 0.04) {
-            change(ManualShooterCommand(source))
+            change(ManualHoodCommand(source.map { it * 1.0 }))
         }
     }
 

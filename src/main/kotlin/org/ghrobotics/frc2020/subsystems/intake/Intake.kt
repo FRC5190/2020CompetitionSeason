@@ -55,7 +55,7 @@ object Intake : FalconSubsystem() {
             intakeSlave.canSparkMax.restoreFactoryDefaults()
 
             intakeMaster.outputInverted = true
-            intakeSlave.follow(intakeMaster)
+            intakeSlave.outputInverted = true
 
             intakeMaster.smartCurrentLimit = IntakeConstants.kCurrentLimit
             intakeSlave.smartCurrentLimit = IntakeConstants.kCurrentLimit
@@ -83,15 +83,17 @@ object Intake : FalconSubsystem() {
             when (val desiredOutput = periodicIO.desiredOutput) {
                 is Output.Nothing ->
                     intakeMaster.setNeutral()
-                is Output.Percent ->
+                is Output.Percent -> {
                     intakeMaster.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+                    intakeSlave.setDutyCycle(desiredOutput.percent2, periodicIO.feedforward)
+                }
             }
         }
     }
 
     sealed class Output() {
         object Nothing : Output()
-        class Percent(val percent: Double) : Output()
+        class Percent(val percent: Double, val percent2: Double = 0.0) : Output()
     }
 
     override fun setNeutral() {
@@ -100,9 +102,9 @@ object Intake : FalconSubsystem() {
         periodicIO.feedforward = 0.volts
     }
 
-    fun setPercent(percent: Double) {
+    fun setPercent(percent: Double, percent2: Double) {
         periodicIO.desiredOutput =
-            Output.Percent(percent)
+            Output.Percent(percent, percent2)
         periodicIO.feedforward = 0.volts
     }
 
@@ -115,7 +117,7 @@ object Intake : FalconSubsystem() {
     }
 
     init {
-        defaultCommand = IntakeCommand { 0.0 }
+        defaultCommand = IntakeCommand({0.0}, {0.0})
         extendPiston(false)
     }
 

@@ -46,7 +46,7 @@ object Robot : FalconTimedRobot() {
         +VisionProcessing
 
         // Add subsystems
-        +Climber
+//        +Climber
         +Drivetrain
         +Feeder
         +Forks

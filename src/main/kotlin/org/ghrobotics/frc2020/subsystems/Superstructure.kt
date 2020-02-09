@@ -21,6 +21,7 @@ import org.ghrobotics.frc2020.planners.ShooterPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.feeder.ManualFeederCommand
 import org.ghrobotics.frc2020.subsystems.hood.AutoHoodCommand
+import org.ghrobotics.frc2020.subsystems.intake.IntakeCommand
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.vision.GoalTracker
@@ -33,8 +34,10 @@ import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.derived.velocity
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
+import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 
@@ -121,6 +124,24 @@ object Superstructure {
 
         override fun end(interrupted: Boolean) {
             VisionProcessing.turnOffLEDs()
+        }
+    }
+
+    fun intake() = parallel {
+        +IntakeCommand({ -0.5 }, { 0.7 })
+        +ManualFeederCommand { 0.6 }
+    }
+
+    fun exhaust() = parallel {
+        +IntakeCommand({ -0.5 }, { -0.7 })
+        +ManualFeederCommand { -0.6 }
+    }
+
+    fun shoot() = parallel {
+        +AutoShooterCommand { 360.degrees / 1.minutes * 4000}
+        +sequential {
+            +WaitCommand(2.0)
+            +ManualFeederCommand { 0.9 }
         }
     }
 
