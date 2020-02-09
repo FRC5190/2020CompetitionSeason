@@ -28,8 +28,13 @@ import org.ghrobotics.lib.utils.isConnected
 
 object Intake : FalconSubsystem() {
 
-    private val intakeMotor = FalconMAX(
-        id = IntakeConstants.kIntakeId,
+    private val intakeMaster = FalconMAX(
+        id = IntakeConstants.kMasterId,
+        type = CANSparkMaxLowLevel.MotorType.kBrushless,
+        model = DefaultNativeUnitModel
+    )
+    private val intakeSlave = FalconMAX(
+        id = IntakeConstants.kSlaveId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = DefaultNativeUnitModel
     )
@@ -43,7 +48,15 @@ object Intake : FalconSubsystem() {
     private val isConnected: Boolean
 
     init {
-        isConnected = intakeMotor.isConnected()
+        isConnected = intakeMaster.isConnected()
+
+        if (isConnected) {
+            intakeMaster.outputInverted = true
+            intakeSlave.follow(intakeMaster)
+
+            intakeMaster.smartCurrentLimit = IntakeConstants.kCurrentLimit
+            intakeSlave.smartCurrentLimit = IntakeConstants.kCurrentLimit
+        }
     }
 
     private class PeriodicIO {
@@ -58,15 +71,15 @@ object Intake : FalconSubsystem() {
 
     override fun periodic() {
         if (isConnected) {
-            periodicIO.voltage = intakeMotor.voltageOutput
-            periodicIO.current = intakeMotor.drawnCurrent
-            periodicIO.position = intakeMotor.encoder.position
+            periodicIO.voltage = intakeMaster.voltageOutput
+            periodicIO.current = intakeMaster.drawnCurrent
+            periodicIO.position = intakeMaster.encoder.position
 
             when (val desiredOutput = periodicIO.desiredOutput) {
                 is Output.Nothing ->
-                    intakeMotor.setNeutral()
+                    intakeMaster.setNeutral()
                 is Output.Percent ->
-                    intakeMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+                    intakeMaster.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
             }
         }
     }
@@ -93,7 +106,7 @@ object Intake : FalconSubsystem() {
     }
 
     fun resetPosition(position: SIUnit<NativeUnit>) {
-        intakeMotor.encoder.resetPosition(position)
+        intakeMaster.encoder.resetPosition(position)
     }
 
     init {
