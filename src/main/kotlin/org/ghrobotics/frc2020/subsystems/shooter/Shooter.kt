@@ -59,6 +59,9 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         isConnected = masterMotor.isConnected() && slaveMotor.isConnected()
 
         if (isConnected) {
+            masterMotor.canSparkMax.restoreFactoryDefaults()
+            slaveMotor.canSparkMax.restoreFactoryDefaults()
+
             slaveMotor.follow(masterMotor)
 
             masterMotor.canSparkMax.closedLoopRampRate = 0.25

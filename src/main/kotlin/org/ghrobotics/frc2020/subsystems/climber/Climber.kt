@@ -50,6 +50,9 @@ object Climber : FalconSubsystem() {
     init {
         isConnected = winchMasterMotor.isConnected() && winchSlaveMotor.isConnected()
         if (isConnected) {
+            winchMasterMotor.canSparkMax.restoreFactoryDefaults()
+            winchSlaveMotor.canSparkMax.restoreFactoryDefaults()
+
             // Slaves to follow master.
             winchSlaveMotor.follow(winchMasterMotor)
 

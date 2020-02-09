@@ -97,6 +97,11 @@ object Drivetrain : FalconWestCoastDrivetrain() {
             leftSlave1.isConnected() && rightSlave1.isConnected()
 
         if (isConnected) {
+            leftMotor.canSparkMax.restoreFactoryDefaults()
+            leftSlave1.canSparkMax.restoreFactoryDefaults()
+            rightMotor.canSparkMax.restoreFactoryDefaults()
+            rightSlave1.canSparkMax.restoreFactoryDefaults()
+
             leftSlave1.follow(leftMotor)
             rightSlave1.follow(rightMotor)
 
