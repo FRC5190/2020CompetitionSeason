@@ -24,6 +24,7 @@ import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnit
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.motors.rev.FalconMAX
+import org.ghrobotics.lib.utils.isConnected
 
 object Intake : FalconSubsystem() {
 
@@ -38,6 +39,13 @@ object Intake : FalconSubsystem() {
     private val periodicIO = PeriodicIO()
     val position get() = periodicIO.position
 
+    // Connection Status
+    private val isConnected: Boolean
+
+    init {
+        isConnected = intakeMotor.isConnected()
+    }
+
     private class PeriodicIO {
         var current: SIUnit<Ampere> = 0.amps
         var voltage: SIUnit<Volt> = 0.volts
@@ -49,15 +57,17 @@ object Intake : FalconSubsystem() {
     }
 
     override fun periodic() {
-        periodicIO.voltage = intakeMotor.voltageOutput
-        periodicIO.current = intakeMotor.drawnCurrent
-        periodicIO.position = intakeMotor.encoder.position
+        if (isConnected) {
+            periodicIO.voltage = intakeMotor.voltageOutput
+            periodicIO.current = intakeMotor.drawnCurrent
+            periodicIO.position = intakeMotor.encoder.position
 
-        when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing ->
-                intakeMotor.setNeutral()
-            is Output.Percent ->
-                intakeMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+            when (val desiredOutput = periodicIO.desiredOutput) {
+                is Output.Nothing ->
+                    intakeMotor.setNeutral()
+                is Output.Percent ->
+                    intakeMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+            }
         }
     }
 

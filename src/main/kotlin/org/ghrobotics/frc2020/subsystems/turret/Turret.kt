@@ -34,6 +34,7 @@ import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 import org.ghrobotics.lib.utils.InterpolatingTreeMapBuffer
+import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the turret on the robot.
@@ -51,6 +52,9 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
+
+    // Connection status
+    private val isConnected: Boolean
 
     // Buffer to store previous turret angles for latency compensation.
     private val buffer =
@@ -91,31 +95,38 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         private set
 
     init {
-        master.outputInverted = true
 
-        master.useMotionProfileForPosition = true
-        master.motionProfileCruiseVelocity = TurretConstants.kMaxVelocity
-        master.motionProfileAcceleration = TurretConstants.kMaxAcceleration
+        isConnected = master.isConnected()
 
-        master.brakeMode = true
+        // Check if the Spark is on the bus.
+        if (isConnected) {
+            master.outputInverted = true
 
-        master.canSparkMax.setSoftLimit(
-            CANSparkMax.SoftLimitDirection.kReverse,
-            TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.start)
-                .value.toFloat()
-        )
-        master.canSparkMax.setSoftLimit(
-            CANSparkMax.SoftLimitDirection.kForward,
-            TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.endInclusive)
-                .value.toFloat()
-        )
+            master.useMotionProfileForPosition = true
+            master.motionProfileCruiseVelocity = TurretConstants.kMaxVelocity
+            master.motionProfileAcceleration = TurretConstants.kMaxAcceleration
+
+            master.brakeMode = true
+
+            master.canSparkMax.setSoftLimit(
+                CANSparkMax.SoftLimitDirection.kReverse,
+                TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.start)
+                    .value.toFloat()
+            )
+            master.canSparkMax.setSoftLimit(
+                CANSparkMax.SoftLimitDirection.kForward,
+                TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.endInclusive)
+                    .value.toFloat()
+            )
+
+            enableClosedLoopControl()
+        }
 
         defaultCommand = InstantCommand(Runnable {
             setPercent(
                 0.0
             )
         }, this).perpetually()
-        enableClosedLoopControl()
     }
 
     /**
@@ -182,22 +193,24 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     }
 
     override fun periodic() {
-        // Read sensor values.
-        periodicIO.position = master.encoder.position
-        periodicIO.velocity = master.encoder.velocity
-        periodicIO.voltage = master.voltageOutput
-        periodicIO.current = master.drawnCurrent
+        if (isConnected) {
+            // Read sensor values.
+            periodicIO.position = master.encoder.position
+            periodicIO.velocity = master.encoder.velocity
+            periodicIO.voltage = master.voltageOutput
+            periodicIO.current = master.drawnCurrent
 
-        periodicIO.hallEffect = hallEffectSensor.get()
+            periodicIO.hallEffect = hallEffectSensor.get()
 
-        // Update the buffer.
-        buffer[Timer.getFPGATimestamp().seconds] = periodicIO.position
+            // Update the buffer.
+            buffer[Timer.getFPGATimestamp().seconds] = periodicIO.position
 
-        // Write motor outputs.
-        when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing -> master.setNeutral()
-            is Output.Percent -> master.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-            is Output.Position -> master.setPosition(desiredOutput.angle, periodicIO.feedforward)
+            // Write motor outputs.
+            when (val desiredOutput = periodicIO.desiredOutput) {
+                is Output.Nothing -> master.setNeutral()
+                is Output.Percent -> master.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+                is Output.Position -> master.setPosition(desiredOutput.angle, periodicIO.feedforward)
+            }
         }
     }
 

@@ -24,6 +24,7 @@ import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
+import org.ghrobotics.lib.utils.isConnected
 
 object FortuneWheel : FalconSubsystem() {
     // Create objects
@@ -34,13 +35,20 @@ object FortuneWheel : FalconSubsystem() {
         model = FortuneWheelConstants.kSpinnerUnitModel
     )
 
+    // Connection Status
+    private val isConnected: Boolean
+
     init {
-        spinnerMotor.voltageCompSaturation = 12.volts
-        spinnerMotor.controller.p = FortuneWheelConstants.kP
-        spinnerMotor.controller.ff = FortuneWheelConstants.kF
-        spinnerMotor.motionProfileCruiseVelocity = FortuneWheelConstants.kMaxVelocity
-        spinnerMotor.motionProfileAcceleration = FortuneWheelConstants.kMaxAcceleration
-        spinnerMotor.useMotionProfileForPosition = true
+        isConnected = spinnerMotor.isConnected()
+
+        if (isConnected) {
+            spinnerMotor.voltageCompSaturation = 12.volts
+            spinnerMotor.controller.p = FortuneWheelConstants.kP
+            spinnerMotor.controller.ff = FortuneWheelConstants.kF
+            spinnerMotor.motionProfileCruiseVelocity = FortuneWheelConstants.kMaxVelocity
+            spinnerMotor.motionProfileAcceleration = FortuneWheelConstants.kMaxAcceleration
+            spinnerMotor.useMotionProfileForPosition = true
+        }
     }
 
     // Create PeriodicIO

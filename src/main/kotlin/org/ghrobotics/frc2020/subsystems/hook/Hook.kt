@@ -19,6 +19,7 @@ import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.motors.rev.FalconMAX
+import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the hook which can slide across the climbing bar.
@@ -34,7 +35,11 @@ object Hook : FalconSubsystem() {
 
     private val periodicIO = PeriodicIO()
 
+    // Connection Status
+    private val isConnected: Boolean
+
     init {
+        isConnected = masterMotor.isConnected()
         defaultCommand = ManualHookCommand { 0.0 }
     }
 

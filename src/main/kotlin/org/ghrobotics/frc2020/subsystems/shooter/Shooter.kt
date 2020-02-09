@@ -23,6 +23,7 @@ import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
+import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the shooter subsystem on the robot.
@@ -39,26 +40,35 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
 
+    // Connection status
+    private val isConnected: Boolean
+
     // Getters
     val velocity get() = periodicIO.velocity
     val voltage get() = periodicIO.voltage
 
     // Initialize and configure motors.
     init {
+        // Check if Spark is on the bus.
         val slaveMotor = FalconMAX(
             id = ShooterConstants.kSlaveId,
             type = CANSparkMaxLowLevel.MotorType.kBrushless,
             model = ShooterConstants.kNativeUnitModel
         )
-        slaveMotor.follow(masterMotor)
 
-        masterMotor.canSparkMax.closedLoopRampRate = 0.25
-        masterMotor.canSparkMax.openLoopRampRate = 0.5
+        isConnected = masterMotor.isConnected() && slaveMotor.isConnected()
 
-        masterMotor.brakeMode = false
-        slaveMotor.brakeMode = false
+        if (isConnected) {
+            slaveMotor.follow(masterMotor)
 
-        enableClosedLoopControl()
+            masterMotor.canSparkMax.closedLoopRampRate = 0.25
+            masterMotor.canSparkMax.openLoopRampRate = 0.5
+
+            masterMotor.brakeMode = false
+            slaveMotor.brakeMode = false
+
+            enableClosedLoopControl()
+        }
     }
 
     /**
@@ -113,14 +123,16 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     }
 
     override fun periodic() {
-        periodicIO.velocity = masterMotor.encoder.velocity
-        periodicIO.voltage = masterMotor.voltageOutput
-        periodicIO.current = masterMotor.drawnCurrent
+        if (isConnected) {
+            periodicIO.velocity = masterMotor.encoder.velocity
+            periodicIO.voltage = masterMotor.voltageOutput
+            periodicIO.current = masterMotor.drawnCurrent
 
-        when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing -> masterMotor.setNeutral()
-            is Output.Percent -> masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-            is Output.Velocity -> masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
+            when (val desiredOutput = periodicIO.desiredOutput) {
+                is Output.Nothing -> masterMotor.setNeutral()
+                is Output.Percent -> masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+                is Output.Velocity -> masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
+            }
         }
     }
 

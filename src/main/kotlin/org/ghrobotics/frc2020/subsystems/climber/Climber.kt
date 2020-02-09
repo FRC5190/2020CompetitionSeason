@@ -19,6 +19,7 @@ import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
 import org.ghrobotics.lib.motors.rev.FalconMAX
+import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the climber assembly and the climber winch
@@ -42,26 +43,33 @@ object Climber : FalconSubsystem() {
     private val extensionPiston = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kExtensionPistonId)
     private val winchBrake = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kWinchBrakeId)
 
+    private val isConnected: Boolean
+
     private val periodicIO = PeriodicIO()
 
     init {
-        // Slaves to follow master.
-        winchSlaveMotor.follow(winchMasterMotor)
+        isConnected = winchMasterMotor.isConnected() && winchSlaveMotor.isConnected()
+        if (isConnected) {
+            // Slaves to follow master.
+            winchSlaveMotor.follow(winchMasterMotor)
 
-        // Set default command.
-        defaultCommand = ManualClimberCommand { 0.0 }
+            // Set default command.
+            defaultCommand = ManualClimberCommand { 0.0 }
+        }
     }
 
     override fun periodic() {
-        periodicIO.voltage = winchMasterMotor.voltageOutput
-        periodicIO.current = winchMasterMotor.drawnCurrent
+        if (isConnected) {
+            periodicIO.voltage = winchMasterMotor.voltageOutput
+            periodicIO.current = winchMasterMotor.drawnCurrent
 
-        when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing -> {
-                winchMasterMotor.setNeutral()
+            when (val desiredOutput = periodicIO.desiredOutput) {
+                is Output.Nothing -> {
+                    winchMasterMotor.setNeutral()
+                }
+                is Output.Percent ->
+                    winchMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
             }
-            is Output.Percent ->
-                winchMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
         }
     }
 
