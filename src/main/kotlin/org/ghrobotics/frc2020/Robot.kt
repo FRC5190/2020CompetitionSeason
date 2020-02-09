@@ -17,9 +17,7 @@ import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder
 import org.ghrobotics.frc2020.subsystems.forks.Forks
-import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
 import org.ghrobotics.frc2020.subsystems.hood.Hood
-import org.ghrobotics.frc2020.subsystems.hook.Hook
 import org.ghrobotics.frc2020.subsystems.intake.Intake
 import org.ghrobotics.frc2020.subsystems.led.LED
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
@@ -52,9 +50,9 @@ object Robot : FalconTimedRobot() {
         +Drivetrain
         +Feeder
         +Forks
-        +FortuneWheel
+//        +FortuneWheel
         +Hood
-        +Hook
+//        +Hook
         +Intake
         +LED
         +Shooter

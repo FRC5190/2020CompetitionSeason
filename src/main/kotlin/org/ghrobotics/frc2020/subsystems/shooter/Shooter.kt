@@ -70,6 +70,8 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
             slaveMotor.brakeMode = false
 
             enableClosedLoopControl()
+        } else {
+            println("Did not initialize Shooter")
         }
     }
 

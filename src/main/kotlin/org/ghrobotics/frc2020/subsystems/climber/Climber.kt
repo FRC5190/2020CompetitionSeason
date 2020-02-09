@@ -58,6 +58,8 @@ object Climber : FalconSubsystem() {
 
             // Set default command.
             defaultCommand = ManualClimberCommand { 0.0 }
+        } else {
+            println("Did not initialize Climber.")
         }
     }
 

@@ -111,6 +111,8 @@ object Drivetrain : FalconWestCoastDrivetrain() {
             rightSlave1.outputInverted = true
 
             enableClosedLoopControl()
+        } else {
+            println("Did not initialize Drivetrain")
         }
 
         // Set the default command

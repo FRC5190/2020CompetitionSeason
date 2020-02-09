@@ -59,6 +59,8 @@ object Intake : FalconSubsystem() {
 
             intakeMaster.smartCurrentLimit = IntakeConstants.kCurrentLimit
             intakeSlave.smartCurrentLimit = IntakeConstants.kCurrentLimit
+        } else {
+            println("Did not initialize Intake")
         }
     }
 

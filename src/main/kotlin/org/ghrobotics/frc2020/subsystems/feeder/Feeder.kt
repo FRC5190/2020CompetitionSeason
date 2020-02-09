@@ -34,6 +34,8 @@ object Feeder : FalconSubsystem() {
             feederMotor.canSparkMax.restoreFactoryDefaults()
             feederMotor.outputInverted = true
             feederMotor.smartCurrentLimit = FeederConstants.kCurrentLimit
+        } else {
+            println("Did not initialize Feeder")
         }
     }
 

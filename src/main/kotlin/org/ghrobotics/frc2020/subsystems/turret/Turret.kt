@@ -121,6 +121,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             )
 
             enableClosedLoopControl()
+        } else {
+            println("Did not initialize Turret")
         }
 
         defaultCommand = InstantCommand(Runnable {

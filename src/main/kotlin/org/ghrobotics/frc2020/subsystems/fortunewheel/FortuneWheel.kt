@@ -49,6 +49,8 @@ object FortuneWheel : FalconSubsystem() {
             spinnerMotor.motionProfileCruiseVelocity = FortuneWheelConstants.kMaxVelocity
             spinnerMotor.motionProfileAcceleration = FortuneWheelConstants.kMaxAcceleration
             spinnerMotor.useMotionProfileForPosition = true
+        } else {
+            println("Did not initialize FortuneWheel")
         }
     }
 
