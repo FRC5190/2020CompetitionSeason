@@ -50,9 +50,13 @@ object DriveConstants {
 
 object FeederConstants {
     const val kFeederMasterId = 10
+    const val kIntakeSensorId = 0
+    const val kTurretSensorId = 1
     val kFeederRadius = 1.inches
-    val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
+    val kFeederUnitModel = NativeUnitLengthModel(1.nativeUnits, kFeederRadius)
 
+    const val kNormalIntake = 0
+    const val kNormalTurret = 0
     val kCurrentLimit = 25.amps
 }
 

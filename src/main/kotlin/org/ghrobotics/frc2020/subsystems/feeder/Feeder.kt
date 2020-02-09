@@ -9,13 +9,18 @@
 package org.ghrobotics.frc2020.subsystems.feeder
 
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.AnalogInput
 import org.ghrobotics.frc2020.FeederConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
+import org.ghrobotics.lib.mathematics.units.Meter
+import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.utils.isConnected
 
 object Feeder : FalconSubsystem() {
     // Create objects
+    private val intakeSensor = AnalogInput(FeederConstants.kIntakeSensorId)
+    private val turretSensor = AnalogInput(FeederConstants.kTurretSensorId)
     private val feederMotor = FalconMAX(
         id = FeederConstants.kFeederMasterId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
@@ -24,6 +29,12 @@ object Feeder : FalconSubsystem() {
 
     // Create PeriodicIO
     private val periodicIO = PeriodicIO()
+    val intakeValue get() = periodicIO.intakeValue
+    val turretValue get() = periodicIO.turretValue
+
+    // Feeder Values
+    var ballCount = 0
+    var status = Status.INTAKE
 
     // Connection Status
     private val isConnected: Boolean
@@ -40,21 +51,38 @@ object Feeder : FalconSubsystem() {
         periodicIO.output = Output.Percent(percent)
     }
 
+    fun setPosition(position: SIUnit<Meter>) {
+        periodicIO.output = Output.Position(position)
+    }
+
     override fun periodic() {
         if (isConnected) {
+            periodicIO.intakeValue = intakeSensor.value != FeederConstants.kNormalIntake
+            periodicIO.turretValue = turretSensor.value != FeederConstants.kNormalTurret
+
             when (val output = periodicIO.output) {
                 is Output.Nothing -> feederMotor.setNeutral()
                 is Output.Percent -> feederMotor.setDutyCycle(output.percent)
+                is Output.Position -> feederMotor.setPosition(output.position)
             }
         }
     }
 
     private class PeriodicIO {
         var output: Output = Output.Nothing
+        var intakeValue: Boolean = false
+        var turretValue: Boolean = false
     }
 
     private sealed class Output {
         object Nothing : Output()
         class Percent(val percent: Double) : Output()
+        class Position(val position: SIUnit<Meter>) : Output()
+    }
+
+    enum class Status {
+        INTAKE,
+        TURRET,
+        TOINTAKE
     }
 }
