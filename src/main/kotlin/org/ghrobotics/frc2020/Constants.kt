@@ -52,8 +52,8 @@ object FeederConstants {
     const val kFeederMasterId = 10
     const val kIntakeSensorId = 0
     const val kTurretSensorId = 1
-    val kFeederRadius = 1.inches
-    val kFeederUnitModel = NativeUnitLengthModel(1.nativeUnits, kFeederRadius)
+    val kFeederDiameter = 1.25.inches
+    val kFeederUnitModel = NativeUnitLengthModel(15.nativeUnits, kFeederDiameter / 2)
 
     const val kNormalIntake = 0
     const val kNormalTurret = 0
