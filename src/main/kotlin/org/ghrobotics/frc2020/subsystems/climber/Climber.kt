@@ -43,11 +43,11 @@ object Climber : FalconSubsystem() {
     private val extensionPiston = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kExtensionPistonId)
     private val winchBrake = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kWinchBrakeId)
 
-    private val isConnected: Boolean
+    private var isConnected = false
 
     private val periodicIO = PeriodicIO()
 
-    init {
+    override fun lateInit() {
         isConnected = winchMasterMotor.isConnected() && winchSlaveMotor.isConnected()
         if (isConnected) {
             winchMasterMotor.canSparkMax.restoreFactoryDefaults()
@@ -58,6 +58,8 @@ object Climber : FalconSubsystem() {
 
             // Set default command.
             defaultCommand = ManualClimberCommand { 0.0 }
+        } else {
+            println("Did not initialize Climber.")
         }
     }
 

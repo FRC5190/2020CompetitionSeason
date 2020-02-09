@@ -54,7 +54,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     private val periodicIO = PeriodicIO()
 
     // Connection status
-    private val isConnected: Boolean
+    private var isConnected = false
 
     // Buffer to store previous turret angles for latency compensation.
     private val buffer =
@@ -94,7 +94,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     var status = Status.NOT_ZEROED
         private set
 
-    init {
+    override fun lateInit() {
         isConnected = master.isConnected()
 
         // Check if the Spark is on the bus.
@@ -121,6 +121,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             )
 
             enableClosedLoopControl()
+        } else {
+            println("Did not initialize Turret")
         }
 
         defaultCommand = InstantCommand(Runnable {
@@ -134,7 +136,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * Sets the zero of the turret at the current position.
      */
     fun zero() {
-        master.encoder.resetPosition(0.radians)
+        periodicIO.resetPosition = true
+        periodicIO.resetTo = 0.radians
         setStatus(Status.READY)
     }
 
@@ -151,7 +154,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * @param jogAmount The amount to jog the zero by.
      */
     fun jogZero(jogAmount: SIUnit<Radian>) {
-        master.encoder.resetPosition(periodicIO.position - jogAmount)
+        periodicIO.resetPosition = true
+        periodicIO.resetTo = periodicIO.position - jogAmount
     }
 
     /**
@@ -206,6 +210,11 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             // Update the buffer.
             buffer[Timer.getFPGATimestamp().seconds] = periodicIO.position
 
+            if (periodicIO.resetPosition) {
+                periodicIO.resetPosition = false
+                master.encoder.resetPosition(periodicIO.resetTo)
+            }
+
             // Write motor outputs.
             when (val desiredOutput = periodicIO.desiredOutput) {
                 is Output.Nothing -> master.setNeutral()
@@ -225,6 +234,9 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         var feedforward: SIUnit<Volt> = 0.volts
         var desiredOutput: Output =
             Output.Nothing
+
+        var resetPosition: Boolean = false
+        var resetTo: SIUnit<Radian> = 0.radians
     }
 
     private sealed class Output {

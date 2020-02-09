@@ -41,14 +41,13 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     private val periodicIO = PeriodicIO()
 
     // Connection status
-    private val isConnected: Boolean
+    private var isConnected = false
 
     // Getters
     val velocity get() = periodicIO.velocity
     val voltage get() = periodicIO.voltage
 
-    // Initialize and configure motors.
-    init {
+    override fun lateInit() {
         // Check if Spark is on the bus.
         val slaveMotor = FalconMAX(
             id = ShooterConstants.kSlaveId,
@@ -71,6 +70,8 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
             slaveMotor.brakeMode = false
 
             enableClosedLoopControl()
+        } else {
+            println("Did not initialize Shooter")
         }
     }
 

@@ -26,14 +26,16 @@ object Feeder : FalconSubsystem() {
     private val periodicIO = PeriodicIO()
 
     // Connection Status
-    private val isConnected: Boolean
+    private var isConnected = false
 
-    init {
+    override fun lateInit() {
         isConnected = feederMotor.isConnected()
         if (isConnected) {
             feederMotor.canSparkMax.restoreFactoryDefaults()
             feederMotor.outputInverted = true
             feederMotor.smartCurrentLimit = FeederConstants.kCurrentLimit
+        } else {
+            println("Did not initialize Feeder")
         }
     }
 

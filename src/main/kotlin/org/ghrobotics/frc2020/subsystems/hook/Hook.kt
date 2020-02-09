@@ -36,12 +36,14 @@ object Hook : FalconSubsystem() {
     private val periodicIO = PeriodicIO()
 
     // Connection Status
-    private val isConnected: Boolean
+    private var isConnected = false
 
-    init {
+    override fun lateInit() {
         isConnected = masterMotor.isConnected()
         if (isConnected) {
             masterMotor.canSparkMax.restoreFactoryDefaults()
+        } else {
+            println("Did not initialize Hook")
         }
         defaultCommand = ManualHookCommand { 0.0 }
     }

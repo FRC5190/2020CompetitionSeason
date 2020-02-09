@@ -36,9 +36,9 @@ object FortuneWheel : FalconSubsystem() {
     )
 
     // Connection Status
-    private val isConnected: Boolean
+    private var isConnected = false
 
-    init {
+    override fun lateInit() {
         isConnected = spinnerMotor.isConnected()
 
         if (isConnected) {
@@ -49,6 +49,8 @@ object FortuneWheel : FalconSubsystem() {
             spinnerMotor.motionProfileCruiseVelocity = FortuneWheelConstants.kMaxVelocity
             spinnerMotor.motionProfileAcceleration = FortuneWheelConstants.kMaxAcceleration
             spinnerMotor.useMotionProfileForPosition = true
+        } else {
+            println("Did not initialize FortuneWheel")
         }
     }
 

@@ -22,4 +22,4 @@ fun Pose2d.toTransform(): Transform2d = minus(Pose2d())
  */
 fun Transform2d.toPose(): Pose2d = Pose2d(translation, rotation)
 
-fun FalconMAX<*>.isConnected() = canSparkMax.firmwareString != null
+fun FalconMAX<*>.isConnected() = canSparkMax.firmwareString != "v0.0.0"

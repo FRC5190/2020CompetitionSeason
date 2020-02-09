@@ -54,7 +54,7 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     )
 
     // Connection status
-    private val isConnected: Boolean
+    private var isConnected = false
 
     // Gyro
     private val navx = AHRS(SPI.Port.kMXP)
@@ -91,8 +91,8 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         return TestDrivetrainCommand().withTimeout(2.0)
     }
 
-    // Initialize follower motors and other motor configs
-    init {
+    override fun lateInit() {
+        super.lateInit()
         isConnected = leftMotor.isConnected() && rightMotor.isConnected() &&
             leftSlave1.isConnected() && rightSlave1.isConnected()
 
@@ -111,6 +111,8 @@ object Drivetrain : FalconWestCoastDrivetrain() {
             rightSlave1.outputInverted = true
 
             enableClosedLoopControl()
+        } else {
+            println("Did not initialize Drivetrain")
         }
 
         // Set the default command
