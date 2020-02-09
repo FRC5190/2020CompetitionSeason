@@ -42,6 +42,7 @@ object FortuneWheel : FalconSubsystem() {
         isConnected = spinnerMotor.isConnected()
 
         if (isConnected) {
+            spinnerMotor.canSparkMax.restoreFactoryDefaults()
             spinnerMotor.voltageCompSaturation = 12.volts
             spinnerMotor.controller.p = FortuneWheelConstants.kP
             spinnerMotor.controller.ff = FortuneWheelConstants.kF

@@ -40,6 +40,9 @@ object Hook : FalconSubsystem() {
 
     init {
         isConnected = masterMotor.isConnected()
+        if (isConnected) {
+            masterMotor.canSparkMax.restoreFactoryDefaults()
+        }
         defaultCommand = ManualHookCommand { 0.0 }
     }
 

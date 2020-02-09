@@ -51,6 +51,9 @@ object Intake : FalconSubsystem() {
         isConnected = intakeMaster.isConnected()
 
         if (isConnected) {
+            intakeMaster.canSparkMax.restoreFactoryDefaults()
+            intakeSlave.canSparkMax.restoreFactoryDefaults()
+
             intakeMaster.outputInverted = true
             intakeSlave.follow(intakeMaster)
 

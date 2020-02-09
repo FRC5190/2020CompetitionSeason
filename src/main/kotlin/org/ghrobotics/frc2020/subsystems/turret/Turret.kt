@@ -95,11 +95,12 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         private set
 
     init {
-
         isConnected = master.isConnected()
 
         // Check if the Spark is on the bus.
         if (isConnected) {
+            master.canSparkMax.restoreFactoryDefaults()
+
             master.outputInverted = true
 
             master.useMotionProfileForPosition = true

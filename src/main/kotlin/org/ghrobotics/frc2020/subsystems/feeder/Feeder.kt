@@ -31,6 +31,7 @@ object Feeder : FalconSubsystem() {
     init {
         isConnected = feederMotor.isConnected()
         if (isConnected) {
+            feederMotor.canSparkMax.restoreFactoryDefaults()
             feederMotor.outputInverted = true
             feederMotor.smartCurrentLimit = FeederConstants.kCurrentLimit
         }
