@@ -52,7 +52,7 @@ class ManualDriveCommand : FalconCommand(Drivetrain) {
             if (isQuickTurn) {
                 kMaxAngularSpeed.value * curvatureLimiter.calculate(-cSource())
             } else {
-                kMaxCurvature.value * curvatureLimiter.calculate(cSource()) * linear.value
+                kMaxCurvature.value * curvatureLimiter.calculate(-cSource()) * linear.value
             }
         )
         val desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredChassisSpeeds)
