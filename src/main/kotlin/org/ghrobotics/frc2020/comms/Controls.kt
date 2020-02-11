@@ -105,9 +105,6 @@ object Controls {
          * These are just buttons for debugging, will be removed for competition.
          */
         button(kY).change(AutoShooterCommand { 360.degrees / 1.minutes * 5000 })
-        axisButton(5, 0.04) {
-            change(ManualHoodCommand(source.map { it * 1.0 }))
-        }
     }
 
     fun update() {

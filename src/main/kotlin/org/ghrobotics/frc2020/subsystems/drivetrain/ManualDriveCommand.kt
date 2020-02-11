@@ -11,6 +11,7 @@ package org.ghrobotics.frc2020.subsystems.drivetrain
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.SlewRateLimiter
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -21,6 +22,8 @@ import org.ghrobotics.lib.wrappers.hid.getRawButton
 import org.ghrobotics.lib.wrappers.hid.getX
 import org.ghrobotics.lib.wrappers.hid.getY
 import org.ghrobotics.lib.wrappers.hid.kA
+import kotlin.math.pow
+import kotlin.math.withSign
 
 /**
  * Command to drive the robot using the Xbox controller in teleop.
@@ -44,7 +47,7 @@ class ManualDriveCommand : FalconCommand(Drivetrain) {
 
     override fun execute() {
         // Curvature Drive
-        val isQuickTurn = qSource()
+        /*val isQuickTurn = qSource()
         val linear = kMaxSpeed * speedLimiter.calculate(-xSource())
 
         val desiredChassisSpeeds = ChassisSpeeds(
@@ -55,13 +58,13 @@ class ManualDriveCommand : FalconCommand(Drivetrain) {
                 kMaxCurvature.value * curvatureLimiter.calculate(-cSource()) * linear.value
             }
         )
-        val desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredChassisSpeeds)
+        val desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredChassisSpeeds)*/
 
         // Tank Drive
-        /*val desiredWheelSpeeds = DifferentialDriveWheelSpeeds(
-            kMaxSpeed.value * leftLimiter.calculate(-lSource()),
-            kMaxSpeed.value * rightLimiter.calculate(-rSource())
-        )*/
+        val desiredWheelSpeeds = DifferentialDriveWheelSpeeds(
+            kMaxSpeed.value * leftLimiter.calculate(lSource().pow(2).withSign(-lSource())),
+            kMaxSpeed.value * rightLimiter.calculate(rSource().pow(2).withSign(-rSource()))
+        )
 
         Drivetrain.setOutputSI(
             desiredWheelSpeeds.leftMetersPerSecond, desiredWheelSpeeds.rightMetersPerSecond, 0.0, 0.0
