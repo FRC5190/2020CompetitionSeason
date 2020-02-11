@@ -35,6 +35,9 @@ object Hood : FalconSubsystem() {
     // PeriodicIO
     private val periodicIO = PeriodicIO()
 
+    val rawEncoder get() = periodicIO.rawEncoder
+    val angle get() = periodicIO.angle
+
     // Initialize PWM Continuous Servos.
     init {
         // Set pulse width bounds.
@@ -47,6 +50,7 @@ object Hood : FalconSubsystem() {
     }
 
     override fun periodic() {
+        periodicIO.rawEncoder = encoder.get().toDouble()
         periodicIO.angle = HoodConstants.kNativeUnitModel.fromNativeUnitPosition(encoder.distance.nativeUnits)
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> {
@@ -74,12 +78,14 @@ object Hood : FalconSubsystem() {
     }
 
     fun setAngle(angle: SIUnit<Radian>) {
-        periodicIO.desiredOutput = Output.Position(angle)
+        periodicIO.desiredOutput = Output.Position(angle.coerceIn(HoodConstants.kAcceptableRange))
     }
 
     private class PeriodicIO {
         var angle: SIUnit<Radian> = 0.degrees
         var desiredOutput: Output = Output.Nothing
+
+        var rawEncoder: Double = 0.0
     }
 
     sealed class Output {
