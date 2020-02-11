@@ -10,8 +10,9 @@ package org.ghrobotics.frc2020.subsystems.drivetrain
 
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.SlewRateLimiter
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds
+import kotlin.math.pow
+import kotlin.math.withSign
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -22,8 +23,6 @@ import org.ghrobotics.lib.wrappers.hid.getRawButton
 import org.ghrobotics.lib.wrappers.hid.getX
 import org.ghrobotics.lib.wrappers.hid.getY
 import org.ghrobotics.lib.wrappers.hid.kA
-import kotlin.math.pow
-import kotlin.math.withSign
 
 /**
  * Command to drive the robot using the Xbox controller in teleop.

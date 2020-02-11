@@ -12,13 +12,11 @@ import edu.wpi.first.wpilibj.GenericHID
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
-import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
-import org.ghrobotics.lib.utils.map
 import org.ghrobotics.lib.utils.not
 import org.ghrobotics.lib.wrappers.hid.button
 import org.ghrobotics.lib.wrappers.hid.kB
