@@ -68,6 +68,5 @@ object Autonomous {
         EIGHT_BALL_STEAL,
         // 10 Ball Autos
         TEN_BALL_STEAL
-
     }
 }

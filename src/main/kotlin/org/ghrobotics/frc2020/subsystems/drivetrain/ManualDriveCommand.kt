@@ -13,10 +13,6 @@ import edu.wpi.first.wpilibj.SlewRateLimiter
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.lib.commands.FalconCommand
-import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.feet
-import org.ghrobotics.lib.mathematics.units.operations.div
-import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.wrappers.hid.getRawButton
 import org.ghrobotics.lib.wrappers.hid.getX
 import org.ghrobotics.lib.wrappers.hid.getY
@@ -28,9 +24,6 @@ import org.ghrobotics.lib.wrappers.hid.kA
 class ManualDriveCommand : FalconCommand(Drivetrain) {
 
     // Constants
-    private val kMaxSpeed = 13.23.feet / 1.seconds
-    private val kMaxAngularSpeed = 360.degrees / 1.seconds
-    private val kMaxCurvature = kMaxAngularSpeed / kMaxSpeed
 
     // Rate Limitiers
     private val speedLimiter = SlewRateLimiter(3.0) // 0.33 seconds from 0 to 1.
@@ -45,14 +38,14 @@ class ManualDriveCommand : FalconCommand(Drivetrain) {
     override fun execute() {
         // Curvature Drive
         val isQuickTurn = qSource()
-        val linear = kMaxSpeed * speedLimiter.calculate(-xSource())
+        val linear = Drivetrain.kMaxSpeed * speedLimiter.calculate(-xSource())
 
         val desiredChassisSpeeds = ChassisSpeeds(
             linear.value, 0.0,
             if (isQuickTurn) {
-                kMaxAngularSpeed.value * curvatureLimiter.calculate(-cSource())
+                Drivetrain.kMaxAngularSpeed.value * curvatureLimiter.calculate(-cSource())
             } else {
-                kMaxCurvature.value * curvatureLimiter.calculate(-cSource()) * linear.absoluteValue.value
+                Drivetrain.kMaxCurvature.value * curvatureLimiter.calculate(-cSource()) * linear.absoluteValue.value
             }
         )
         val desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredChassisSpeeds)

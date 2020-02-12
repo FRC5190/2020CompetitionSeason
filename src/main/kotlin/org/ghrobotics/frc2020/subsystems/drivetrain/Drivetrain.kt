@@ -21,7 +21,11 @@ import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.DriveConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
+import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.feet
+import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.operations.times
+import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.drive.FalconWestCoastDrivetrain
 import org.ghrobotics.lib.utils.asSource
@@ -31,6 +35,12 @@ import org.ghrobotics.lib.utils.isConnected
  * Represents the drivetrain of the robot.
  */
 object Drivetrain : FalconWestCoastDrivetrain() {
+
+    // Constants
+    val kMaxSpeed = 13.23.feet / 1.seconds
+    val kMaxAngularSpeed = 360.degrees / 1.seconds
+    val kMaxCurvature = kMaxAngularSpeed / kMaxSpeed
+
     // Create motors
     override val leftMotor = FalconMAX(
         id = DriveConstants.kLeftMasterId,

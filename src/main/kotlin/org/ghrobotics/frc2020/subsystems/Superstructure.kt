@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
+import kotlin.math.abs
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.planners.ShooterPlanner
@@ -37,10 +38,9 @@ import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
-import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
-import kotlin.math.abs
+import org.ghrobotics.lib.mathematics.units.unitlessValue
 
 /**
  * Represents the overall superstructure of the robot, including the turret,
@@ -72,7 +72,7 @@ object Superstructure {
      *
      * @return The command.
      */
-    fun shootPowerCells(attemptInner: Boolean = true): Command = object : SequentialCommandGroup() {
+    fun shoot(attemptInner: Boolean = true): Command = object : SequentialCommandGroup() {
         init {
             addCommands(
                 // Turn on LEDs so that we can start aiming.
@@ -125,7 +125,7 @@ object Superstructure {
                     +AutoHoodCommand { hoodHoldAngle }
 
                     // Feed balls
-                    +ManualFeederCommand(0.9, 0.9)
+                    +ManualFeederCommand(1.0, 1.0)
                 }
             )
         }
@@ -135,22 +135,19 @@ object Superstructure {
         }
     }
 
+    /**
+     * Intakes power cells.
+     */
     fun intake() = parallel {
-        +IntakeCommand(0.5)
+        // Run the intake with a base speed of 0.5, scaling up linearly
+        // to the robot's max speed.
+        +IntakeCommand { 0.5 + (1.0 - 0.5) * (Drivetrain.averageVelocity / Drivetrain.kMaxSpeed).unitlessValue }
         +AutoFeederCommand()
     }
 
     fun exhaust() = parallel {
         +IntakeCommand(-0.5)
         +ManualFeederCommand(-0.6, -0.75)
-    }
-
-    fun shoot() = parallel {
-        +AutoShooterCommand { 360.degrees / 1.minutes * 6000 }
-        +sequential {
-            +WaitCommand(2.0)
-            +ManualFeederCommand(0.9, 0.9)
-        }
     }
 
     /**

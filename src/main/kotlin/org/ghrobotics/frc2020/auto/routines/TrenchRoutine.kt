@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2019, Green Hope Falcons
+ */
+
 package org.ghrobotics.frc2020.auto.routines
 
 import edu.wpi.first.wpilibj2.command.Command
@@ -32,24 +40,24 @@ class TrenchRoutine(private val type: Type) : AutoRoutine {
         +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchStart) })
 
         // Shoot existing power cells from current location.
-        +Superstructure.shootPowerCells()
+        +Superstructure.shoot()
 
         // Pickup more power cells.
         +parallel {
             +Drivetrain.followTrajectory(path1)
-            +Superstructure.intakePowerCells()
+            +Superstructure.intake()
         }.withTimeout(path1.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
 
         // Shot the power cells if it's a 6 ball auto. Come back and
         // shoot and if 8 ball.
         if (type == Type.SIX_BALL) {
-            +Superstructure.shootPowerCells()
+            +Superstructure.shoot()
         } else {
             +parallel {
                 +Drivetrain.followTrajectory(path2)
                 +sequential {
                     +WaitCommand(0.2)
-                    +Superstructure.shootPowerCells()
+                    +Superstructure.shoot()
                 }
             }
         }

@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2019, Green Hope Falcons
+ */
+
 package org.ghrobotics.frc2020.auto.routines
 
 import edu.wpi.first.wpilibj2.command.Command
@@ -36,7 +44,7 @@ class StealRoutine(private val type: Type) : AutoRoutine {
         // Drive and pickup balls from opponent trench.
         +parallel {
             +Drivetrain.followTrajectory(path1)
-            +Superstructure.intakePowerCells()
+            +Superstructure.intake()
         }.withTimeout(path1.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
 
         // Drive back to the scoring position and score.
@@ -44,26 +52,26 @@ class StealRoutine(private val type: Type) : AutoRoutine {
             +Drivetrain.followTrajectory(path2)
             +sequential {
                 +WaitCommand(0.2)
-                +Superstructure.shootPowerCells()
+                +Superstructure.shoot()
             }
         }
 
         // Pickup more balls.
         +parallel {
             +Drivetrain.followTrajectory(path3)
-            +Superstructure.intakePowerCells()
+            +Superstructure.intake()
         }.withTimeout(path3.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
 
         // Score immediately if 8 ball auto, or come back into range
         // if 10 ball auto.
         if (type == Type.EIGHT_BALL) {
-            +Superstructure.shootPowerCells()
+            +Superstructure.shoot()
         } else {
             +parallel {
                 +Drivetrain.followTrajectory(path4)
                 +sequential {
                     +WaitCommand(0.2)
-                    +Superstructure.shootPowerCells()
+                    +Superstructure.shoot()
                 }
             }
         }

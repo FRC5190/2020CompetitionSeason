@@ -51,7 +51,6 @@ object TrajectoryManager {
         .addConstraint(kVoltageConstraint)
         .setReversed(true)
 
-
     // Trajectories
     // Steal Autos
     val stealStartToOpponentTrenchBalls: Trajectory =
