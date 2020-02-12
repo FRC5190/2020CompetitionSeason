@@ -11,6 +11,7 @@
 package org.ghrobotics.frc2020
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d
+import org.ghrobotics.frc2020.subsystems.hood.HoodNativeUnitModel
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.amps
@@ -43,7 +44,7 @@ object DriveConstants {
 
     val kWheelRadius = 3.inches
     val kTrackWidth = 27.75.inches
-    val kNativeUnitModel = NativeUnitLengthModel(7.29.nativeUnits, kWheelRadius)
+    val kNativeUnitModel = NativeUnitLengthModel(9.09.nativeUnits, kWheelRadius)
 
     const val kP = 0.0003
 }
@@ -65,13 +66,17 @@ object HoodConstants {
     const val kServoAId = 8
     const val kServoBId = 9
 
-    const val kEncoderAId = 2
-    const val kEncoderBId = 3
+    const val kEncoderAId = 0
+    const val kEncoderBId = 1
 
-    const val kP = 0.0
+    const val kP = 8.2
 
-    const val kGearRatio = 0.5
-    val kNativeUnitModel = NativeUnitRotationModel(4096.nativeUnits * kGearRatio)
+    val kNativeUnitModel = HoodNativeUnitModel(
+        0.nativeUnits, 42.61.degrees,
+        (-690).nativeUnits, 13.degrees
+    )
+
+    val kAcceptableRange = 10.degrees..42.61.degrees
 }
 
 object HookConstants {
@@ -131,7 +136,7 @@ object FortuneWheelConstants {
 
 object TurretConstants {
     const val kTurretId = 5
-    const val kHallEffectSensorId = 1
+    const val kHallEffectSensorId = 3
 
     const val kGearRatio = 100.0 / 20.0 * 124.0 / 18.0 * 3.0
 
@@ -155,7 +160,7 @@ object TurretConstants {
 }
 
 object VisionConstants {
-    const val kLEDId = 0
+    const val kLEDId = 2
 
     val kGoalHeight = 92.inches
     val kCameraHeight = 22.5.inches

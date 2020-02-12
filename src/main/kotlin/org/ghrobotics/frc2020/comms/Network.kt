@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.comms
 
 import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.hood.Hood
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.twodim.geometry.x_u
@@ -67,6 +68,13 @@ object Network {
                 double("Angle (Degrees)") { Turret.getAngle().inDegrees() }
                 double("Speed") { Math.toDegrees(Turret.speed.value) }
                 double("Current (A)") { Turret.current.inAmps() }
+            }
+            grid("Hood") {
+                position(row = 2, column = 0)
+                size(width = 2, height = 1)
+
+                double("Encoder Raw") { Hood.rawEncoder }
+                double("Angle") { Hood.angle.inDegrees() }
             }
         }
     }
