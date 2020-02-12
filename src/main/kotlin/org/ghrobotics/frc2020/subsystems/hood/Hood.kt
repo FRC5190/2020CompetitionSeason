@@ -52,6 +52,7 @@ object Hood : FalconSubsystem() {
     override fun periodic() {
         periodicIO.rawEncoder = encoder.get().toDouble()
         periodicIO.angle = HoodConstants.kNativeUnitModel.fromNativeUnitPosition(encoder.distance.nativeUnits)
+
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> {
                 servoA.speed = 0.0

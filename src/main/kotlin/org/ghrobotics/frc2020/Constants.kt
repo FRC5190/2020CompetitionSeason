@@ -72,11 +72,11 @@ object HoodConstants {
     const val kP = 8.2
 
     val kNativeUnitModel = HoodNativeUnitModel(
-        0.nativeUnits, 40.degrees,
-        (-690).nativeUnits, 15.degrees
+        0.nativeUnits, 42.61.degrees,
+        (-690).nativeUnits, 13.degrees
     )
 
-    val kAcceptableRange = 15.degrees..40.degrees
+    val kAcceptableRange = 10.degrees..42.61.degrees
 }
 
 object HookConstants {
