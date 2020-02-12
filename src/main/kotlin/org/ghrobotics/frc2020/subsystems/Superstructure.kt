@@ -19,6 +19,7 @@ import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.planners.ShooterPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.feeder.AutoFeederCommand
 import org.ghrobotics.frc2020.subsystems.feeder.ManualFeederCommand
 import org.ghrobotics.frc2020.subsystems.hood.AutoHoodCommand
 import org.ghrobotics.frc2020.subsystems.intake.IntakeCommand
@@ -128,7 +129,7 @@ object Superstructure {
 
     fun intake() = parallel {
         +IntakeCommand(0.5)
-        +ManualFeederCommand(feederPercent = 0.6, bridgePercent = 0.75)
+        +AutoFeederCommand()
     }
 
     fun exhaust() = parallel {
@@ -137,7 +138,7 @@ object Superstructure {
     }
 
     fun shoot() = parallel {
-        +AutoShooterCommand { 360.degrees / 1.minutes * 4000 }
+        +AutoShooterCommand { 360.degrees / 1.minutes * 6000 }
         +sequential {
             +WaitCommand(2.0)
             +ManualFeederCommand(0.9, 0.9)

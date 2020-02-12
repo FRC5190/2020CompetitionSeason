@@ -52,6 +52,9 @@ object FeederConstants {
     const val kFeederId = 10
     const val kBridgeId = 14
 
+    const val kIntakeSensorId = 3
+    const val kExitSensorId = 2
+
     val kFeederRadius = 1.inches
     val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
 
@@ -89,8 +92,8 @@ object IntakeConstants {
 }
 
 object LEDConstants {
-    const val kPort = 5
-    const val kBufferSize = 60
+    const val kPort = 2
+    const val kBufferSize = 72
 }
 
 object ShooterConstants {
