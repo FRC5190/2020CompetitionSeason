@@ -9,6 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.feeder
 
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.AnalogInput
 import org.ghrobotics.frc2020.FeederConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
@@ -28,11 +29,18 @@ object Feeder : FalconSubsystem() {
         model = DefaultNativeUnitModel
     )
 
+    private val intakeSensor = AnalogInput(FeederConstants.kIntakeSensorId)
+    private val exitSensor = AnalogInput(FeederConstants.kExitSensorId)
+
     // Create PeriodicIO
     private val periodicIO = PeriodicIO()
 
     // Connection Status
     private var isConnected = false
+
+    // Getters
+    val intakeSensorTriggered get() = periodicIO.intakeSensor
+    val exitSensorTriggered get() = periodicIO.exitSensor
 
     override fun lateInit() {
         isConnected = feederMotor.isConnected() && bridgeMotor.isConnected()
@@ -56,6 +64,9 @@ object Feeder : FalconSubsystem() {
 
     override fun periodic() {
         if (isConnected) {
+            periodicIO.intakeSensor = intakeSensor.averageVoltage > 1.25
+            periodicIO.exitSensor = exitSensor.averageVoltage > 1.0
+
             when (val output = periodicIO.output) {
                 is Output.Nothing -> {
                     feederMotor.setNeutral()
@@ -75,6 +86,9 @@ object Feeder : FalconSubsystem() {
 
     private class PeriodicIO {
         var output: Output = Output.Nothing
+
+        var intakeSensor: Boolean = false
+        var exitSensor: Boolean = false
     }
 
     private sealed class Output {

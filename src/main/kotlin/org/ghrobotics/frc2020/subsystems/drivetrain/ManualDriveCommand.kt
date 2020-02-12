@@ -10,9 +10,7 @@ package org.ghrobotics.frc2020.subsystems.drivetrain
 
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.SlewRateLimiter
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds
-import kotlin.math.pow
-import kotlin.math.withSign
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -46,7 +44,7 @@ class ManualDriveCommand : FalconCommand(Drivetrain) {
 
     override fun execute() {
         // Curvature Drive
-        /*val isQuickTurn = qSource()
+        val isQuickTurn = qSource()
         val linear = kMaxSpeed * speedLimiter.calculate(-xSource())
 
         val desiredChassisSpeeds = ChassisSpeeds(
@@ -54,20 +52,21 @@ class ManualDriveCommand : FalconCommand(Drivetrain) {
             if (isQuickTurn) {
                 kMaxAngularSpeed.value * curvatureLimiter.calculate(-cSource())
             } else {
-                kMaxCurvature.value * curvatureLimiter.calculate(-cSource()) * linear.value
+                kMaxCurvature.value * curvatureLimiter.calculate(-cSource()) * linear.absoluteValue.value
             }
         )
-        val desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredChassisSpeeds)*/
+        val desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredChassisSpeeds)
 
         // Tank Drive
-        val desiredWheelSpeeds = DifferentialDriveWheelSpeeds(
+        /*val desiredWheelSpeeds = DifferentialDriveWheelSpeeds(
             kMaxSpeed.value * leftLimiter.calculate(lSource().pow(2).withSign(-lSource())),
             kMaxSpeed.value * rightLimiter.calculate(rSource().pow(2).withSign(-rSource()))
-        )
+        )*/
 
-        Drivetrain.setOutputSI(
-            desiredWheelSpeeds.leftMetersPerSecond, desiredWheelSpeeds.rightMetersPerSecond, 0.0, 0.0
-        )
+//        Drivetrain.setOutputSI(
+//            desiredWheelSpeeds.leftMetersPerSecond, desiredWheelSpeeds.rightMetersPerSecond, 0.0, 0.0
+//        )
+        Drivetrain.curvatureDrive(-xSource(), cSource(), qSource())
     }
 
     companion object {
