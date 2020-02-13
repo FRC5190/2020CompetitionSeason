@@ -8,6 +8,7 @@
 
 package org.ghrobotics.frc2020.auto
 
+import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.auto.routines.CharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.CheckSubsystemsRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
@@ -21,9 +22,13 @@ import org.ghrobotics.frc2020.comms.Network
  * Handles the autonomous portion of the game -- the first 15 seconds.
  */
 object Autonomous {
+
+    // Empty string to make the meme work.
+    private const val IT = ""
+
     fun start() {
         // Start the auto mode based on what is selected.
-        when (Network.autoModeSelector.selected) {
+        val JUST = when (Network.autoModeSelector.selected) {
             Mode.CHECK_SUBSYSTEMS -> CheckSubsystemsRoutine()
             Mode.CHARACTERIZE -> CharacterizationRoutine()
             Mode.TESTING -> TestingRoutine()
@@ -42,7 +47,10 @@ object Autonomous {
             Mode.TEN_BALL_STEAL -> StealRoutine(StealRoutine.Type.TEN_BALL)
 
             null -> DefaultRoutine()
-        }.startRoutine()
+        }.getRoutine()
+
+        // Start auto.
+        JUST S3ND IT
     }
 
     /**
@@ -69,4 +77,7 @@ object Autonomous {
         // 10 Ball Autos
         TEN_BALL_STEAL
     }
+
+    @Suppress("FunctionName")
+    private infix fun Command.S3ND(any: Any) = schedule()
 }
