@@ -28,8 +28,8 @@ import org.ghrobotics.lib.mathematics.units.seconds
 object TrajectoryManager {
 
     // Constraints
-    private val kMaxVelocity = 12.feet / 1.seconds
-    private val kMaxAcceleration = 8.feet / 1.seconds / 1.seconds
+    private val kMaxVelocity = 3.feet / 1.seconds
+    private val kMaxAcceleration = 3.feet / 1.seconds / 1.seconds
     private val kMaxCentripetalAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
 

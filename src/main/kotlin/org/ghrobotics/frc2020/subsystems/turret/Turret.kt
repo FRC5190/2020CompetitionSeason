@@ -205,7 +205,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             periodicIO.voltage = master.voltageOutput
             periodicIO.current = master.drawnCurrent
 
-            periodicIO.hallEffect = hallEffectSensor.get()
+            periodicIO.hallEffect = !hallEffectSensor.get()
 
             // Update the buffer.
             buffer[Timer.getFPGATimestamp().seconds] = periodicIO.position
