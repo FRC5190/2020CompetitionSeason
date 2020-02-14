@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConst
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.twodim.trajectory.FalconTrajectoryConfig
+import org.ghrobotics.lib.mathematics.twodim.trajectory.constraints.VelocityLimitRegionConstraint
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.operations.div
@@ -28,8 +29,10 @@ import org.ghrobotics.lib.mathematics.units.seconds
 object TrajectoryManager {
 
     // Constraints
-    private val kMaxVelocity = 3.feet / 1.seconds
-    private val kMaxAcceleration = 3.feet / 1.seconds / 1.seconds
+    private val kMaxVelocity = 12.feet / 1.seconds
+    private val kMaxTrenchVelocity = 8.feet / 1.seconds
+
+    private val kMaxAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxCentripetalAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
 
@@ -39,16 +42,21 @@ object TrajectoryManager {
     private val kVoltageConstraint =
         DifferentialDriveVoltageConstraint(Drivetrain.getFeedforward(), Drivetrain.kinematics, kMaxVoltage.value)
 
+    private val kTrenchVelocityConstraint =
+        VelocityLimitRegionConstraint(WaypointManager.kTrenchRegion, kMaxTrenchVelocity)
+
     // Config
     private val kFwdConfig = FalconTrajectoryConfig(kMaxVelocity, kMaxAcceleration)
         .setKinematics(Drivetrain.kinematics)
         .addConstraint(kCentripetalAccelerationConstraint)
         .addConstraint(kVoltageConstraint)
+        .addConstraint(kTrenchVelocityConstraint)
 
     private val kRevConfig = FalconTrajectoryConfig(kMaxVelocity, kMaxAcceleration)
         .setKinematics(Drivetrain.kinematics)
         .addConstraint(kCentripetalAccelerationConstraint)
         .addConstraint(kVoltageConstraint)
+        .addConstraint(kTrenchVelocityConstraint)
         .setReversed(true)
 
     // Trajectories
@@ -80,6 +88,10 @@ object TrajectoryManager {
 
     val trenchStartToLongPickup: Trajectory =
         generate(WaypointManager.kTrenchStart, WaypointManager.kLongPickupAfterTrench, kFwdConfig)
+
+    // Rendezvois Autos
+    val trenchStartToNearRendezvous: Trajectory =
+        generate(WaypointManager.kTrenchStart, WaypointManager.kNearRendezvous, kFwdConfig)
 
     /**
      * Generates a trajectory from a start and end waypoint.

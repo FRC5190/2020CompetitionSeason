@@ -8,6 +8,7 @@
 
 package org.ghrobotics.frc2020.subsystems.drivetrain
 
+import com.ctre.phoenix.sensors.PigeonIMU
 import com.kauailabs.navx.frc.AHRS
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.SPI
@@ -69,7 +70,7 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     // Gyro
     private val navx = AHRS(SPI.Port.kMXP)
     // private val pigeon = PigeonIMU(DriveConstants.kPigeonId)
-    override val gyro = navx.asSource()
+    override val gyro = PigeonIMU(17).asSource()
 
     // Path following
     override val controller = RamseteController(2.0, 0.7)

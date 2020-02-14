@@ -58,6 +58,7 @@ object Robot : FalconTimedRobot() {
         +Turret
 
         ZeroTurretCommand().schedule()
+        VisionProcessing.turnOnLEDs()
     }
 
     // Runs once when autonomous period starts

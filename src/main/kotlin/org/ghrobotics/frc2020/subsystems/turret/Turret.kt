@@ -137,7 +137,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun zero() {
         periodicIO.resetPosition = true
-        periodicIO.resetTo = 0.radians
+        periodicIO.resetTo = 180.degrees
         setStatus(Status.READY)
     }
 

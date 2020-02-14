@@ -40,7 +40,7 @@ class TrenchRoutine(private val type: Type) : AutoRoutine {
         +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchStart) })
 
         // Shoot existing power cells from current location.
-        +Superstructure.shoot()
+//        +Superstructure.shoot()
 
         // Pickup more power cells.
         +parallel {

@@ -36,6 +36,7 @@ import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.inInches
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.operations.div
@@ -59,7 +60,7 @@ object Superstructure {
     private var hoodHoldAngle = 0.degrees
 
     private val kVelocityTreshold = 0.25.inches / 1.seconds
-    private val kStopTimeTreshold = 0.6.seconds
+    private val kStopTimeTreshold = 2.seconds
     private val kGoodToAimToInnerTolerance = Math.toRadians(20.0)
 
     // Positions
@@ -125,12 +126,13 @@ object Superstructure {
                     +AutoHoodCommand { hoodHoldAngle }
 
                     // Feed balls
-                    +ManualFeederCommand(1.0, 1.0)
+                    +ManualFeederCommand(0.8, 1.0)
                 }
             )
         }
 
         override fun end(interrupted: Boolean) {
+            super.end(interrupted)
             VisionProcessing.turnOffLEDs()
         }
     }
@@ -181,7 +183,7 @@ object Superstructure {
         }
 
         // Get the distance to the target.
-        val distance = turretToOuterGoal.translation.norm
+        val distance = turretToInnerGoal.translation.norm
 
         // Get the angle to the target.
         val angleOuter = Rotation2d(turretToOuterGoal.translation.x, turretToOuterGoal.translation.y)
@@ -197,6 +199,9 @@ object Superstructure {
     fun update() {
         latestAimingParameters = getAimingParameters()
         latestShootingParameters = ShooterPlanner[latestAimingParameters.distance]
+
+//        println("Distance: ${latestAimingParameters.distance.inInches()}, " +
+//            "Speed: ${latestShootingParameters.speed.value}, Angle: ${latestShootingParameters.angle}")
     }
 
     /**

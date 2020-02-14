@@ -9,9 +9,11 @@
 package org.ghrobotics.frc2020.comms
 
 import edu.wpi.first.wpilibj.GenericHID
+import edu.wpi.first.wpilibj.XboxController
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
+import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -103,6 +105,9 @@ object Controls {
          * These are just buttons for debugging, will be removed for competition.
          */
         button(kY).change(AutoShooterCommand { 360.degrees / 1.minutes * 5000 })
+        axisButton(XboxController.Axis.kRightY.value) {
+            change(ManualHoodCommand(source))
+        }
     }
 
     fun update() {

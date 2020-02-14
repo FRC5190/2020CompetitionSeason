@@ -54,6 +54,9 @@ object FeederConstants {
     const val kFeederId = 10
     const val kBridgeId = 14
 
+    const val kPCMId = 0
+    const val kExitPistonId = 3
+
     const val kIntakeSensorId = 3
     const val kExitSensorId = 2
 
@@ -64,8 +67,8 @@ object FeederConstants {
 }
 
 object HoodConstants {
-    const val kServoAId = 8
-    const val kServoBId = 9
+    const val kServoAId = 0
+    const val kServoBId = 1
 
     const val kEncoderAId = 0
     const val kEncoderBId = 1
@@ -113,7 +116,7 @@ object ShooterConstants {
     val kS = 0.volts
 
     const val kP = 3.5E-4
-    const val kF = 2.0E-4
+    const val kF = 1.9E-4
 }
 
 object FortuneWheelConstants {
@@ -137,7 +140,7 @@ object FortuneWheelConstants {
 
 object TurretConstants {
     const val kTurretId = 5
-    const val kHallEffectSensorId = 3
+    const val kHallEffectSensorId = 4
 
     const val kGearRatio = 100.0 / 20.0 * 124.0 / 18.0 * 3.0
 
@@ -157,15 +160,15 @@ object TurretConstants {
 
     val kBadTurretOffset = 3.0.degrees
 
-    val kTurretRelativeToRobotCenter = Translation2d((6).inches, 0.inches)
+    val kTurretRelativeToRobotCenter = Translation2d((-8).inches, 0.inches)
 }
 
 object VisionConstants {
     const val kLEDId = 2
 
-    val kGoalHeight = 92.inches
-    val kCameraHeight = 22.5.inches
-    val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(25.0)
+    val kGoalHeight = 104.inches
+    val kCameraHeight = 23.75.inches
+    val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(23.5)
 
     val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d())
 
