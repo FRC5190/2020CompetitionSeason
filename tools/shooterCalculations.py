@@ -84,7 +84,7 @@ def trajectory(motorSpeed, launchAngle):
     return ret
 
 motorSpeed = 2000
-while motorSpeed <= 6000:
+while motorSpeed <= 8000:
     launchAngle = 10
     while launchAngle <= 80:
         trajectories.append(trajectory(motorSpeed, launchAngle))
