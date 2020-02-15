@@ -30,7 +30,7 @@ object ClimberConstants {
     const val kWinchMasterId = 11
     const val kWinchSlaveId = 12
 
-    const val kPCMId = 41
+    const val kPCMId = 0
     const val kExtensionPistonId = 1
     const val kWinchBrakeId = 4
 }
@@ -55,7 +55,7 @@ object FeederConstants {
     const val kBridgeId = 14
 
     const val kPCMId = 0
-    const val kExitPistonId = 3
+    const val kExitPistonId = 2
 
     const val kIntakeSensorId = 3
     const val kExitSensorId = 2
@@ -142,10 +142,10 @@ object TurretConstants {
     const val kTurretId = 5
     const val kHallEffectSensorId = 4
 
-    const val kGearRatio = 100.0 / 20.0 * 124.0 / 18.0 * 3.0
+    const val kGearRatio = 124.0 / 16.0 * 12.0
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
-    val kAcceptableRange = (-200).degrees..200.degrees
+    val kAcceptableRange = (-60).degrees..260.degrees
 
     val kAlignDelay = 0.25.seconds
     val kDefaultJogAmount = 1.degrees
@@ -170,7 +170,7 @@ object VisionConstants {
     val kCameraHeight = 23.75.inches
     val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(23.5)
 
-    val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d())
+    val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d.fromDegrees(2.0))
 
     val kGoalFieldRelativeAngle = Rotation2d()
 

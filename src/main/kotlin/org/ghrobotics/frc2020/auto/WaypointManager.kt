@@ -13,9 +13,11 @@ package org.ghrobotics.frc2020.auto
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.feet
+import org.ghrobotics.lib.mathematics.units.inch
 import org.ghrobotics.lib.mathematics.units.inches
 
 /**
@@ -77,7 +79,11 @@ object WaypointManager {
 
     // Rendezvous Autos
     val kNearRendezvous = Pose2d(
-        x = 33.82.feet, y = 8.61.feet, angle = Rotation2d.fromDegrees(135.0)
+        x = 33.32.feet, y = 7.33.feet, angle = Rotation2d.fromDegrees(85.0)) +
+        Transform2d(0.9.feet - 3.inches, -1.0.feet, Rotation2d())
+
+    val kRendezvousScore = Pose2d(
+        x = 40.244.feet, y = 5.703.feet, angle = Rotation2d.fromDegrees(180.0)
     )
 
     val kOpenScoringLocation = Pose2d(38.21.feet, 4.75.feet, Rotation2d.fromDegrees(-132.0))

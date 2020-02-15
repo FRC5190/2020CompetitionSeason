@@ -13,6 +13,7 @@ import org.ghrobotics.frc2020.auto.routines.CharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.CheckSubsystemsRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
 import org.ghrobotics.frc2020.auto.routines.LineCrossRoutine
+import org.ghrobotics.frc2020.auto.routines.RendezvousTrenchRoutine
 import org.ghrobotics.frc2020.auto.routines.StealRoutine
 import org.ghrobotics.frc2020.auto.routines.TestingRoutine
 import org.ghrobotics.frc2020.auto.routines.TrenchRoutine
@@ -45,6 +46,7 @@ object Autonomous {
             Mode.EIGHT_BALL_STEAL -> StealRoutine(StealRoutine.Type.EIGHT_BALL)
 
             Mode.TEN_BALL_STEAL -> StealRoutine(StealRoutine.Type.TEN_BALL)
+            Mode.TEN_BALL_NEAR -> RendezvousTrenchRoutine()
 
             null -> DefaultRoutine()
         }.getRoutine()
@@ -75,7 +77,8 @@ object Autonomous {
         EIGHT_BALL_TRENCH,
         EIGHT_BALL_STEAL,
         // 10 Ball Autos
-        TEN_BALL_STEAL
+        TEN_BALL_STEAL,
+        TEN_BALL_NEAR
     }
 
     @Suppress("FunctionName")

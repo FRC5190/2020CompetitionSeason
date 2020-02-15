@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
-import kotlin.math.abs
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.planners.ShooterPlanner
@@ -36,12 +35,12 @@ import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
-import org.ghrobotics.lib.mathematics.units.inInches
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.mathematics.units.unitlessValue
+import kotlin.math.abs
 
 /**
  * Represents the overall superstructure of the robot, including the turret,
@@ -78,6 +77,8 @@ object Superstructure {
             addCommands(
                 // Turn on LEDs so that we can start aiming.
                 InstantCommand(Runnable { VisionProcessing.turnOnLEDs() }),
+
+                AutoTurretCommand.createFromFieldOrientedAngle(0.degrees).withTimeout(0.3),
 
                 // Aim turret, shooter, and hood until the drivetrain is stopped for
                 // at least 0.7 seconds.
@@ -125,8 +126,11 @@ object Superstructure {
                     +AutoShooterCommand { shooterHoldSpeed }
                     +AutoHoodCommand { hoodHoldAngle }
 
-                    // Feed balls
-                    +ManualFeederCommand(0.8, 1.0)
+                    +sequential {
+                        +ManualFeederCommand(-0.2, 0.0).withTimeout(0.2)
+                        // Feed balls
+                        +ManualFeederCommand(0.7, 1.0)
+                    }
                 }
             )
         }
@@ -135,6 +139,10 @@ object Superstructure {
             super.end(interrupted)
             VisionProcessing.turnOffLEDs()
         }
+    }
+
+    fun test() = AutoTurretCommand {
+        SIUnit(latestAimingParameters.turretAngleOuterGoal.radians)
     }
 
     /**

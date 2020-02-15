@@ -13,14 +13,20 @@ import edu.wpi.first.wpilibj.XboxController
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
+import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
+import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
+import org.ghrobotics.frc2020.subsystems.feeder.Feeder
+import org.ghrobotics.frc2020.subsystems.forks.DropForksCommand
 import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
+import org.ghrobotics.lib.utils.map
 import org.ghrobotics.lib.utils.not
 import org.ghrobotics.lib.wrappers.hid.button
+import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.kB
 import org.ghrobotics.lib.wrappers.hid.kBumperLeft
 import org.ghrobotics.lib.wrappers.hid.kBumperRight
@@ -37,36 +43,36 @@ object Controls {
         /**
          * Represents controls when the robot is in climb mode.
          */
-//        state(Robot::isClimbMode) {
-//            /**
-//             * Retract the climber when the left bumper is pressed.
-//             */
-//            button(kBumperLeft).changeOn(ExtendClimberCommand(false))
-//
-//            /**
-//             * Extend the climber the right bumper is pressed.
-//             */
-//            button(kBumperRight).changeOn(ExtendClimberCommand(true))
-//
-//            /**
-//             * Pull the robot up when the left trigger is pressed.
-//             */
-//            triggerAxisButton(GenericHID.Hand.kLeft) {
-//                change(ManualClimberCommand(source))
-//            }
-//
-//            /**
-//             * Pull the robot down when the right trigger is pressed.
-//             */
-//            triggerAxisButton(GenericHID.Hand.kRight) {
-//                change(ManualClimberCommand(source.map { it * -1.0 }))
-//            }
-//
-//            /**
-//             * Extends the buddy climb platform
-//             */
-//            button(kA).change(DropForksCommand(true))
-//        }
+        state(Robot::isClimbMode) {
+            /**
+             * Retract the climber when the left bumper is pressed.
+             */
+            button(kBumperLeft).changeOn(ExtendClimberCommand(false))
+
+            /**
+             * Extend the climber the right bumper is pressed.
+             */
+            button(kBumperRight).changeOn(ExtendClimberCommand(true))
+
+            /**
+             * Pull the robot up when the left trigger is pressed.
+             */
+            triggerAxisButton(GenericHID.Hand.kLeft) {
+                change(ManualClimberCommand(source))
+            }
+
+            /**
+             * Pull the robot down when the right trigger is pressed.
+             */
+            triggerAxisButton(GenericHID.Hand.kRight) {
+                change(ManualClimberCommand(source.map { it * -1.0 }))
+            }
+
+            /**
+             * Extends the buddy climb platform
+             */
+            button(kA).change(DropForksCommand(true))
+        }
 
         /**
          * Represents controls when the robot is not in climb mode.
@@ -77,7 +83,8 @@ object Controls {
              * The turret and shooter will aim and the feeder will feed all balls
              * to the shooter when the drivetrain comes to a complete stop.
              */
-            button(kBumperRight).change(Superstructure.shoot())
+            button(kBumperRight).change(Superstructure.shoot(false))
+            triggerAxisButton(GenericHID.Hand.kRight).change(Superstructure.test())
 
             button(kBumperLeft).change(Superstructure.intake())
             triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.exhaust())
@@ -100,6 +107,9 @@ object Controls {
             Robot.isClimbMode = !Robot.isClimbMode
             Superstructure.goToStowedPosition()
         }
+
+        pov(90).changeOn { Feeder.setExitPiston(true) }
+        pov(270).changeOn { Feeder.setExitPiston(false) }
 
         /**
          * These are just buttons for debugging, will be removed for competition.
