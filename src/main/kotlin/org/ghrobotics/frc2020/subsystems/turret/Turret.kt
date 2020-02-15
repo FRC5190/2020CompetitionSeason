@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.planners.TurretPlanner
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -76,6 +77,11 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             DriverStation.reportError("[Turret] Buffer was empty!", false)
             0.degrees
         }()
+    }
+
+    fun getFieldRelativeAngle(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): SIUnit<Radian> {
+        val robotAngle = Drivetrain.getPose(timestamp).rotation.radians
+        return getAngle(timestamp) + SIUnit(robotAngle)
     }
 
     /**

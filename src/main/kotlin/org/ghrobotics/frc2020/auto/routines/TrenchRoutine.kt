@@ -36,31 +36,31 @@ class TrenchRoutine(private val type: Type) : AutoRoutine {
      * @return The command that runs the auto routine.
      */
     override fun getRoutine(): Command = sequential {
-        // Reset odometry
-        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchStart) })
-
-        // Shoot existing power cells from current location.
-//        +Superstructure.shoot()
-
-        // Pickup more power cells.
-        +parallel {
-            +Drivetrain.followTrajectory(path1)
-            +Superstructure.intake()
-        }.withTimeout(path1.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
-
-        // Shot the power cells if it's a 6 ball auto. Come back and
-        // shoot and if 8 ball.
-        if (type == Type.SIX_BALL) {
-            +Superstructure.shoot()
-        } else {
-            +parallel {
-                +Drivetrain.followTrajectory(path2)
-                +sequential {
-                    +WaitCommand(0.2)
-                    +Superstructure.shoot()
-                }
-            }
-        }
+//        // Reset odometry
+//        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchStart) })
+//
+//        // Shoot existing power cells from current location.
+////        +Superstructure.shoot()
+//
+//        // Pickup more power cells.
+//        +parallel {
+//            +Drivetrain.followTrajectory(path1)
+//            +Superstructure.intake()
+//        }.withTimeout(path1.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
+//
+//        // Shot the power cells if it's a 6 ball auto. Come back and
+//        // shoot and if 8 ball.
+//        if (type == Type.SIX_BALL) {
+//            +Superstructure.shoot()
+//        } else {
+//            +parallel {
+//                +Drivetrain.followTrajectory(path2)
+//                +sequential {
+//                    +WaitCommand(0.2)
+//                    +Superstructure.shoot()
+//                }
+//            }
+//        }
     }
 
     enum class Type {

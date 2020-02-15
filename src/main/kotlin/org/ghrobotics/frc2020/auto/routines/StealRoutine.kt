@@ -39,42 +39,42 @@ class StealRoutine(private val type: Type) : AutoRoutine {
      */
     override fun getRoutine(): Command = sequential {
         // Reset odometry to current location.
-        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kStealStart) })
-
-        // Drive and pickup balls from opponent trench.
-        +parallel {
-            +Drivetrain.followTrajectory(path1)
-            +Superstructure.intake()
-        }.withTimeout(path1.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
-
-        // Drive back to the scoring position and score.
-        +parallel {
-            +Drivetrain.followTrajectory(path2)
-            +sequential {
-                +WaitCommand(0.2)
-                +Superstructure.shoot()
-            }
-        }
-
-        // Pickup more balls.
-        +parallel {
-            +Drivetrain.followTrajectory(path3)
-            +Superstructure.intake()
-        }.withTimeout(path3.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
-
-        // Score immediately if 8 ball auto, or come back into range
-        // if 10 ball auto.
-        if (type == Type.EIGHT_BALL) {
-            +Superstructure.shoot()
-        } else {
-            +parallel {
-                +Drivetrain.followTrajectory(path4)
-                +sequential {
-                    +WaitCommand(0.2)
-                    +Superstructure.shoot()
-                }
-            }
-        }
+//        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kStealStart) })
+//
+//        // Drive and pickup balls from opponent trench.
+//        +parallel {
+//            +Drivetrain.followTrajectory(path1)
+//            +Superstructure.intake()
+//        }.withTimeout(path1.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
+//
+//        // Drive back to the scoring position and score.
+//        +parallel {
+//            +Drivetrain.followTrajectory(path2)
+//            +sequential {
+//                +WaitCommand(0.2)
+//                +Superstructure.shoot()
+//            }
+//        }
+//
+//        // Pickup more balls.
+//        +parallel {
+//            +Drivetrain.followTrajectory(path3)
+//            +Superstructure.intake()
+//        }.withTimeout(path3.totalTimeSeconds + kIntakeDelayTolerance.inSeconds())
+//
+//        // Score immediately if 8 ball auto, or come back into range
+//        // if 10 ball auto.
+//        if (type == Type.EIGHT_BALL) {
+//            +Superstructure.shoot()
+//        } else {
+//            +parallel {
+//                +Drivetrain.followTrajectory(path4)
+//                +sequential {
+//                    +WaitCommand(0.2)
+//                    +Superstructure.shoot()
+//                }
+//            }
+//        }
     }
 
     enum class Type {
