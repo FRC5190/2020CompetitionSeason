@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.auto.routines.CharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.CheckSubsystemsRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
+import org.ghrobotics.frc2020.auto.routines.EightBallTrenchRoutine
 import org.ghrobotics.frc2020.auto.routines.LineCrossRoutine
-import org.ghrobotics.frc2020.auto.routines.RendezvousTrenchRoutine
+import org.ghrobotics.frc2020.auto.routines.SixBallTrenchRoutine
 import org.ghrobotics.frc2020.auto.routines.StealRoutine
 import org.ghrobotics.frc2020.auto.routines.TestingRoutine
-import org.ghrobotics.frc2020.auto.routines.TrenchRoutine
 import org.ghrobotics.frc2020.comms.Network
 
 /**
@@ -38,15 +38,12 @@ object Autonomous {
 
             Mode.THREE_BALL -> TODO()
 
-            Mode.SIX_BALL_RENDEZVOUS -> TODO()
-            Mode.SIX_BALL_TRENCH -> TrenchRoutine(TrenchRoutine.Type.SIX_BALL)
+            Mode.SIX_BALL_TRENCH -> SixBallTrenchRoutine()
 
-            Mode.EIGHT_BALL_RENDEZVOUS -> TODO()
-            Mode.EIGHT_BALL_TRENCH -> TrenchRoutine(TrenchRoutine.Type.EIGHT_BALL)
+            Mode.EIGHT_BALL_TRENCH -> EightBallTrenchRoutine()
             Mode.EIGHT_BALL_STEAL -> StealRoutine(StealRoutine.Type.EIGHT_BALL)
 
             Mode.TEN_BALL_STEAL -> StealRoutine(StealRoutine.Type.TEN_BALL)
-            Mode.TEN_BALL_NEAR -> RendezvousTrenchRoutine()
 
             null -> DefaultRoutine()
         }.getRoutine()
@@ -70,15 +67,12 @@ object Autonomous {
         // Basic 3 Ball
         THREE_BALL,
         // 6 Ball Autos
-        SIX_BALL_RENDEZVOUS,
         SIX_BALL_TRENCH,
         // 8 Ball Autos
-        EIGHT_BALL_RENDEZVOUS,
         EIGHT_BALL_TRENCH,
         EIGHT_BALL_STEAL,
         // 10 Ball Autos
-        TEN_BALL_STEAL,
-        TEN_BALL_NEAR
+        TEN_BALL_STEAL
     }
 
     @Suppress("FunctionName")

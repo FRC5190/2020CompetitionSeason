@@ -9,16 +9,9 @@
 package org.ghrobotics.frc2020.auto.routines
 
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ghrobotics.frc2020.auto.AutoRoutine
 import org.ghrobotics.frc2020.auto.TrajectoryManager
-import org.ghrobotics.frc2020.auto.WaypointManager
-import org.ghrobotics.frc2020.subsystems.Superstructure
-import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
-import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.sequential
-import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.seconds
 
 class StealRoutine(private val type: Type) : AutoRoutine {

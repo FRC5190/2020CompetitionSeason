@@ -13,11 +13,8 @@ package org.ghrobotics.frc2020.auto
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
-import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
-import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.feet
-import org.ghrobotics.lib.mathematics.units.inch
 import org.ghrobotics.lib.mathematics.units.inches
 
 /**
@@ -42,6 +39,10 @@ object WaypointManager {
     // Regions
     val kTrenchRegion = Rectangle2d(
         Translation2d(18.feet, 0.feet), Translation2d(36.feet, 4.5.feet)
+    )
+
+    val kControlPanelRegion = Rectangle2d(
+        Translation2d(21.5.feet, 0.feet), Translation2d(25.feet, 4.5.feet)
     )
 
     // Waypoints
@@ -77,13 +78,13 @@ object WaypointManager {
         x = 22.59.feet, y = 2.27.feet, angle = Rotation2d.fromDegrees(175.0)
     )
 
-    // Rendezvous Autos
-    val kNearRendezvous = Pose2d(
-        x = 33.32.feet, y = 7.33.feet, angle = Rotation2d.fromDegrees(85.0)) +
-        Transform2d(0.9.feet - 3.inches, -1.0.feet, Rotation2d())
+    // Scoring Locations
+    val kGoodInnerGoalScoringLocation = Pose2d(
+        x = 40.24.feet, y = 5.70.feet, angle = Rotation2d.fromDegrees(180.0)
+    )
 
-    val kRendezvousScore = Pose2d(
-        x = 40.244.feet, y = 5.703.feet, angle = Rotation2d.fromDegrees(180.0)
+    val kGoodTrenchScoringLocation = Pose2d(
+        x = 32.98.feet, y = 5.91.feet, angle = Rotation2d.fromDegrees(231.0)
     )
 
     val kOpenScoringLocation = Pose2d(38.21.feet, 4.75.feet, Rotation2d.fromDegrees(-132.0))

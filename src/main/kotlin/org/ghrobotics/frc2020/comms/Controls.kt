@@ -20,7 +20,6 @@ import org.ghrobotics.frc2020.subsystems.forks.DropForksCommand
 import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
-import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
@@ -84,10 +83,7 @@ object Controls {
              * The turret and shooter will aim and the feeder will feed all balls
              * to the shooter when the drivetrain comes to a complete stop.
              */
-            button(kBumperRight).change(sequential {
-                +Superstructure.aimToGoal()
-                +Superstructure.shootIntoGoal()
-            })
+            button(kBumperRight).change(Superstructure.waitUntilStoppedThenShoot())
 
             button(kBumperLeft).change(Superstructure.intake())
             triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.exhaust())
@@ -108,7 +104,6 @@ object Controls {
          */
         button(kB).changeOn {
             Robot.isClimbMode = !Robot.isClimbMode
-            Superstructure.goToStowedPosition()
         }
 
         pov(90).changeOn { Feeder.setExitPiston(true) }

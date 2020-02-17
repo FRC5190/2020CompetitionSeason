@@ -9,14 +9,12 @@
 package org.ghrobotics.frc2020.auto
 
 import edu.wpi.first.wpilibj.geometry.Pose2d
-import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.trajectory.Trajectory
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator
 import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
-import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.twodim.trajectory.FalconTrajectoryConfig
 import org.ghrobotics.lib.mathematics.twodim.trajectory.constraints.VelocityLimitRegionConstraint
@@ -34,7 +32,7 @@ object TrajectoryManager {
     private val kMaxVelocity = 8.feet / 1.seconds
     private val kMaxTrenchVelocity = 6.feet / 1.seconds
 
-    private val kMaxAcceleration = 7.feet / 1.seconds / 1.seconds
+    private val kMaxAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxCentripetalAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
 
@@ -85,22 +83,26 @@ object TrajectoryManager {
         generate(WaypointManager.kLongPickupAfterSteal, WaypointManager.kShortPickupAfterSteal, kRevConfig)
 
     // Trench Autos
-    val trenchStartToShortPickup: Trajectory =
-        generate(WaypointManager.kTrenchStart, WaypointManager.kShortPickupAfterTrench, kFwdConfig)
+    val trenchStartToInnerGoalScore: Trajectory =
+        generate(WaypointManager.kTrenchStart, WaypointManager.kGoodInnerGoalScoringLocation, kFwdConfig)
 
-    val trenchStartToLongPickup: Trajectory =
-        generate(WaypointManager.kTrenchStart, WaypointManager.kLongPickupAfterTrench, kFwdConfig)
+    val innerGoalScoreToShortTrenchPickup: Trajectory =
+        TrajectoryGenerator.generateTrajectory(
+            WaypointManager.kGoodInnerGoalScoringLocation, listOf(Translation2d(35.41.feet, 3.23.feet)),
+            WaypointManager.kShortPickupAfterTrench, kFwdConfig
+        )
 
-    // Rendezvois Autos
-    val trenchStartToNearRendezvous: Trajectory =
-        generate(WaypointManager.kTrenchStart, WaypointManager.kNearRendezvous, kFwdConfig)
+    val innerGoalScoreToLongTrenchPickup: Trajectory =
+        TrajectoryGenerator.generateTrajectory(
+            WaypointManager.kGoodInnerGoalScoringLocation, listOf(Translation2d(35.41.feet, 3.23.feet)),
+            WaypointManager.kLongPickupAfterTrench, kFwdConfig
+        )
 
-    val nearRendezvousToScore: Trajectory =
-        generate(WaypointManager.kNearRendezvous, WaypointManager.kRendezvousScore, kRevConfig)
+    val shortTrenchPickupToTrenchScore: Trajectory =
+        generate(WaypointManager.kShortPickupAfterTrench, WaypointManager.kGoodTrenchScoringLocation, kRevConfig)
 
-    val pickupAgain: Trajectory = TrajectoryGenerator.generateTrajectory(
-        WaypointManager.kRendezvousScore, listOf(Translation2d(35.408.feet, 3.23.feet)),
-            Pose2d(28.427.feet, 2.43.feet, Rotation2d.fromDegrees(180.0)), kFwdConfig)
+    val longTrenchPickupToTrenchScore: Trajectory =
+        generate(WaypointManager.kLongPickupAfterTrench, WaypointManager.kGoodTrenchScoringLocation, kRevConfig)
 
     /**
      * Generates a trajectory from a start and end waypoint.

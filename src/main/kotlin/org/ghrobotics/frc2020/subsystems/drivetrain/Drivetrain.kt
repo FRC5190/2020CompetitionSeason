@@ -9,9 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.drivetrain
 
 import com.ctre.phoenix.sensors.PigeonIMU
-import com.kauailabs.navx.frc.AHRS
 import com.revrobotics.CANSparkMaxLowLevel
-import edu.wpi.first.wpilibj.SPI
 import edu.wpi.first.wpilibj.controller.RamseteController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj.geometry.Pose2d
@@ -68,9 +66,8 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     private var isConnected = false
 
     // Gyro
-    private val navx = AHRS(SPI.Port.kMXP)
-    // private val pigeon = PigeonIMU(DriveConstants.kPigeonId)
-    override val gyro = PigeonIMU(17).asSource()
+    private val pigeon = PigeonIMU(DriveConstants.kPigeonId)
+    override val gyro = pigeon.asSource()
 
     // Path following
     override val controller = RamseteController(2.0, 0.7)
@@ -154,8 +151,11 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         // Get the predicted distance traveled.
         val dx = (leftVelocity + rightVelocity) / 2.0 * lookahead
 
+        val rawGyroData = DoubleArray(3)
+        pigeon.getRawGyro(rawGyroData)
+
         // Get the predicted change in the angle.
-        val dtheta = -Math.toRadians(navx.rate) * lookahead.value
+        val dtheta = Math.toRadians(rawGyroData[0]) * lookahead.value
 
         // Integrate the pose forward in time.
         return getPose().exp(Twist2d(dx.value, 0.0, dtheta))
