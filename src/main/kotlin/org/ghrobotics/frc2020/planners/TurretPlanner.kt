@@ -11,6 +11,7 @@ package org.ghrobotics.frc2020.planners
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 
 /**
@@ -25,7 +26,14 @@ object TurretPlanner {
      * @return The constrained angle.
      */
     fun constrainToAcceptableRange(angle: SIUnit<Radian>): SIUnit<Radian> {
-        return SIUnit<Radian>(angle.value % 360).coerceIn(TurretConstants.kAcceptableRange)
+        var goal = angle
+        while (goal < TurretConstants.kAcceptableRange.start) {
+            goal += 360.degrees
+        }
+        while (goal > TurretConstants.kAcceptableRange.endInclusive) {
+            goal -= 360.degrees
+        }
+        return goal
     }
 
     /**

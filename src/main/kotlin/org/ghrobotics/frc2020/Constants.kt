@@ -80,6 +80,7 @@ object HoodConstants {
         (-690).nativeUnits, 13.degrees
     )
 
+    val kBadHoodOffset = (-5).degrees
     val kAcceptableRange = 10.degrees..42.61.degrees
 }
 
@@ -145,7 +146,7 @@ object TurretConstants {
     const val kGearRatio = 124.0 / 16.0 * 12.0
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
-    val kAcceptableRange = (-60).degrees..260.degrees
+    val kAcceptableRange = (-70).degrees..290.degrees
 
     val kAlignDelay = 0.25.seconds
     val kDefaultJogAmount = 1.degrees
@@ -183,7 +184,6 @@ object VisionConstants {
 }
 
 object ForkConstants {
-
     const val kPCMId = 41
     const val kForkId = 2
 }

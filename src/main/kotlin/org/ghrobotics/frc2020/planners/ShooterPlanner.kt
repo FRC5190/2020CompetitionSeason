@@ -10,14 +10,15 @@
 
 package org.ghrobotics.frc2020.planners
 
-import java.io.InputStreamReader
-import java.util.Objects
+import org.ghrobotics.frc2020.HoodConstants
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.types.Interpolatable
 import org.ghrobotics.lib.utils.InterpolatingTreeMap
+import java.io.InputStreamReader
+import java.util.Objects
 
 /**
  * An object that reads the trajectory.csv file from the filesystem and
@@ -33,7 +34,10 @@ object ShooterPlanner {
             InputStreamReader(stream).readLines().forEach { line ->
                 val data = line.split(",").map { it.trim() }
                 map[SIUnit(data[0].toDouble())] =
-                    ShooterParameters(SIUnit(data[2].toDouble()), SIUnit(Math.toRadians(data[3].toDouble())))
+                    ShooterParameters(
+                        SIUnit(data[2].toDouble()),
+                        SIUnit(Math.toRadians(data[3].toDouble()) + HoodConstants.kBadHoodOffset.value)
+                    )
             }
         }
     }
