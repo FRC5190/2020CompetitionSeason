@@ -65,22 +65,7 @@ object TrajectoryManager {
         generate(WaypointManager.kStealStart, WaypointManager.kOpponentTrenchBalls, kFwdConfig)
 
     val opponentTrenchBallsToStealScore: Trajectory =
-        TrajectoryGenerator.generateTrajectory(
-            WaypointManager.kOpponentTrenchBalls, listOf(Translation2d(x = 38.69.feet, y = 13.18.feet)),
-            WaypointManager.kScoreAfterSteal, kRevConfig
-        )
-
-    val stealScoreToShortPickup: Trajectory =
-        generate(WaypointManager.kScoreAfterSteal, WaypointManager.kShortPickupAfterSteal, kFwdConfig)
-
-    val stealScoreToLongPickup: Trajectory =
-        TrajectoryGenerator.generateTrajectory(
-            WaypointManager.kScoreAfterSteal, listOf(Translation2d(x = 30.63.feet, y = 02.71.feet)),
-            WaypointManager.kLongPickupAfterSteal, kFwdConfig
-        )
-
-    val longPickupToShortPickup: Trajectory =
-        generate(WaypointManager.kLongPickupAfterSteal, WaypointManager.kShortPickupAfterSteal, kRevConfig)
+        generate(WaypointManager.kOpponentTrenchBalls, WaypointManager.kGoodAfterStealScoringLocation, kRevConfig)
 
     // Trench Autos
     val trenchStartToInnerGoalScore: Trajectory =

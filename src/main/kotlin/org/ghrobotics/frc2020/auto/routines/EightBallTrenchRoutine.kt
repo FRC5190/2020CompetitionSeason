@@ -18,6 +18,7 @@ import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.lib.commands.parallel
+import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
 
 class EightBallTrenchRoutine : AutoRoutine {
@@ -43,11 +44,10 @@ class EightBallTrenchRoutine : AutoRoutine {
 
         // Pickup balls and return to score location while aligning
         // to the goal. Then shoot.
-        +parallel {
-            +Drivetrain.followTrajectory(path2)
+        +parallelDeadline(Drivetrain.followTrajectory(path2)) {
             +Superstructure.intake()
             +AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
-        }.withTimeout(path2.totalTimeSeconds)
+        }
 
         +parallel {
             +Drivetrain.followTrajectory(path3)

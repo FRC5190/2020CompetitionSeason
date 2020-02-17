@@ -13,10 +13,11 @@ import org.ghrobotics.frc2020.auto.routines.CharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.CheckSubsystemsRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
 import org.ghrobotics.frc2020.auto.routines.EightBallTrenchRoutine
+import org.ghrobotics.frc2020.auto.routines.FiveBallStealRoutine
 import org.ghrobotics.frc2020.auto.routines.LineCrossRoutine
 import org.ghrobotics.frc2020.auto.routines.SixBallTrenchRoutine
-import org.ghrobotics.frc2020.auto.routines.StealRoutine
 import org.ghrobotics.frc2020.auto.routines.TestingRoutine
+import org.ghrobotics.frc2020.auto.routines.ThreeBallRoutine
 import org.ghrobotics.frc2020.comms.Network
 
 /**
@@ -36,14 +37,12 @@ object Autonomous {
 
             Mode.LINE_CROSS -> LineCrossRoutine()
 
-            Mode.THREE_BALL -> TODO()
-
+            Mode.THREE_BALL -> ThreeBallRoutine()
+            Mode.FIVE_BALL_STEAL -> FiveBallStealRoutine()
             Mode.SIX_BALL_TRENCH -> SixBallTrenchRoutine()
-
             Mode.EIGHT_BALL_TRENCH -> EightBallTrenchRoutine()
-            Mode.EIGHT_BALL_STEAL -> StealRoutine(StealRoutine.Type.EIGHT_BALL)
 
-            Mode.TEN_BALL_STEAL -> StealRoutine(StealRoutine.Type.TEN_BALL)
+            Mode.ASSIST_WITH_SIX_BALL_TRENCH -> SixBallTrenchRoutine(pushOff = true)
 
             null -> DefaultRoutine()
         }.getRoutine()
@@ -56,23 +55,15 @@ object Autonomous {
      * Represents the various auto modes.
      */
     enum class Mode {
-        // Subsystem Checking
         CHECK_SUBSYSTEMS,
-        // Drivetrain Characterization
         CHARACTERIZE,
-        // Testing
         TESTING,
-        // Cross the Line
         LINE_CROSS,
-        // Basic 3 Ball
         THREE_BALL,
-        // 6 Ball Autos
+        FIVE_BALL_STEAL,
         SIX_BALL_TRENCH,
-        // 8 Ball Autos
+        ASSIST_WITH_SIX_BALL_TRENCH,
         EIGHT_BALL_TRENCH,
-        EIGHT_BALL_STEAL,
-        // 10 Ball Autos
-        TEN_BALL_STEAL
     }
 
     @Suppress("FunctionName")

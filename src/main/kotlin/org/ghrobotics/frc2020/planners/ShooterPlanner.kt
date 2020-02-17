@@ -10,6 +10,8 @@
 
 package org.ghrobotics.frc2020.planners
 
+import java.io.InputStreamReader
+import java.util.Objects
 import org.ghrobotics.frc2020.HoodConstants
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -17,8 +19,6 @@ import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.types.Interpolatable
 import org.ghrobotics.lib.utils.InterpolatingTreeMap
-import java.io.InputStreamReader
-import java.util.Objects
 
 /**
  * An object that reads the trajectory.csv file from the filesystem and

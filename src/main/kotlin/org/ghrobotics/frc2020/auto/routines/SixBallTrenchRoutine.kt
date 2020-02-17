@@ -15,15 +15,20 @@ import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.auto.WaypointManager
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.sequential
 
-class SixBallTrenchRoutine : AutoRoutine {
+class SixBallTrenchRoutine(private val pushOff: Boolean = false) : AutoRoutine {
 
     // Paths
     private val path1 = TrajectoryManager.trenchStartToInnerGoalScore
     private val path2 = TrajectoryManager.innerGoalScoreToShortTrenchPickup
     private val path3 = TrajectoryManager.shortTrenchPickupToTrenchScore
+
+    // Constants
+    private val kPushTime = 0.3
+    private val kPushSpeed = -0.2
 
     /**
      * Returns the command that runs the auto routine.
@@ -31,7 +36,18 @@ class SixBallTrenchRoutine : AutoRoutine {
      */
     override fun getRoutine(): Command = sequential {
         // Reset odometry
-        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchStart) })
+        +InstantCommand(Runnable {
+            Drivetrain.resetPosition(
+                if (pushOff) WaypointManager.kTrenchPushOffStart else WaypointManager.kTrenchStart
+            )
+        })
+
+        // Push alliance partner (if needed).
+        if (pushOff) {
+            +object : FalconCommand(Drivetrain) {
+                override fun initialize() = Drivetrain.setPercent(kPushSpeed, kPushSpeed)
+            }.withTimeout(kPushTime)
+        }
 
         // Follow trajectory while aligning, and shot balls at the end.
         +parallel {
