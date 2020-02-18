@@ -56,6 +56,9 @@ object WaypointManager {
     val kOpponentTrenchBalls = Pose2d(
         x = 33.31.feet, y = 24.38.feet, angle = Rotation2d.fromDegrees(156.0)
     )
+    val kStealAutoIntermediate = Pose2d(
+        x = 39.10.feet, y = 24.17.feet, angle = Rotation2d.fromDegrees(-153.0)
+    )
 
     // Trench Autos
     val kTrenchStart = Pose2d(
@@ -81,6 +84,6 @@ object WaypointManager {
         x = 32.98.feet, y = 5.91.feet, angle = Rotation2d.fromDegrees(231.0)
     )
     val kGoodAfterStealScoringLocation = Pose2d(
-        x = 34.98.feet, y = 9.76.feet, angle = Rotation2d.fromDegrees(090.0)
+        x = 38.98.feet, y = 9.21.feet, angle = Rotation2d.fromDegrees(-90.0)
     )
 }

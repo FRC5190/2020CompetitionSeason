@@ -8,6 +8,7 @@
 
 package org.ghrobotics.frc2020.auto.routines
 
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.auto.AutoRoutine
@@ -15,6 +16,7 @@ import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.auto.WaypointManager
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
@@ -23,25 +25,32 @@ class FiveBallStealRoutine : AutoRoutine {
 
     // Paths
     private val path1 = TrajectoryManager.stealStartToOpponentTrenchBalls
-    private val path2 = TrajectoryManager.opponentTrenchBallsToStealScore
+    private val path2 = TrajectoryManager.opponentTrenchBallsToIntermediate
+    private val path3 = TrajectoryManager.stealIntermediateToStealScore
 
     override fun getRoutine(): Command = sequential {
         // Reset odometry.
         +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kStealStart) })
 
         // Drive and steal opponent trench balls.
-        +parallelDeadline(Drivetrain.followTrajectory(path1)) {
+        +parallelDeadline(sequential {
+            +Drivetrain.followTrajectory(path1)
+            +Drivetrain.followTrajectory(path2)
+        }) {
             +Superstructure.intake()
         }
 
         // Drive to scoring location while aligning to the goal
         // and shoot when path ends.
         +parallel {
-            +Drivetrain.followTrajectory(path2)
+            +Drivetrain.followTrajectory(path3)
             +sequential {
-                +Superstructure.intake().withTimeout(1.5)
+                +AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d()).withTimeout(1.5)
                 +Superstructure.waitUntilStoppedThenShoot()
             }
         }
     }
+
+    fun getPathDuration(): Double =
+        path1.totalTimeSeconds + path2.totalTimeSeconds + path3.totalTimeSeconds
 }

@@ -23,37 +23,46 @@ import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
 
-class EightBallTrenchRoutine : AutoRoutine {
+class TenBallStealRoutine : AutoRoutine {
 
     // Paths
-    private val path1 = TrajectoryManager.trenchStartToInnerGoalScore
-    private val path2 = TrajectoryManager.innerGoalScoreToLongTrenchPickup
-    private val path3 = TrajectoryManager.longTrenchPickupToTrenchScore
+    private val path1 = TrajectoryManager.stealStartToOpponentTrenchBalls
+    private val path2 = TrajectoryManager.opponentTrenchBallsToIntermediate
+    private val path3 = TrajectoryManager.stealIntermediateToStealScore
+    private val path4 = TrajectoryManager.stealScoreToLongTrenchPickup
+    private val path5 = TrajectoryManager.longTrenchPickupToTrenchScore
 
-    /**
-     * Returns the command that runs the auto routine.
-     * @return The command that runs the auto routine.
-     */
     override fun getRoutine(): Command = sequential {
         // Reset odometry
-        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchStart) })
+        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kStealStart) })
 
-        // Follow trajectory while aligning, and shot balls at the end.
-        +parallel {
+        // Intake opponent trench balls and come forward a little bit.
+        +parallelDeadline(sequential {
             +Drivetrain.followTrajectory(path1)
-            +Superstructure.waitUntilStoppedThenShoot()
+            +Drivetrain.followTrajectory(path2)
+        }) {
+            +Superstructure.intake()
         }
 
-        // Pickup balls and return to score location while aligning
-        // to the goal. Then shoot.
-        +parallelDeadline(Drivetrain.followTrajectory(path2)) {
+        // Go to scoring position and shoot.
+        +parallel {
+            +Drivetrain.followTrajectory(path3)
+            +sequential {
+                +AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d()).withTimeout(1.5)
+                +Superstructure.waitUntilStoppedThenShoot()
+            }
+        }
+
+        // Pickup trench balls.
+        +parallelDeadline(Drivetrain.followTrajectory(path4)) {
             +Superstructure.intake()
             +AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
             +AutoHoodCommand { HoodConstants.kAcceptableRange.endInclusive }
         }
 
+        // Return to scoring location, then shoot.
         +parallel {
-            +Drivetrain.followTrajectory(path3)
+            +Drivetrain.followTrajectory(path5)
             +sequential {
                 +parallel {
                     +Superstructure.intake()
@@ -65,5 +74,6 @@ class EightBallTrenchRoutine : AutoRoutine {
     }
 
     fun getPathDuration(): Double =
-        path1.totalTimeSeconds + path2.totalTimeSeconds + path3.totalTimeSeconds
+        path1.totalTimeSeconds + path2.totalTimeSeconds + path3.totalTimeSeconds +
+            path4.totalTimeSeconds + path5.totalTimeSeconds
 }

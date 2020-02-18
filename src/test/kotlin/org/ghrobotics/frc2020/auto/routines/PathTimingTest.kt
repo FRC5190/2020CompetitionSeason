@@ -25,4 +25,14 @@ class PathTimingTest {
     fun timeEightBallTrenchAuto() {
         println("Eight Ball Trench Auto: ${EightBallTrenchRoutine().getPathDuration()}")
     }
+
+    @Test
+    fun timeFiveBallStealAuto() {
+        println("Five Ball Steal Auto: ${FiveBallStealRoutine().getPathDuration()}")
+    }
+
+    @Test
+    fun timeTenBallStealAuto() {
+        println("Ten Ball Steal Auto: ${TenBallStealRoutine().getPathDuration()}")
+    }
 }

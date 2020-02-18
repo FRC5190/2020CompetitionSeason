@@ -16,6 +16,7 @@ import org.ghrobotics.frc2020.auto.routines.EightBallTrenchRoutine
 import org.ghrobotics.frc2020.auto.routines.FiveBallStealRoutine
 import org.ghrobotics.frc2020.auto.routines.LineCrossRoutine
 import org.ghrobotics.frc2020.auto.routines.SixBallTrenchRoutine
+import org.ghrobotics.frc2020.auto.routines.TenBallStealRoutine
 import org.ghrobotics.frc2020.auto.routines.TestingRoutine
 import org.ghrobotics.frc2020.auto.routines.ThreeBallRoutine
 import org.ghrobotics.frc2020.comms.Network
@@ -30,7 +31,7 @@ object Autonomous {
 
     fun start() {
         // Start the auto mode based on what is selected.
-        val JUST = when (Network.autoModeSelector.selected) {
+        @Suppress("LocalVariableName") val JUST = when (Network.autoModeSelector.selected) {
             Mode.CHECK_SUBSYSTEMS -> CheckSubsystemsRoutine()
             Mode.CHARACTERIZE -> CharacterizationRoutine()
             Mode.TESTING -> TestingRoutine()
@@ -41,6 +42,7 @@ object Autonomous {
             Mode.FIVE_BALL_STEAL -> FiveBallStealRoutine()
             Mode.SIX_BALL_TRENCH -> SixBallTrenchRoutine()
             Mode.EIGHT_BALL_TRENCH -> EightBallTrenchRoutine()
+            Mode.TEN_BALL_STEAL -> TenBallStealRoutine()
 
             Mode.ASSIST_WITH_SIX_BALL_TRENCH -> SixBallTrenchRoutine(pushOff = true)
 
@@ -64,6 +66,7 @@ object Autonomous {
         SIX_BALL_TRENCH,
         ASSIST_WITH_SIX_BALL_TRENCH,
         EIGHT_BALL_TRENCH,
+        TEN_BALL_STEAL
     }
 
     @Suppress("FunctionName")
