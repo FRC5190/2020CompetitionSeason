@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConst
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.twodim.trajectory.FalconTrajectoryConfig
-import org.ghrobotics.lib.mathematics.twodim.trajectory.constraints.VelocityLimitRegionConstraint
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.operations.div
@@ -29,11 +28,13 @@ import org.ghrobotics.lib.mathematics.units.seconds
 object TrajectoryManager {
 
     // Constraints
-    private val kMaxVelocity = 8.feet / 1.seconds
-    private val kMaxTrenchVelocity = 6.feet / 1.seconds
+    private val kMaxVelocity = 12.feet / 1.seconds
+    private val kMaxPickupVelocity = 6.feet / 1.seconds
 
     private val kMaxAcceleration = 8.feet / 1.seconds / 1.seconds
-    private val kMaxCentripetalAcceleration = 6.feet / 1.seconds / 1.seconds
+    private val kMaxPickupAcceleration = 8.feet / 1.seconds / 1.seconds
+
+    private val kMaxCentripetalAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
 
     private val kCentripetalAccelerationConstraint =
@@ -42,27 +43,33 @@ object TrajectoryManager {
     private val kVoltageConstraint =
         DifferentialDriveVoltageConstraint(Drivetrain.getFeedforward(), Drivetrain.kinematics, kMaxVoltage.value)
 
-    private val kTrenchVelocityConstraint =
-        VelocityLimitRegionConstraint(WaypointManager.kTrenchRegion, kMaxTrenchVelocity)
-
     // Config
     private val kFwdConfig = FalconTrajectoryConfig(kMaxVelocity, kMaxAcceleration)
         .setKinematics(Drivetrain.kinematics)
         .addConstraint(kCentripetalAccelerationConstraint)
         .addConstraint(kVoltageConstraint)
-        .addConstraint(kTrenchVelocityConstraint)
 
     private val kRevConfig = FalconTrajectoryConfig(kMaxVelocity, kMaxAcceleration)
         .setKinematics(Drivetrain.kinematics)
         .addConstraint(kCentripetalAccelerationConstraint)
         .addConstraint(kVoltageConstraint)
-        .addConstraint(kTrenchVelocityConstraint)
+        .setReversed(true)
+
+    private val kFwdPickupConfig = FalconTrajectoryConfig(kMaxPickupVelocity, kMaxPickupAcceleration)
+        .setKinematics(Drivetrain.kinematics)
+        .addConstraint(kCentripetalAccelerationConstraint)
+        .addConstraint(kVoltageConstraint)
+
+    private val kRevPickupConfig = FalconTrajectoryConfig(kMaxPickupVelocity, kMaxPickupAcceleration)
+        .setKinematics(Drivetrain.kinematics)
+        .addConstraint(kCentripetalAccelerationConstraint)
+        .addConstraint(kVoltageConstraint)
         .setReversed(true)
 
     // Trajectories
     // Steal Autos
     val stealStartToOpponentTrenchBalls: Trajectory =
-        generate(WaypointManager.kStealStart, WaypointManager.kOpponentTrenchBalls, kFwdConfig)
+        generate(WaypointManager.kStealStart, WaypointManager.kOpponentTrenchBalls, kFwdPickupConfig)
 
     val opponentTrenchBallsToIntermediate: Trajectory =
         generate(WaypointManager.kOpponentTrenchBalls, WaypointManager.kStealAutoIntermediate, kRevConfig)
@@ -71,22 +78,22 @@ object TrajectoryManager {
         generate(WaypointManager.kStealAutoIntermediate, WaypointManager.kGoodAfterStealScoringLocation, kFwdConfig)
 
     val stealScoreToLongTrenchPickup: Trajectory =
-        generate(WaypointManager.kGoodAfterStealScoringLocation, WaypointManager.kLongPickupAfterTrench, kFwdConfig)
+        generate(WaypointManager.kGoodAfterStealScoringLocation, WaypointManager.kLongPickupAfterTrench, kFwdPickupConfig)
 
     // Trench Autos
     val trenchStartToInnerGoalScore: Trajectory =
-        generate(WaypointManager.kTrenchStart, WaypointManager.kGoodInnerGoalScoringLocation, kFwdConfig)
+        generate(WaypointManager.kTrenchStart, WaypointManager.kGoodInnerGoalScoringLocation, kRevConfig)
 
     val innerGoalScoreToShortTrenchPickup: Trajectory =
         TrajectoryGenerator.generateTrajectory(
-            WaypointManager.kGoodInnerGoalScoringLocation, listOf(Translation2d(35.41.feet, 3.23.feet)),
-            WaypointManager.kShortPickupAfterTrench, kFwdConfig
+            WaypointManager.kGoodInnerGoalScoringLocation, listOf(/*Translation2d(35.41.feet, 3.23.feet)*/),
+            WaypointManager.kShortPickupAfterTrench, kFwdPickupConfig
         )
 
     val innerGoalScoreToLongTrenchPickup: Trajectory =
         TrajectoryGenerator.generateTrajectory(
-            WaypointManager.kGoodInnerGoalScoringLocation, listOf(Translation2d(35.41.feet, 3.23.feet)),
-            WaypointManager.kLongPickupAfterTrench, kFwdConfig
+            WaypointManager.kGoodInnerGoalScoringLocation, listOf(/*Translation2d(35.41.feet, 3.23.feet)*/),
+            WaypointManager.kLongPickupAfterTrench, kFwdPickupConfig
         )
 
     val shortTrenchPickupToTrenchScore: Trajectory =

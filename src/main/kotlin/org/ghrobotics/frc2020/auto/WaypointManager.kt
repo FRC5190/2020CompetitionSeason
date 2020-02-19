@@ -62,12 +62,10 @@ object WaypointManager {
 
     // Trench Autos
     val kTrenchStart = Pose2d(
-        x = kInitiationLineX,
+        x = kInitiationLineX - kRobotLength / 2.0 - kBumperThickness,
         y = 2.18.feet,
-        angle = Rotation2d.fromDegrees(180.0)
+        angle = Rotation2d()
     )
-    val kTrenchPushOffStart =
-        kTrenchStart + Transform2d(kRobotLength / 2.0 + kBumperThickness, 0.feet, Rotation2d())
 
     val kShortPickupAfterTrench = Pose2d(
         x = 28.12.feet, y = 2.18.feet, angle = Rotation2d.fromDegrees(180.0)
@@ -78,7 +76,7 @@ object WaypointManager {
 
     // Scoring Locations
     val kGoodInnerGoalScoringLocation = Pose2d(
-        x = 39.24.feet, y = 5.70.feet, angle = Rotation2d.fromDegrees(180.0)
+        x = 37.54.feet, y = 6.95.feet, angle = Rotation2d.fromDegrees(-90.0)
     )
     val kGoodTrenchScoringLocation = Pose2d(
         x = 35.98.feet, y = 5.91.feet, angle = Rotation2d.fromDegrees(215.0)
