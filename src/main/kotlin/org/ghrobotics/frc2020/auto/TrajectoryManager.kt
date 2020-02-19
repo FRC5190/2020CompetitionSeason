@@ -33,7 +33,7 @@ object TrajectoryManager {
     private val kMaxTrenchVelocity = 6.feet / 1.seconds
 
     private val kMaxAcceleration = 8.feet / 1.seconds / 1.seconds
-    private val kMaxCentripetalAcceleration = 8.feet / 1.seconds / 1.seconds
+    private val kMaxCentripetalAcceleration = 6.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
 
     private val kCentripetalAccelerationConstraint =

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.planners.TurretPlanner
@@ -131,11 +132,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             println("Did not initialize Turret")
         }
 
-        defaultCommand = InstantCommand(Runnable {
-            setPercent(
-                0.0
-            )
-        }, this).perpetually()
+        defaultCommand = AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
     }
 
     /**
@@ -143,7 +140,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun zero() {
         periodicIO.resetPosition = true
-        periodicIO.resetTo = 180.degrees
+        periodicIO.resetTo = 211.39.degrees
         setStatus(Status.READY)
     }
 
@@ -191,6 +188,10 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         periodicIO.desiredOutput =
             Output.Position(TurretPlanner.getOptimizedAngle(angle, periodicIO.position))
         periodicIO.feedforward = TurretConstants.kS
+    }
+
+    fun setBrakeMode(brakeMode: Boolean) {
+        master.brakeMode = brakeMode
     }
 
     override fun enableClosedLoopControl() {

@@ -18,6 +18,7 @@ import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
+import org.ghrobotics.lib.motors.ctre.FalconSRX
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.utils.isConnected
 
@@ -28,14 +29,12 @@ import org.ghrobotics.lib.utils.isConnected
 object Climber : FalconSubsystem() {
 
     // Winch motors.
-    private val winchMasterMotor = FalconMAX(
+    private val winchMasterMotor = FalconSRX(
         id = ClimberConstants.kWinchMasterId,
-        type = CANSparkMaxLowLevel.MotorType.kBrushed,
         model = DefaultNativeUnitModel
     )
-    private val winchSlaveMotor = FalconMAX(
+    private val winchSlaveMotor = FalconSRX(
         id = ClimberConstants.kWinchSlaveId,
-        type = CANSparkMaxLowLevel.MotorType.kBrushed,
         model = DefaultNativeUnitModel
     )
 
@@ -43,18 +42,19 @@ object Climber : FalconSubsystem() {
     private val extensionPiston = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kExtensionPistonId)
     private val winchBrake = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kWinchBrakeId)
 
-    private var isConnected = false
+    private var isConnected = true
 
     private val periodicIO = PeriodicIO()
 
     override fun lateInit() {
-        isConnected = winchMasterMotor.isConnected() && winchSlaveMotor.isConnected()
         if (isConnected) {
             // Slaves to follow master.
             winchSlaveMotor.follow(winchMasterMotor)
 
             // Set default command.
             defaultCommand = ManualClimberCommand { 0.0 }
+
+            setWinchBrake(true)
         } else {
             println("Did not initialize Climber.")
         }
@@ -69,10 +69,14 @@ object Climber : FalconSubsystem() {
                 is Output.Nothing -> {
                     winchMasterMotor.setNeutral()
                 }
-                is Output.Percent ->
+                is Output.Percent -> {
+                    println(desiredOutput.percent)
                     winchMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+                }
             }
         }
+
+        setWinchBrake(true)
     }
 
     /**
@@ -108,7 +112,7 @@ object Climber : FalconSubsystem() {
      * @param braked Whether to enable the brake or not.
      */
     fun setWinchBrake(braked: Boolean) {
-        winchBrake.set(braked)
+        winchBrake.set(true)
     }
 
     private class PeriodicIO {

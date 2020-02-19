@@ -8,11 +8,14 @@
 
 package org.ghrobotics.frc2020
 
+import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Superstructure
+import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder
 import org.ghrobotics.frc2020.subsystems.forks.Forks
@@ -45,7 +48,7 @@ object Robot : FalconTimedRobot() {
         +VisionProcessing
 
         // Add subsystems
-//        +Climber
+        +Climber
         +Drivetrain
         +Feeder
         +Forks
@@ -64,17 +67,21 @@ object Robot : FalconTimedRobot() {
     // Runs once when autonomous period starts
     override fun autonomousInit() {
         Drivetrain.setBrakeMode(true)
+        Turret.setBrakeMode(true)
         Autonomous.start()
     }
 
     // Runs once when teleop period starts
     override fun teleopInit() {
+        Drivetrain.resetPosition(Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180.0)))
         Drivetrain.setBrakeMode(true)
+        Turret.setBrakeMode(true)
     }
 
     // Runs once when robot is disabled
     override fun disabledInit() {
         Drivetrain.setBrakeMode(false)
+        Turret.setBrakeMode(false)
     }
 
     // Runs every 20 ms when robot is on

@@ -25,7 +25,7 @@ class ZeroTurretCommand : FalconCommand(Turret) {
         if (!Turret.hallEffectEngaged ||
             Turret.speed.absoluteValue != 0.radians.velocity
         ) {
-//            timer.reset()
+            timer.reset()
             Turret.setStatus(Turret.Status.NOT_ZEROED)
         } else {
             Turret.setStatus(Turret.Status.ZEROING)

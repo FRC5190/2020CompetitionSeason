@@ -19,6 +19,7 @@ import org.ghrobotics.frc2020.subsystems.feeder.Feeder
 import org.ghrobotics.frc2020.subsystems.forks.DropForksCommand
 import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
 import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
+import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.minutes
@@ -57,14 +58,14 @@ object Controls {
             /**
              * Pull the robot up when the left trigger is pressed.
              */
-            triggerAxisButton(GenericHID.Hand.kLeft) {
+            triggerAxisButton(GenericHID.Hand.kLeft, threshold = 0.04) {
                 change(ManualClimberCommand(source))
             }
 
             /**
              * Pull the robot down when the right trigger is pressed.
              */
-            triggerAxisButton(GenericHID.Hand.kRight) {
+            triggerAxisButton(GenericHID.Hand.kRight, threshold = 0.04) {
                 change(ManualClimberCommand(source.map { it * -1.0 }))
             }
 
@@ -104,6 +105,11 @@ object Controls {
          */
         button(kB).changeOn {
             Robot.isClimbMode = !Robot.isClimbMode
+            if (Robot.isClimbMode) {
+                AutoTurretCommand { 90.degrees }.schedule()
+            } else {
+                Turret.defaultCommand.schedule()
+            }
         }
 
         pov(90).changeOn { Feeder.setExitPiston(true) }

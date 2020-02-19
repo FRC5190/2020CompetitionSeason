@@ -9,12 +9,13 @@
 package org.ghrobotics.frc2020.auto
 
 import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.auto.routines.CharacterizationRoutine
+import org.ghrobotics.frc2020.auto.routines.DriveCharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.CheckSubsystemsRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
 import org.ghrobotics.frc2020.auto.routines.EightBallTrenchRoutine
 import org.ghrobotics.frc2020.auto.routines.FiveBallStealRoutine
 import org.ghrobotics.frc2020.auto.routines.LineCrossRoutine
+import org.ghrobotics.frc2020.auto.routines.ShooterCharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.SixBallTrenchRoutine
 import org.ghrobotics.frc2020.auto.routines.TenBallStealRoutine
 import org.ghrobotics.frc2020.auto.routines.TestingRoutine
@@ -33,7 +34,8 @@ object Autonomous {
         // Start the auto mode based on what is selected.
         @Suppress("LocalVariableName") val JUST = when (Network.autoModeSelector.selected) {
             Mode.CHECK_SUBSYSTEMS -> CheckSubsystemsRoutine()
-            Mode.CHARACTERIZE -> CharacterizationRoutine()
+            Mode.DRIVE_CHARACTERIZE -> DriveCharacterizationRoutine()
+            Mode.SHOOTER_CHARACTERIZE -> ShooterCharacterizationRoutine()
             Mode.TESTING -> TestingRoutine()
 
             Mode.LINE_CROSS -> LineCrossRoutine()
@@ -58,7 +60,8 @@ object Autonomous {
      */
     enum class Mode {
         CHECK_SUBSYSTEMS,
-        CHARACTERIZE,
+        DRIVE_CHARACTERIZE,
+        SHOOTER_CHARACTERIZE,
         TESTING,
         LINE_CROSS,
         THREE_BALL,

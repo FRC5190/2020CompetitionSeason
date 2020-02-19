@@ -47,6 +47,8 @@ object Hood : FalconSubsystem() {
         // Remove deadbands.
         servoA.enableDeadbandElimination(true)
         servoB.enableDeadbandElimination(true)
+
+        defaultCommand = AutoHoodCommand { HoodConstants.kAcceptableRange.endInclusive }
     }
 
     override fun periodic() {

@@ -114,10 +114,12 @@ object ShooterConstants {
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
 
-    val kS = 0.volts
+    const val kS = 0.112
+    const val kV = 0.00986
+    const val kA = 0.0
 
-    const val kP = 3.5E-4
-    const val kF = 1.9E-4
+    const val kP = 0.00051
+    const val kF = 0.0
 }
 
 object FortuneWheelConstants {
@@ -153,7 +155,7 @@ object TurretConstants {
 
     val kS = 0.0.volts
 
-    const val kP = 2.50E-5
+    const val kP = 1.50E-5
     const val kF = 1.041667E-4
 
     val kMaxVelocity = 720.degrees / 1.seconds
@@ -176,8 +178,8 @@ object VisionConstants {
     val kGoalFieldRelativeAngle = Rotation2d()
 
     val kMaxTargetTrackingLifetime = 1.5.seconds
-    val kTargetTrackingDistanceErrorTolerance = 6.inches
-    const val kMedianWindowSize = 10
+    val kTargetTrackingDistanceErrorTolerance = 25.inches
+    const val kMedianWindowSize = 15
 
     val kGoalLocation = Pose2d(54.feet, 94.66.inches, Rotation2d())
     val kOuterToInnerGoalTransform = Transform2d(27.inches, 0.inches, Rotation2d())

@@ -37,6 +37,7 @@ import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.inDegrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
@@ -63,10 +64,10 @@ object Superstructure {
     private val kVelocityTreshold = 0.0.inches / 1.seconds
 
     // Amount of time required to stop.
-    private val kStopTimeTreshold = 0.7.seconds
+    private val kStopTimeTreshold = 0.4.seconds
 
     // Error tolerance for the shooter.
-    private val kShooterErrorTolerance = 360.degrees / 1.minutes * 20
+    private val kShooterErrorTolerance = 360.degrees / 1.minutes * 225
 
     // Error tolerance for the hood.
     private val kHoodErrorTolerance = 1.degrees
@@ -75,7 +76,7 @@ object Superstructure {
     private val kTurretErrorTolerance = 1.degrees
 
     // Amount of time it takes to shoot 5 balls.
-    private const val kShootTime = 2.0
+    private const val kShootTime = 3.0
 
     // Whether the turret is aligning or not.
     var visionAlign = false
@@ -97,15 +98,14 @@ object Superstructure {
                 // Intake and align until drivetrain stops.
                 parallelDeadline(WaitForDrivetrainToStopCommand()) {
                     // Run and intake and feeder.
-                    +IntakeCommand(0.75)
+                    +IntakeCommand(1.0)
                     +AutoFeederCommand()
 
                     // Run turret, shooter, and hood.
-                    +sequential {
-                        +AutoTurretCommand { latestAimingParameters.turretAngleOuterGoal }
-                        +AutoShooterCommand { latestShootingParameters.speed }
-                        +AutoHoodCommand { latestShootingParameters.angle }
-                    }
+                    +AutoTurretCommand { latestAimingParameters.turretAngleOuterGoal }
+                    +AutoShooterCommand { latestShootingParameters.speed }
+                    +AutoHoodCommand { latestShootingParameters.angle }
+
                 },
 
                 // Lock speeds and angles.
@@ -123,7 +123,7 @@ object Superstructure {
                 // Set speeds and angles, run feeder when ready.
                 parallelDeadline(sequential {
                     +WaitUntilCommand {
-                        (Shooter.velocity - shooterHoldSpeed).absoluteValue < kShooterErrorTolerance &&
+//                        (Shooter.velocity - shooterHoldSpeed).absoluteValue < kShooterErrorTolerance &&
                             (Hood.angle - hoodHoldAngle).absoluteValue < kHoodErrorTolerance &&
                             (Turret.getAngle() - turretHoldAngle).absoluteValue < kTurretErrorTolerance
                     }
@@ -160,11 +160,10 @@ object Superstructure {
                 // Intake and align until drivetrain stops.
                 parallelDeadline(WaitForDrivetrainToStopCommand()) {
                     // Run turret, shooter, and hood.
-                    +sequential {
-                        +AutoTurretCommand { latestAimingParameters.turretAngleOuterGoal }
-                        +AutoShooterCommand { latestShootingParameters.speed }
-                        +AutoHoodCommand { latestShootingParameters.angle }
-                    }
+                    +AutoTurretCommand { latestAimingParameters.turretAngleOuterGoal }
+                    +AutoShooterCommand { latestShootingParameters.speed }
+                    +AutoHoodCommand { latestShootingParameters.angle }
+
                 },
 
                 // Lock speeds and angles.
@@ -182,9 +181,14 @@ object Superstructure {
                 // Set speeds and angles, run feeder when ready.
                 parallelDeadline(sequential {
                     +WaitUntilCommand {
+//                        println("Shooter: " + (Shooter.velocity - shooterHoldSpeed).value * 60 / 6.28)
+//                        println("Hood: " + (Hood.angle - hoodHoldAngle).inDegrees())
+//                        println("Turret: " + (Turret.getAngle() - turretHoldAngle).inDegrees())
+
+
                         (Shooter.velocity - shooterHoldSpeed).absoluteValue < kShooterErrorTolerance &&
                             (Hood.angle - hoodHoldAngle).absoluteValue < kHoodErrorTolerance &&
-                            (Turret.getAngle() - turretHoldAngle).absoluteValue < kTurretErrorTolerance
+                            ((Turret.getAngle() - turretHoldAngle).absoluteValue.value % (2 * Math.PI)) < kTurretErrorTolerance.value
                     }
                     +ManualFeederCommand(1.0, 1.0).withTimeout(kShootTime)
                 }) {
@@ -206,10 +210,10 @@ object Superstructure {
     /**
      * Intakes power cells.
      */
-    fun intake() = parallel {
+    fun intake(speed: Double = 0.75) = parallel {
         // Run the intake with a base speed of 0.5, scaling up linearly
         // to the robot's max speed.
-        +IntakeCommand { 0.5 + (1.0 - 0.5) * (Drivetrain.averageVelocity / Drivetrain.kMaxSpeed).unitlessValue }
+        +IntakeCommand { speed}
         +AutoFeederCommand()
     }
 
@@ -287,12 +291,13 @@ object Superstructure {
 
         // Check the drivetrain's velocity.
         override fun execute() {
-            if (Drivetrain.averageVelocity > kVelocityTreshold) {
+            if (Drivetrain.averageVelocity.absoluteValue > kVelocityTreshold) {
                 timer.reset()
             }
         }
 
         // End the command when the desired period has passed.
+
         override fun isFinished() = timer.hasPeriodPassed(kStopTimeTreshold.inSeconds())
     }
 }
