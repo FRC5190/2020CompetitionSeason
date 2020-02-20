@@ -76,7 +76,7 @@ object Superstructure {
     private val kTurretErrorTolerance = 1.degrees
 
     // Amount of time it takes to shoot 5 balls.
-    private const val kShootTime = 3.0
+    private const val kShootTime = 10.0
 
     // Whether the turret is aligning or not.
     var visionAlign = false
@@ -144,6 +144,9 @@ object Superstructure {
         }
     }
 
+    val lockStart = Timer.getFPGATimestamp()
+    val shooterPercent = 0.0
+
     /**
      * Aligns to the goal until the drivetrain has stopped, then
      * shoots power cells into the goal.
@@ -190,12 +193,16 @@ object Superstructure {
                             (Hood.angle - hoodHoldAngle).absoluteValue < kHoodErrorTolerance &&
                             ((Turret.getAngle() - turretHoldAngle).absoluteValue.value % (2 * Math.PI)) < kTurretErrorTolerance.value
                     }
-                    +ManualFeederCommand(1.0, 1.0).withTimeout(feederTime)
+                    +ManualFeederCommand(   1.0, 1.0).withTimeout(feederTime)
                 }) {
                     // Hold speeds and angles.
                     +AutoTurretCommand { turretHoldAngle }
                     +AutoShooterCommand { shooterHoldSpeed }
                     +AutoHoodCommand { hoodHoldAngle }
+                }.withInterrupt {
+                    System.out.printf("%2.2f, %4.2f, %4.2f %n",
+                        Timer.getFPGATimestamp() - lockStart, shooterHoldSpeed.value, Shooter.velocity.value)
+                    false
                 }
             )
         }

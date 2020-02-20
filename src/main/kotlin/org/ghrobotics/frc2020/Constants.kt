@@ -80,7 +80,7 @@ object HoodConstants {
         (-690).nativeUnits, 13.degrees
     )
 
-    val kBadHoodOffset = (-5).degrees
+    val kBadHoodOffset = (-4).degrees
     val kAcceptableRange = 10.degrees..42.61.degrees
 }
 
@@ -118,7 +118,7 @@ object ShooterConstants {
     const val kV = 0.00986
     const val kA = 0.0
 
-    const val kP = 0.00051
+    const val kP = 0.00025
     const val kF = 0.0
 }
 

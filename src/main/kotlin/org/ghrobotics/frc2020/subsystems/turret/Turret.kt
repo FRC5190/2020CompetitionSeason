@@ -132,7 +132,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             println("Did not initialize Turret")
         }
 
-        defaultCommand = AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
+//        defaultCommand = AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
     }
 
     /**

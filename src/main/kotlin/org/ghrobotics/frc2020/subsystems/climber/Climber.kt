@@ -70,7 +70,6 @@ object Climber : FalconSubsystem() {
                     winchMasterMotor.setNeutral()
                 }
                 is Output.Percent -> {
-                    println(desiredOutput.percent)
                     winchMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
                 }
             }
