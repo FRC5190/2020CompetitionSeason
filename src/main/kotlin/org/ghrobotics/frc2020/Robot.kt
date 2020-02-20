@@ -73,7 +73,6 @@ object Robot : FalconTimedRobot() {
 
     // Runs once when teleop period starts
     override fun teleopInit() {
-        Drivetrain.resetPosition(Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180.0)))
         Drivetrain.setBrakeMode(true)
         Turret.setBrakeMode(true)
     }

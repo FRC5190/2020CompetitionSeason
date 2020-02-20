@@ -47,7 +47,7 @@ object DriveConstants {
     val kTrackWidth = 27.75.inches
     val kNativeUnitModel = NativeUnitLengthModel(9.09.nativeUnits, kWheelRadius)
 
-    const val kP = 0.0003
+    const val kP = 0.0004
 }
 
 object FeederConstants {
@@ -58,7 +58,7 @@ object FeederConstants {
     const val kExitPistonId = 2
 
     const val kIntakeSensorId = 3
-    const val kExitSensorId = 2
+    const val kExitSensorId = 1
 
     val kFeederRadius = 1.inches
     val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)

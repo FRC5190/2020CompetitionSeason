@@ -100,11 +100,12 @@ object LED : FalconSubsystem() {
                 }
             }
 
-            // Blue when intake sensor is triggered.
-            Feeder.intakeSensorTriggered -> setSolidColor(kIntakeSensor)
 
             // Green when vision aligning.
             Superstructure.visionAlign -> setSolidColor(kVision)
+
+            // Blue when intake sensor is triggered.
+            Feeder.intakeSensorTriggered -> setSolidColor(kIntakeSensor)
 
             // Rainbow when robot is disabled and everything is ready.
             Robot.currentMode == FalconTimedRobot.Mode.DISABLED -> setRainbow()

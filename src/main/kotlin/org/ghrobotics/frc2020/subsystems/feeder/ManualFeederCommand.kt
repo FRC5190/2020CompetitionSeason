@@ -32,7 +32,7 @@ class ManualFeederCommand(
 
     override fun initialize() {
         // Release the exit piston.
-//        Feeder.setExitPiston(false)
+        Feeder.setExitPiston(false)
     }
 
     override fun execute() {

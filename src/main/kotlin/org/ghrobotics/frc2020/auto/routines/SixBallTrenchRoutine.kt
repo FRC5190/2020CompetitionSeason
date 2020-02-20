@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.auto.routines
 
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.auto.AutoRoutine
 import org.ghrobotics.frc2020.auto.TrajectoryManager
@@ -17,14 +18,10 @@ import org.ghrobotics.frc2020.auto.WaypointManager
 import org.ghrobotics.frc2020.planners.ShooterPlanner
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
-import org.ghrobotics.frc2020.subsystems.hood.AutoHoodCommand
-import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
-import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.derived.degrees
 
 class SixBallTrenchRoutine(private val pushOff: Boolean = false) : AutoRoutine {
 
@@ -36,7 +33,7 @@ class SixBallTrenchRoutine(private val pushOff: Boolean = false) : AutoRoutine {
     // Constants
     private val kPushTime = 0.3
     private val kPushSpeed = -0.2
-    private val kStartInitialVisionAlign = 0.4
+    private val kStartInitialVisionAlign = 1.6
 
     // Shooting parameters for initial shot.
     private val initialShootingParams =
@@ -64,17 +61,7 @@ class SixBallTrenchRoutine(private val pushOff: Boolean = false) : AutoRoutine {
         // Follow trajectory while aligning, and shot balls at the end.
         +parallel {
             +Drivetrain.followTrajectory(path1)
-            +sequential {
-                // Align turret, shooter and hood from pre-determined values.
-                +parallel {
-                    +AutoTurretCommand { 270.degrees }
-                    +AutoShooterCommand { initialShootingParams.speed }
-                    +AutoHoodCommand { initialShootingParams.angle }
-                }.withTimeout(path1.totalTimeSeconds - kStartInitialVisionAlign)
-
-                // Use Vision to adjust and shoot.
-                +Superstructure.waitUntilStoppedThenShoot()
-            }
+            +Superstructure.waitUntilStoppedThenShoot(2.0)
         }
 
         // Pickup balls and return to score location while aligning

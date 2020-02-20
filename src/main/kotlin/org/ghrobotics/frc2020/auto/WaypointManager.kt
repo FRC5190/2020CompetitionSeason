@@ -68,10 +68,10 @@ object WaypointManager {
     )
 
     val kShortPickupAfterTrench = Pose2d(
-        x = 28.12.feet, y = 2.18.feet, angle = Rotation2d.fromDegrees(180.0)
+        x = 28.80.feet, y = 2.18.feet, angle = Rotation2d.fromDegrees(180.0)
     )
     val kLongPickupAfterTrench = Pose2d(
-        x = 22.00.feet, y = 2.35.feet, angle = Rotation2d.fromDegrees(169.0)
+        x = 23.50.feet, y = 2.18.feet, angle = Rotation2d.fromDegrees(182.0)
     )
 
     // Scoring Locations

@@ -41,7 +41,7 @@ class EightBallTrenchRoutine : AutoRoutine {
         // Follow trajectory while aligning, and shot balls at the end.
         +parallel {
             +Drivetrain.followTrajectory(path1)
-            +Superstructure.waitUntilStoppedThenShoot()
+            +Superstructure.waitUntilStoppedThenShoot(1.5)
         }
 
         // Pickup balls and return to score location while aligning

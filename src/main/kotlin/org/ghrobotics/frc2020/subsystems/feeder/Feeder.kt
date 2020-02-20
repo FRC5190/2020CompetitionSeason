@@ -41,8 +41,6 @@ object Feeder : FalconSubsystem() {
     // Connection Status
     private var isConnected = false
 
-    var exitPistons = false
-
     // Getters
     val intakeSensorTriggered get() = periodicIO.intakeSensor
     val exitSensorTriggered get() = periodicIO.exitSensor
@@ -71,7 +69,6 @@ object Feeder : FalconSubsystem() {
 
     fun setExitPiston(extend: Boolean) {
         exitPiston.set(extend)
-        exitPistons = extend
     }
 
     override fun periodic() {

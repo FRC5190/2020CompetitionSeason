@@ -64,7 +64,7 @@ object Superstructure {
     private val kVelocityTreshold = 0.0.inches / 1.seconds
 
     // Amount of time required to stop.
-    private val kStopTimeTreshold = 0.4.seconds
+    private val kStopTimeTreshold = 0.7.seconds
 
     // Error tolerance for the shooter.
     private val kShooterErrorTolerance = 360.degrees / 1.minutes * 225
@@ -148,7 +148,7 @@ object Superstructure {
      * Aligns to the goal until the drivetrain has stopped, then
      * shoots power cells into the goal.
      */
-    fun waitUntilStoppedThenShoot() = object : SequentialCommandGroup() {
+    fun waitUntilStoppedThenShoot(feederTime: Double = kShootTime) = object : SequentialCommandGroup() {
         init {
             addCommands(
                 // Turn on LEDs
@@ -190,7 +190,7 @@ object Superstructure {
                             (Hood.angle - hoodHoldAngle).absoluteValue < kHoodErrorTolerance &&
                             ((Turret.getAngle() - turretHoldAngle).absoluteValue.value % (2 * Math.PI)) < kTurretErrorTolerance.value
                     }
-                    +ManualFeederCommand(1.0, 1.0).withTimeout(kShootTime)
+                    +ManualFeederCommand(1.0, 1.0).withTimeout(feederTime)
                 }) {
                     // Hold speeds and angles.
                     +AutoTurretCommand { turretHoldAngle }
