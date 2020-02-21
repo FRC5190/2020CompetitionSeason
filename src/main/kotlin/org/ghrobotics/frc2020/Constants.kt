@@ -13,6 +13,7 @@ package org.ghrobotics.frc2020
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.subsystems.hood.HoodNativeUnitModel
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -29,7 +30,7 @@ object ClimberConstants {
     const val kWinchMasterId = 11
     const val kWinchSlaveId = 12
 
-    const val kPCMId = 41
+    const val kPCMId = 0
     const val kExtensionPistonId = 1
     const val kWinchBrakeId = 4
 }
@@ -46,15 +47,18 @@ object DriveConstants {
     val kTrackWidth = 27.75.inches
     val kNativeUnitModel = NativeUnitLengthModel(9.09.nativeUnits, kWheelRadius)
 
-    const val kP = 0.0003
+    const val kP = 0.0004
 }
 
 object FeederConstants {
     const val kFeederId = 10
     const val kBridgeId = 14
 
+    const val kPCMId = 0
+    const val kExitPistonId = 2
+
     const val kIntakeSensorId = 3
-    const val kExitSensorId = 2
+    const val kExitSensorId = 1
 
     val kFeederRadius = 1.inches
     val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
@@ -63,8 +67,8 @@ object FeederConstants {
 }
 
 object HoodConstants {
-    const val kServoAId = 8
-    const val kServoBId = 9
+    const val kServoAId = 0
+    const val kServoBId = 1
 
     const val kEncoderAId = 0
     const val kEncoderBId = 1
@@ -76,6 +80,7 @@ object HoodConstants {
         (-690).nativeUnits, 13.degrees
     )
 
+    val kBadHoodOffset = (-4).degrees
     val kAcceptableRange = 10.degrees..42.61.degrees
 }
 
@@ -109,10 +114,12 @@ object ShooterConstants {
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
 
-    val kS = 0.volts
+    const val kS = 0.112
+    const val kV = 0.00986
+    const val kA = 0.0
 
-    const val kP = 3.5E-4
-    const val kF = 2.0E-4
+    const val kP = 0.00025
+    const val kF = 0.0
 }
 
 object FortuneWheelConstants {
@@ -136,19 +143,19 @@ object FortuneWheelConstants {
 
 object TurretConstants {
     const val kTurretId = 5
-    const val kHallEffectSensorId = 3
+    const val kHallEffectSensorId = 4
 
-    const val kGearRatio = 100.0 / 20.0 * 124.0 / 18.0 * 3.0
+    const val kGearRatio = 124.0 / 16.0 * 12.0
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
-    val kAcceptableRange = (-200).degrees..200.degrees
+    val kAcceptableRange = (-70).degrees..290.degrees
 
     val kAlignDelay = 0.25.seconds
     val kDefaultJogAmount = 1.degrees
 
     val kS = 0.0.volts
 
-    const val kP = 2.50E-5
+    const val kP = 1.50E-5
     const val kF = 1.041667E-4
 
     val kMaxVelocity = 720.degrees / 1.seconds
@@ -156,29 +163,29 @@ object TurretConstants {
 
     val kBadTurretOffset = 3.0.degrees
 
-    val kTurretRelativeToRobotCenter = Translation2d((6).inches, 0.inches)
+    val kTurretRelativeToRobotCenter = Translation2d((-8).inches, 0.inches)
 }
 
 object VisionConstants {
     const val kLEDId = 2
 
-    val kGoalHeight = 92.inches
-    val kCameraHeight = 22.5.inches
-    val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(25.0)
+    val kGoalHeight = 104.inches
+    val kCameraHeight = 23.75.inches
+    val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(23.5)
 
-    val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d())
+    val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d.fromDegrees(2.0))
 
     val kGoalFieldRelativeAngle = Rotation2d()
 
     val kMaxTargetTrackingLifetime = 1.5.seconds
-    val kTargetTrackingDistanceErrorTolerance = 6.inches
-    const val kMedianWindowSize = 10
+    val kTargetTrackingDistanceErrorTolerance = 25.inches
+    const val kMedianWindowSize = 15
 
     val kGoalLocation = Pose2d(54.feet, 94.66.inches, Rotation2d())
+    val kOuterToInnerGoalTransform = Transform2d(27.inches, 0.inches, Rotation2d())
 }
 
 object ForkConstants {
-
     const val kPCMId = 41
     const val kForkId = 2
 }

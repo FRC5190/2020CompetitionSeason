@@ -9,6 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.shooter
 
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.ShooterConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -16,6 +17,7 @@ import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
+import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.derived.volts
@@ -43,7 +45,11 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     // Connection status
     private var isConnected = false
 
+    // Feedforward
+    private val feedforward = SimpleMotorFeedforward(ShooterConstants.kS, ShooterConstants.kV, ShooterConstants.kA)
+
     // Getters
+    val position get() = periodicIO.position
     val velocity get() = periodicIO.velocity
     val voltage get() = periodicIO.voltage
 
@@ -63,7 +69,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
             slaveMotor.canSparkMax.follow(masterMotor.canSparkMax, true)
 
-            masterMotor.canSparkMax.closedLoopRampRate = 0.25
+            masterMotor.canSparkMax.closedLoopRampRate = 0.5
             masterMotor.canSparkMax.openLoopRampRate = 0.5
 
             masterMotor.brakeMode = false
@@ -114,7 +120,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun setSpeed(speed: SIUnit<AngularVelocity>) {
         periodicIO.desiredOutput = Output.Velocity(speed)
-        periodicIO.feedforward = ShooterConstants.kS
+        periodicIO.feedforward = SIUnit(feedforward.calculate(speed.value))
     }
 
     /**
@@ -128,6 +134,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
     override fun periodic() {
         if (isConnected) {
+            periodicIO.position = masterMotor.encoder.position
             periodicIO.velocity = masterMotor.encoder.velocity
             periodicIO.voltage = masterMotor.voltageOutput
             periodicIO.current = masterMotor.drawnCurrent
@@ -141,6 +148,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     }
 
     private class PeriodicIO {
+        var position: SIUnit<Radian> = 0.radians
         var velocity: SIUnit<AngularVelocity> = 0.radians / 1.seconds
         var voltage: SIUnit<Volt> = 0.volts
         var current: SIUnit<Ampere> = 0.amps

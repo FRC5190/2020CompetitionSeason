@@ -24,12 +24,26 @@ class AutoFeederCommand : FalconCommand(Feeder) {
             sensorLastTriggered = Timer.getFPGATimestamp()
         }
 
-        // Check if the sensor is triggered or it has been under 500 ms
+        // Check if the sensor is triggered or it has been under 250 ms
         // since the sensor was last triggered.
-        if (Timer.getFPGATimestamp() - sensorLastTriggered < 0.5) {
-            Feeder.setPercent(0.9, 1.0)
+
+//        if (Timer.getFPGATimestamp() - sensorLastTriggered < 0.10 && Feeder.exitPistons) {
+//            Feeder.setPercent(0.0, 0.4)
+//            return
+//        }
+
+        if (Timer.getFPGATimestamp() - sensorLastTriggered < 0.10) {
+            if (Feeder.exitSensorTriggered) {
+                Feeder.setPercent(0.2, 1.0)
+            } else {
+                Feeder.setPercent(0.9, 1.0)
+            }
         } else {
             Feeder.setPercent(0.0, 1.0)
+        }
+
+        if (Feeder.exitSensorTriggered) {
+            Feeder.setExitPiston(true)
         }
     }
 

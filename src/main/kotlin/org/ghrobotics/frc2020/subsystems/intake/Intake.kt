@@ -104,11 +104,6 @@ object Intake : FalconSubsystem() {
         intakeMaster.encoder.resetPosition(position)
     }
 
-    init {
-        defaultCommand = IntakeCommand(0.0)
-        extendPiston(false)
-    }
-
     override fun checkSubsystem(): Command {
         return TestIntakeCommand().withTimeout(3.0)
     }

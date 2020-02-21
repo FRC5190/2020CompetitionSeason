@@ -8,9 +8,8 @@
 
 package org.ghrobotics.frc2020.subsystems.drivetrain
 
-import com.kauailabs.navx.frc.AHRS
+import com.ctre.phoenix.sensors.PigeonIMU
 import com.revrobotics.CANSparkMaxLowLevel
-import edu.wpi.first.wpilibj.SPI
 import edu.wpi.first.wpilibj.controller.RamseteController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj.geometry.Pose2d
@@ -21,7 +20,11 @@ import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.DriveConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
+import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.feet
+import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.operations.times
+import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.drive.FalconWestCoastDrivetrain
 import org.ghrobotics.lib.utils.asSource
@@ -31,6 +34,12 @@ import org.ghrobotics.lib.utils.isConnected
  * Represents the drivetrain of the robot.
  */
 object Drivetrain : FalconWestCoastDrivetrain() {
+
+    // Constants
+    val kMaxSpeed = 13.23.feet / 1.seconds
+    val kMaxAngularSpeed = 360.degrees / 1.seconds
+    val kMaxCurvature = kMaxAngularSpeed / kMaxSpeed
+
     // Create motors
     override val leftMotor = FalconMAX(
         id = DriveConstants.kLeftMasterId,
@@ -57,9 +66,8 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     private var isConnected = false
 
     // Gyro
-    private val navx = AHRS(SPI.Port.kMXP)
-    // private val pigeon = PigeonIMU(DriveConstants.kPigeonId)
-    override val gyro = navx.asSource()
+    private val pigeon = PigeonIMU(DriveConstants.kPigeonId)
+    override val gyro = pigeon.asSource()
 
     // Path following
     override val controller = RamseteController(2.0, 0.7)
@@ -143,10 +151,19 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         // Get the predicted distance traveled.
         val dx = (leftVelocity + rightVelocity) / 2.0 * lookahead
 
+        val rawGyroData = DoubleArray(3)
+        pigeon.getRawGyro(rawGyroData)
+
         // Get the predicted change in the angle.
-        val dtheta = -Math.toRadians(navx.rate) * lookahead.value
+        val dtheta = Math.toRadians(rawGyroData[0]) * lookahead.value
 
         // Integrate the pose forward in time.
         return getPose().exp(Twist2d(dx.value, 0.0, dtheta))
     }
+
+    /**
+     * Returns the feedforward for the drivetrain. We can use the left
+     * side as an approximation for the entire chassis.
+     */
+    fun getFeedforward() = leftCharacterization
 }

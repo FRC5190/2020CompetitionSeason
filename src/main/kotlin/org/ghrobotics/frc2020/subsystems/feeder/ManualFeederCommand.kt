@@ -30,6 +30,11 @@ class ManualFeederCommand(
      */
     constructor(feederPercent: Double, bridgePercent: Double) : this({ feederPercent }, { bridgePercent })
 
+    override fun initialize() {
+        // Release the exit piston.
+        Feeder.setExitPiston(false)
+    }
+
     override fun execute() {
         Feeder.setPercent(feederPercent(), bridgePercent())
     }

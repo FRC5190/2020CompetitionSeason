@@ -9,18 +9,17 @@
 package org.ghrobotics.frc2020.auto.routines
 
 import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.auto.AutoRoutine
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 
 /**
- * Tests all subsystems by running their respective checks.
+ * Characterizes the robot using the frc-characterization tool.
  */
-class TestSubsystemsRoutine : AutoRoutine {
+class DriveCharacterizationRoutine : AutoRoutine {
     /**
-     * Return the test subsystem routine. There is nothing in here because
-     * we are manually starting the test routine in the startRoutine() method.
+     * Returns the characterization routine.
      */
     override fun getRoutine(): Command {
-        return Robot.getChecks()
+        return Drivetrain.characterize()
     }
 }

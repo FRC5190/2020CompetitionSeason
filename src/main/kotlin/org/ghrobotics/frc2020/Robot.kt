@@ -9,10 +9,11 @@
 package org.ghrobotics.frc2020
 
 import org.ghrobotics.frc2020.auto.Autonomous
-import org.ghrobotics.frc2020.auto.Paths
+import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.frc2020.subsystems.Superstructure
+import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder
 import org.ghrobotics.frc2020.subsystems.forks.Forks
@@ -36,7 +37,7 @@ object Robot : FalconTimedRobot() {
     // Runs once when robot boots up
     override fun robotInit() {
         // Initialize auto paths
-        Paths
+        TrajectoryManager
 
         // Initialize Network
         Network
@@ -45,7 +46,7 @@ object Robot : FalconTimedRobot() {
         +VisionProcessing
 
         // Add subsystems
-//        +Climber
+        +Climber
         +Drivetrain
         +Feeder
         +Forks
@@ -58,22 +59,26 @@ object Robot : FalconTimedRobot() {
         +Turret
 
         ZeroTurretCommand().schedule()
+        VisionProcessing.turnOffLEDs()
     }
 
     // Runs once when autonomous period starts
     override fun autonomousInit() {
         Drivetrain.setBrakeMode(true)
+        Turret.setBrakeMode(true)
         Autonomous.start()
     }
 
     // Runs once when teleop period starts
     override fun teleopInit() {
         Drivetrain.setBrakeMode(true)
+        Turret.setBrakeMode(true)
     }
 
     // Runs once when robot is disabled
     override fun disabledInit() {
         Drivetrain.setBrakeMode(false)
+        Turret.setBrakeMode(false)
     }
 
     // Runs every 20 ms when robot is on

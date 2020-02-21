@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.vision
 
 import edu.wpi.first.wpilibj.DigitalOutput
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import kotlin.math.tan
@@ -66,6 +67,9 @@ object VisionProcessing : FalconSubsystem() {
             return deltaHeight / tan(camera.pitch.radians + VisionConstants.kCameraAngle.radians)
         }
 
+    var estimatedRobotPose: Pose2d = Pose2d()
+        private set
+
     override fun periodic() {
         // Update camera.
         camera.update()
@@ -83,6 +87,8 @@ object VisionProcessing : FalconSubsystem() {
             val fieldRelativeTarget = Drivetrain.getPose(timestamp) + robotToTarget.toTransform()
 
             GoalTracker.addSample(timestamp, fieldRelativeTarget)
+            estimatedRobotPose =
+                GoalLocalizer.calculateRobotPose(timestamp, cameraToTarget, Drivetrain.getPose().rotation)
         }
 
         // Update GoalTracker.

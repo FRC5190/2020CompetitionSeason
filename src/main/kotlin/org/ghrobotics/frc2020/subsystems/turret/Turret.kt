@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Pose2d
-import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.planners.TurretPlanner
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -78,6 +78,11 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         }()
     }
 
+    fun getFieldRelativeAngle(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): SIUnit<Radian> {
+        val robotAngle = Drivetrain.getPose(timestamp).rotation.radians
+        return getAngle(timestamp) + SIUnit(robotAngle)
+    }
+
     /**
      * Returns the turret position with the robot's center as the origin of
      * the coordinate frame at the specified timestamp.
@@ -101,7 +106,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         if (isConnected) {
             master.canSparkMax.restoreFactoryDefaults()
 
-            master.outputInverted = true
+            master.outputInverted = false
 
             master.useMotionProfileForPosition = true
             master.motionProfileCruiseVelocity = TurretConstants.kMaxVelocity
@@ -125,11 +130,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             println("Did not initialize Turret")
         }
 
-        defaultCommand = InstantCommand(Runnable {
-            setPercent(
-                0.0
-            )
-        }, this).perpetually()
+//        defaultCommand = AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
     }
 
     /**
@@ -137,7 +138,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun zero() {
         periodicIO.resetPosition = true
-        periodicIO.resetTo = 0.radians
+        periodicIO.resetTo = 211.39.degrees
         setStatus(Status.READY)
     }
 
@@ -187,6 +188,10 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         periodicIO.feedforward = TurretConstants.kS
     }
 
+    fun setBrakeMode(brakeMode: Boolean) {
+        master.brakeMode = brakeMode
+    }
+
     override fun enableClosedLoopControl() {
         master.controller.p = TurretConstants.kP
         master.controller.ff = TurretConstants.kF
@@ -205,7 +210,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             periodicIO.voltage = master.voltageOutput
             periodicIO.current = master.drawnCurrent
 
-            periodicIO.hallEffect = hallEffectSensor.get()
+            periodicIO.hallEffect = !hallEffectSensor.get()
 
             // Update the buffer.
             buffer[Timer.getFPGATimestamp().seconds] = periodicIO.position
@@ -215,16 +220,12 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
                 master.encoder.resetPosition(periodicIO.resetTo)
             }
 
-            master.setNeutral()
-
-            /*
             // Write motor outputs.
             when (val desiredOutput = periodicIO.desiredOutput) {
                 is Output.Nothing -> master.setNeutral()
                 is Output.Percent -> master.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
                 is Output.Position -> master.setPosition(desiredOutput.angle, periodicIO.feedforward)
             }
-             */
         }
     }
 

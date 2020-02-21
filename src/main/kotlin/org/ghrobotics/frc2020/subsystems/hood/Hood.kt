@@ -47,6 +47,8 @@ object Hood : FalconSubsystem() {
         // Remove deadbands.
         servoA.enableDeadbandElimination(true)
         servoB.enableDeadbandElimination(true)
+
+        defaultCommand = AutoHoodCommand { HoodConstants.kAcceptableRange.endInclusive }
     }
 
     override fun periodic() {
@@ -59,13 +61,13 @@ object Hood : FalconSubsystem() {
                 servoB.speed = 0.0
             }
             is Output.Percent -> {
-                servoA.speed = desiredOutput.percent
-                servoB.speed = -desiredOutput.percent
+                servoA.speed = -desiredOutput.percent
+                servoB.speed = desiredOutput.percent
             }
             is Output.Position -> {
                 val output = controller.calculate(periodicIO.angle.value, desiredOutput.angle.value)
-                servoA.speed = output
-                servoB.speed = -output
+                servoA.speed = -output
+                servoB.speed = output
             }
         }
     }

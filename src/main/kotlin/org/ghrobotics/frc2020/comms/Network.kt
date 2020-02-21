@@ -59,6 +59,7 @@ object Network {
                 size(width = 2, height = 1)
 
                 double("RPM") { Shooter.velocity.value * 60 / 2 / Math.PI }
+                double("Speed SI") { Shooter.velocity.value }
                 double("Voltage (V)") { Shooter.voltage.value }
             }
             grid("Turret") {

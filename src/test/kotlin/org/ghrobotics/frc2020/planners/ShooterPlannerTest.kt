@@ -8,19 +8,32 @@
 
 package org.ghrobotics.frc2020.planners
 
+import org.ghrobotics.frc2020.HoodConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.junit.Test
 
 class ShooterPlannerTest {
     @Test
     fun testValueInTable() {
-        val params = ShooterPlanner[SIUnit(2.80)]
-        assert(params == ShooterPlanner.ShooterParameters(SIUnit(343.48), SIUnit(Math.toRadians(48.0))))
+        val params = ShooterPlanner[SIUnit(3.30)]
+        println(params)
+        assert(
+            params == ShooterPlanner.ShooterParameters(
+                SIUnit(372.80),
+                SIUnit(Math.toRadians(44.0) + HoodConstants.kBadHoodOffset.value)
+            )
+        )
     }
 
     @Test
     fun testInterpolation() {
         val params = ShooterPlanner[SIUnit(5.25)]
-        assert(params == ShooterPlanner.ShooterParameters(SIUnit(517.315), SIUnit(Math.toRadians(30.0))))
+        println(params)
+        assert(
+            params == ShooterPlanner.ShooterParameters(
+                SIUnit(522.03),
+                SIUnit(Math.toRadians(29.5) + HoodConstants.kBadHoodOffset.value)
+            )
+        )
     }
 }

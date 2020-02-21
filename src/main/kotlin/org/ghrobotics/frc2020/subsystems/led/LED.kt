@@ -14,7 +14,10 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
 import org.ghrobotics.frc2020.LEDConstants
 import org.ghrobotics.frc2020.Robot
+import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder
+import org.ghrobotics.frc2020.subsystems.turret.Turret
+import org.ghrobotics.frc2020.vision.VisionProcessing
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.inMilliseconds
 import org.ghrobotics.lib.mathematics.units.seconds
@@ -37,6 +40,8 @@ object LED : FalconSubsystem() {
     private val kWaitingForCamera = Color.kLimeGreen
     private val kZeroingTurret = Color.kGreen
     private val kClimb = Color.kOrange
+    private val kVision = Color.kGreen
+    private val kIntakeSensor = Color.kBlue
 
     // Current time
     private var currentTime = Timer.getFPGATimestamp().seconds
@@ -64,27 +69,27 @@ object LED : FalconSubsystem() {
 
         when {
             // Blink red when turret is not zeroed.
-//            Robot.currentMode == FalconTimedRobot.Mode.DISABLED
-//                && Turret.status == Turret.Status.NOT_ZEROED -> {
-//                if (currentTime.inMilliseconds() % 1000 > 500) {
-//                    setSolidColor(kFault)
-//                } else {
-//                    setSolidColor(Color.kBlack)
-//                }
-//            }
-//
-//            // Blink rapid green when turret is being zeroed.
-//             Robot.currentMode == FalconTimedRobot.Mode.DISABLED
-//                && Turret.status == Turret.Status.ZEROING -> {
-//                if (currentTime.inMilliseconds() % 250 > 125) {
-//                    setSolidColor(kZeroingTurret)
-//                } else {
-//                    setSolidColor(Color.kBlack)
-//                }
-//            }
-//
-//            // Snake pattern when waiting for camera.
-//            !VisionProcessing.isConnected -> setSnakePattern(kWaitingForCamera)
+            Robot.currentMode == FalconTimedRobot.Mode.DISABLED
+                && Turret.status == Turret.Status.NOT_ZEROED -> {
+                if (currentTime.inMilliseconds() % 1000 > 500) {
+                    setSolidColor(kFault)
+                } else {
+                    setSolidColor(Color.kBlack)
+                }
+            }
+
+            // Blink rapid green when turret is being zeroed.
+            Robot.currentMode == FalconTimedRobot.Mode.DISABLED
+                && Turret.status == Turret.Status.ZEROING -> {
+                if (currentTime.inMilliseconds() % 250 > 125) {
+                    setSolidColor(kZeroingTurret)
+                } else {
+                    setSolidColor(Color.kBlack)
+                }
+            }
+
+            // Snake pattern when waiting for camera.
+            !VisionProcessing.isConnected -> setSnakePattern(kWaitingForCamera)
 
             // Blink orange in climb mode.
             Robot.isClimbMode -> {
@@ -95,8 +100,11 @@ object LED : FalconSubsystem() {
                 }
             }
 
+            // Green when vision aligning.
+            Superstructure.visionAlign -> setSolidColor(kVision)
+
             // Blue when intake sensor is triggered.
-            Feeder.intakeSensorTriggered -> setSolidColor(Color.kBlue)
+            Feeder.intakeSensorTriggered -> setSolidColor(kIntakeSensor)
 
             // Rainbow when robot is disabled and everything is ready.
             Robot.currentMode == FalconTimedRobot.Mode.DISABLED -> setRainbow()
