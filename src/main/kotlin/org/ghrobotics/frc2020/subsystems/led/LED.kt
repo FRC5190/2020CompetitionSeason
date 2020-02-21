@@ -100,7 +100,6 @@ object LED : FalconSubsystem() {
                 }
             }
 
-
             // Green when vision aligning.
             Superstructure.visionAlign -> setSolidColor(kVision)
 

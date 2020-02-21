@@ -37,14 +37,12 @@ import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.derived.inDegrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
-import org.ghrobotics.lib.mathematics.units.unitlessValue
 
 /**
  * Represents the overall superstructure of the robot, including the turret,
@@ -105,7 +103,6 @@ object Superstructure {
                     +AutoTurretCommand { latestAimingParameters.turretAngleOuterGoal }
                     +AutoShooterCommand { latestShootingParameters.speed }
                     +AutoHoodCommand { latestShootingParameters.angle }
-
                 },
 
                 // Lock speeds and angles.
@@ -166,7 +163,6 @@ object Superstructure {
                     +AutoTurretCommand { latestAimingParameters.turretAngleOuterGoal }
                     +AutoShooterCommand { latestShootingParameters.speed }
                     +AutoHoodCommand { latestShootingParameters.angle }
-
                 },
 
                 // Lock speeds and angles.
@@ -188,12 +184,11 @@ object Superstructure {
 //                        println("Hood: " + (Hood.angle - hoodHoldAngle).inDegrees())
 //                        println("Turret: " + (Turret.getAngle() - turretHoldAngle).inDegrees())
 
-
                         (Shooter.velocity - shooterHoldSpeed).absoluteValue < kShooterErrorTolerance &&
                             (Hood.angle - hoodHoldAngle).absoluteValue < kHoodErrorTolerance &&
                             ((Turret.getAngle() - turretHoldAngle).absoluteValue.value % (2 * Math.PI)) < kTurretErrorTolerance.value
                     }
-                    +ManualFeederCommand(   1.0, 1.0).withTimeout(feederTime)
+                    +ManualFeederCommand(1.0, 1.0).withTimeout(feederTime)
                 }) {
                     // Hold speeds and angles.
                     +AutoTurretCommand { turretHoldAngle }
@@ -220,7 +215,7 @@ object Superstructure {
     fun intake(speed: Double = 0.75) = parallel {
         // Run the intake with a base speed of 0.5, scaling up linearly
         // to the robot's max speed.
-        +IntakeCommand { speed}
+        +IntakeCommand { speed }
         +AutoFeederCommand()
     }
 

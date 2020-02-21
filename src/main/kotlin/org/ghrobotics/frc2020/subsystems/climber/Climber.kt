@@ -8,7 +8,6 @@
 
 package org.ghrobotics.frc2020.subsystems.climber
 
-import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
 import org.ghrobotics.frc2020.ClimberConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -19,7 +18,6 @@ import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
 import org.ghrobotics.lib.motors.ctre.FalconSRX
-import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.utils.isConnected
 
 /**

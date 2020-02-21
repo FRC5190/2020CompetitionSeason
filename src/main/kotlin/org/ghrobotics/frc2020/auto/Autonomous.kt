@@ -9,9 +9,9 @@
 package org.ghrobotics.frc2020.auto
 
 import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.auto.routines.DriveCharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.CheckSubsystemsRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
+import org.ghrobotics.frc2020.auto.routines.DriveCharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.EightBallTrenchRoutine
 import org.ghrobotics.frc2020.auto.routines.FiveBallStealRoutine
 import org.ghrobotics.frc2020.auto.routines.LineCrossRoutine

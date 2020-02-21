@@ -8,8 +8,6 @@
 
 package org.ghrobotics.frc2020
 
-import edu.wpi.first.wpilibj.geometry.Pose2d
-import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.comms.Controls
