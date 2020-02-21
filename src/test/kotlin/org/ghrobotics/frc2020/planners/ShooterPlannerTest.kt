@@ -17,13 +17,23 @@ class ShooterPlannerTest {
     fun testValueInTable() {
         val params = ShooterPlanner[SIUnit(3.30)]
         println(params)
-        assert(params == ShooterPlanner.ShooterParameters(SIUnit(372.80), SIUnit(Math.toRadians(44.0) + HoodConstants.kBadHoodOffset.value)))
+        assert(
+            params == ShooterPlanner.ShooterParameters(
+                SIUnit(372.80),
+                SIUnit(Math.toRadians(44.0) + HoodConstants.kBadHoodOffset.value)
+            )
+        )
     }
 
     @Test
     fun testInterpolation() {
         val params = ShooterPlanner[SIUnit(5.25)]
         println(params)
-        assert(params == ShooterPlanner.ShooterParameters(SIUnit(522.03), SIUnit(Math.toRadians(29.5) + HoodConstants.kBadHoodOffset.value)))
+        assert(
+            params == ShooterPlanner.ShooterParameters(
+                SIUnit(522.03),
+                SIUnit(Math.toRadians(29.5) + HoodConstants.kBadHoodOffset.value)
+            )
+        )
     }
 }
