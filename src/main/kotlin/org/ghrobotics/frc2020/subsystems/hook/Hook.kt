@@ -42,6 +42,7 @@ object Hook : FalconSubsystem() {
         isConnected = masterMotor.isConnected()
         if (isConnected) {
             masterMotor.canSparkMax.restoreFactoryDefaults()
+            masterMotor.brakeMode = true
         } else {
             println("Did not initialize Hook")
         }

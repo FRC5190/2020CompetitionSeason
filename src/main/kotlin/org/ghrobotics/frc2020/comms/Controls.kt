@@ -9,6 +9,7 @@
 package org.ghrobotics.frc2020.comms
 
 import edu.wpi.first.wpilibj.GenericHID
+import edu.wpi.first.wpilibj.XboxController
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
@@ -17,6 +18,8 @@ import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
 import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneColor
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheelCommand
+import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
+import org.ghrobotics.frc2020.subsystems.hook.ManualHookCommand
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -64,6 +67,10 @@ object Controls {
                 change(ManualClimberCommand(source.map { it * -1.0 }))
             }
 
+            axisButton(XboxController.Axis.kRightY.value) {
+                change(ManualHookCommand(source))
+            }
+
             /**
              * Toggles the winch brake.
              */
@@ -96,12 +103,12 @@ object Controls {
             /**
              * Perform rotation control when the POV up button is pressed.
              */
-            pov(0).change(FortuneWheelCommand(28))
+//            pov(0).change(FortuneWheelCommand(28))
 
             /**
              * Perform position control when the POV down button is pressed.
              */
-            pov(180).change(FortuneWheelCommand { GameData.getColor() ?: FortuneColor.RED })
+//            pov(180).change(FortuneWheelCommand { GameData.getColor() ?: FortuneColor.RED })
         }
 
         /**

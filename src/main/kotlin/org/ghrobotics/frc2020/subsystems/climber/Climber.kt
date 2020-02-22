@@ -56,7 +56,8 @@ object Climber : FalconSubsystem() {
             // Set default command.
             defaultCommand = ManualClimberCommand { 0.0 }
 
-            setWinchBrake(true)
+            setWinchBrake(false)
+
         } else {
             println("Did not initialize Climber.")
         }
@@ -76,9 +77,6 @@ object Climber : FalconSubsystem() {
                 }
             }
         }
-
-        // Disengage the brake.
-        setWinchBrake(false)
     }
 
     /**
@@ -115,7 +113,7 @@ object Climber : FalconSubsystem() {
      */
     fun setWinchBrake(braked: Boolean) {
         isWinchLocked = braked
-        winchBrake.set(braked)
+        winchBrake.set(!braked)
     }
 
     private class PeriodicIO {
