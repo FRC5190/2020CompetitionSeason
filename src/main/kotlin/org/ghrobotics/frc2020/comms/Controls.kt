@@ -9,21 +9,15 @@
 package org.ghrobotics.frc2020.comms
 
 import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.XboxController
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
+import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
 import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
-import org.ghrobotics.frc2020.subsystems.feeder.Feeder
-import org.ghrobotics.frc2020.subsystems.forks.DropForksCommand
-import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
-import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.minutes
-import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.utils.map
 import org.ghrobotics.lib.utils.not
 import org.ghrobotics.lib.wrappers.hid.button
@@ -31,7 +25,6 @@ import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.kB
 import org.ghrobotics.lib.wrappers.hid.kBumperLeft
 import org.ghrobotics.lib.wrappers.hid.kBumperRight
-import org.ghrobotics.lib.wrappers.hid.kY
 import org.ghrobotics.lib.wrappers.hid.triggerAxisButton
 import org.ghrobotics.lib.wrappers.hid.xboxController
 
@@ -70,9 +63,9 @@ object Controls {
             }
 
             /**
-             * Extends the buddy climb platform
+             * Toggles the winch brake.
              */
-            button(kA).change(DropForksCommand(true))
+            button(kA).changeOn { Climber.setWinchBrake(!Climber.isWinchLocked) }
         }
 
         /**
@@ -106,21 +99,10 @@ object Controls {
         button(kB).changeOn {
             Robot.isClimbMode = !Robot.isClimbMode
             if (Robot.isClimbMode) {
-                AutoTurretCommand { 90.degrees }.schedule()
+                AutoTurretCommand { 55.degrees }.schedule()
             } else {
                 Turret.defaultCommand.schedule()
             }
-        }
-
-        pov(90).changeOn { Feeder.setExitPiston(true) }
-        pov(270).changeOn { Feeder.setExitPiston(false) }
-
-        /**
-         * These are just buttons for debugging, will be removed for competition.
-         */
-        button(kY).change(AutoShooterCommand { 360.degrees / 1.minutes * 5000 })
-        axisButton(XboxController.Axis.kRightY.value) {
-            change(ManualHoodCommand(source))
         }
     }
 

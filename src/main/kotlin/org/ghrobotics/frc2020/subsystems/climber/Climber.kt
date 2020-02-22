@@ -44,6 +44,10 @@ object Climber : FalconSubsystem() {
 
     private val periodicIO = PeriodicIO()
 
+    // Getters
+    var isWinchLocked = false
+        private set
+
     override fun lateInit() {
         if (isConnected) {
             // Slaves to follow master.
@@ -73,7 +77,8 @@ object Climber : FalconSubsystem() {
             }
         }
 
-        setWinchBrake(true)
+        // Disengage the brake.
+        setWinchBrake(false)
     }
 
     /**
@@ -109,7 +114,8 @@ object Climber : FalconSubsystem() {
      * @param braked Whether to enable the brake or not.
      */
     fun setWinchBrake(braked: Boolean) {
-        winchBrake.set(true)
+        isWinchLocked = braked
+        winchBrake.set(braked)
     }
 
     private class PeriodicIO {
