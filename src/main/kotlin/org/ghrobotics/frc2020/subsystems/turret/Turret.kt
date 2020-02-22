@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
@@ -130,7 +131,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             println("Did not initialize Turret")
         }
 
-//        defaultCommand = AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
+        defaultCommand = AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
     }
 
     /**

@@ -48,7 +48,7 @@ object Hood : FalconSubsystem() {
         servoA.enableDeadbandElimination(true)
         servoB.enableDeadbandElimination(true)
 
-        defaultCommand = AutoHoodCommand { HoodConstants.kAcceptableRange.endInclusive }
+        defaultCommand = AutoHoodCommand { HoodConstants.kAcceptableRange.endInclusive - 2.degrees }
     }
 
     override fun periodic() {

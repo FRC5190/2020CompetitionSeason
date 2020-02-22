@@ -37,6 +37,7 @@ import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.inDegrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
@@ -180,9 +181,9 @@ object Superstructure {
                 // Set speeds and angles, run feeder when ready.
                 parallelDeadline(sequential {
                     +WaitUntilCommand {
-//                        println("Shooter: " + (Shooter.velocity - shooterHoldSpeed).value * 60 / 6.28)
-//                        println("Hood: " + (Hood.angle - hoodHoldAngle).inDegrees())
-//                        println("Turret: " + (Turret.getAngle() - turretHoldAngle).inDegrees())
+                        println("Shooter: " + (Shooter.velocity - shooterHoldSpeed).value * 60 / 6.28)
+                        println("Hood: " + (Hood.angle - hoodHoldAngle).inDegrees())
+                        println("Turret: " + (Turret.getAngle() - turretHoldAngle).inDegrees())
 
                         (Shooter.velocity - shooterHoldSpeed).absoluteValue < kShooterErrorTolerance &&
                             (Hood.angle - hoodHoldAngle).absoluteValue < kHoodErrorTolerance &&

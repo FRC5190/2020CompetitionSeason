@@ -59,7 +59,7 @@ class EightBallTrenchRoutine : AutoRoutine {
                     +Superstructure.intake(1.0)
                     +AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
                 }.withInterrupt { !WaypointManager.kControlPanelRegion.contains(Drivetrain.getPose().translation) }
-                +Superstructure.waitUntilStoppedThenShoot()
+                +Superstructure.intakeUntilStoppedThenShoot()
             }
         }
     }
