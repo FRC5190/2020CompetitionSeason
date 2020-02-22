@@ -15,6 +15,8 @@ import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
 import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneColor
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheelCommand
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -90,6 +92,16 @@ object Controls {
              */
             pov(270).changeOn { Turret.jogZero(TurretConstants.kDefaultJogAmount) }
             pov(90).changeOn { Turret.jogZero(-TurretConstants.kDefaultJogAmount) }
+
+            /**
+             * Perform rotation control when the POV up button is pressed.
+             */
+            pov(0).change(FortuneWheelCommand(28))
+
+            /**
+             * Perform position control when the POV down button is pressed.
+             */
+            pov(180).change(FortuneWheelCommand { GameData.getColor() ?: FortuneColor.RED })
         }
 
         /**

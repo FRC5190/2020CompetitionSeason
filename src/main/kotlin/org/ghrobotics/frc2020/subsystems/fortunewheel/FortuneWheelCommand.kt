@@ -13,12 +13,14 @@ import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.derived.inInchesPerSecond
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.meters
+import org.ghrobotics.lib.utils.Source
 
 class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
     private var status = Status.INITIALIZING
 
     private var targetColor = FortuneColor.BLACK
+    private var targetColorSource = { FortuneColor.BLACK }
     private var targetCycles = 0
     private var targetDistance = 0.meters
 
@@ -32,7 +34,11 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
     }
 
     constructor(color: FortuneColor) : this() {
-        targetColor = color + 2
+        targetColorSource = { color }
+    }
+
+    constructor(colorSource: Source<FortuneColor>) : this() {
+        targetColorSource = colorSource
     }
 
     init {
@@ -40,6 +46,10 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
         FortuneWheel.resetPosition()
         println("")
         print("INITIALIZING > ")
+    }
+
+    override fun initialize() {
+        targetColor = targetColorSource() + 2
     }
 
     override fun execute() {
