@@ -77,10 +77,10 @@ object HoodConstants {
 
     val kNativeUnitModel = HoodNativeUnitModel(
         0.nativeUnits, 42.61.degrees,
-        (-690).nativeUnits, 13.degrees
+        (-690).nativeUnits, 9.degrees
     )
 
-    val kBadHoodOffset = (-4).degrees
+    val kBadHoodOffset = (-5).degrees
     val kAcceptableRange = 10.degrees..42.61.degrees
 }
 
