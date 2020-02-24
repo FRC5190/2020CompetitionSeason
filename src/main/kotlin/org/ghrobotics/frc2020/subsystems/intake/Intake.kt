@@ -12,8 +12,8 @@ import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.IntakeConstants
-import org.ghrobotics.frc2020.IntakeConstants.kIntakeModuleId
 import org.ghrobotics.frc2020.IntakeConstants.kIntakePistonId
+import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -29,12 +29,12 @@ import org.ghrobotics.lib.utils.isConnected
 object Intake : FalconSubsystem() {
 
     private val intakeMaster = FalconMAX(
-        id = IntakeConstants.kMasterId,
+        id = IntakeConstants.kIntakeId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = DefaultNativeUnitModel
     )
 
-    private val intakePiston = Solenoid(kIntakeModuleId, kIntakePistonId)
+    private val intakePiston = Solenoid(kPCMId, kIntakePistonId)
 
     private val periodicIO = PeriodicIO()
     val position get() = periodicIO.position

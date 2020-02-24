@@ -9,13 +9,13 @@
 package org.ghrobotics.frc2020.subsystems.forks
 
 import edu.wpi.first.wpilibj.Solenoid
-import org.ghrobotics.frc2020.ForkConstants.kForkId
-import org.ghrobotics.frc2020.ForkConstants.kPCMId
+import org.ghrobotics.frc2020.ForkConstants.kForksPistonId
+import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 
 object Forks : FalconSubsystem() {
 
-    private val forksPiston = Solenoid(kPCMId, kForkId)
+    private val forksPiston = Solenoid(kPCMId, kForksPistonId)
 
     fun dropForks(drop: Boolean) {
         forksPiston.set(drop)

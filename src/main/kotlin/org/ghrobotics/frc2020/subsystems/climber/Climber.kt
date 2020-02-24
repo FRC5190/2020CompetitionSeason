@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.subsystems.climber
 
 import edu.wpi.first.wpilibj.Solenoid
 import org.ghrobotics.frc2020.ClimberConstants
+import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -37,8 +38,8 @@ object Climber : FalconSubsystem() {
     )
 
     // Extension piston and brake to lock winch.
-    private val extensionPiston = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kExtensionPistonId)
-    private val winchBrake = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kWinchBrakeId)
+    private val extensionPiston = Solenoid(kPCMId, ClimberConstants.kExtensionPistonId)
+    private val winchBrake = Solenoid(kPCMId, ClimberConstants.kWinchBrakeId)
 
     private var isConnected = true
 

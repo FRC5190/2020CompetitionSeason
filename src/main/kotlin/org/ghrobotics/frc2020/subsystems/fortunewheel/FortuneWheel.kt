@@ -11,8 +11,10 @@ package org.ghrobotics.frc2020.subsystems.fortunewheel
 import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.ColorSensorV3
 import edu.wpi.first.wpilibj.I2C
+import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.util.Color
 import org.ghrobotics.frc2020.FortuneWheelConstants
+import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Frac
 import org.ghrobotics.lib.mathematics.units.Meter
@@ -34,6 +36,8 @@ object FortuneWheel : FalconSubsystem() {
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
         model = FortuneWheelConstants.kSpinnerUnitModel
     )
+
+    private val spinnerPiston = Solenoid(kPCMId, FortuneWheelConstants.kFortuneWheelPistonId)
 
     // Connection Status
     private var isConnected = false
@@ -76,6 +80,10 @@ object FortuneWheel : FalconSubsystem() {
     // Resets 'position' of encoder
     fun resetPosition() {
         periodicIO.resetPosition = true
+    }
+
+    fun extendSpinnerPiston(extend: Boolean) {
+        spinnerPiston.set(extend)
     }
 
     override fun periodic() {

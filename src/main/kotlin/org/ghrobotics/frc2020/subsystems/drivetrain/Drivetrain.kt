@@ -52,12 +52,12 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         model = DriveConstants.kNativeUnitModel
     )
     private val leftSlave1 = FalconMAX(
-        DriveConstants.kLeftSlave1Id,
+        DriveConstants.kLeftSlaveId,
         CANSparkMaxLowLevel.MotorType.kBrushless,
         DriveConstants.kNativeUnitModel
     )
     private val rightSlave1 = FalconMAX(
-        DriveConstants.kRightSlave1Id,
+        DriveConstants.kRightSlaveId,
         CANSparkMaxLowLevel.MotorType.kBrushless,
         DriveConstants.kNativeUnitModel
     )

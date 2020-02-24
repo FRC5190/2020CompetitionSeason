@@ -70,7 +70,7 @@ object Superstructure {
     private val kStopTimeThreshold = 0.7.seconds
 
     // Error tolerance for the shooter.
-    private val kShooterErrorTolerance = 360.degrees / 1.minutes * 20
+    private val kShooterErrorTolerance = SIUnit<AngularVelocity>(10.0)
 
     // Error tolerance for the hood.
     private val kHoodErrorTolerance = 1.degrees

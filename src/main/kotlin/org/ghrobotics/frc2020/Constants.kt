@@ -6,7 +6,7 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+@file:Suppress("MemberVisibilityCanBePrivate", "unused", "ConstantConditionIf")
 
 package org.ghrobotics.frc2020
 
@@ -20,26 +20,37 @@ import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inches
+import org.ghrobotics.lib.mathematics.units.milli
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 
+const val kIsRaceRobot = false
+
+/**
+ * Common constants that are shared across subsystems.
+ */
+const val kPCMId = 0
+
 object ClimberConstants {
     const val kWinchMasterId = 11
     const val kWinchSlaveId = 12
 
-    const val kPCMId = 0
     const val kExtensionPistonId = 1
     const val kWinchBrakeId = 4
+
+    val kContinuousCurrentLimit = 38.amps
+    val kPeakCurrentLimit = 70.amps
+    val kPeakCurrentLimitDuration = 250.milli.seconds
 }
 
 object DriveConstants {
     const val kLeftMasterId = 1
-    const val kLeftSlave1Id = 2
+    const val kLeftSlaveId = 2
     const val kRightMasterId = 3
-    const val kRightSlave1Id = 4
+    const val kRightSlaveId = 4
 
     const val kPigeonId = 17
 
@@ -54,14 +65,10 @@ object FeederConstants {
     const val kFeederId = 10
     const val kBridgeId = 14
 
-    const val kPCMId = 0
     const val kExitPistonId = 2
 
     const val kIntakeSensorId = 3
     const val kExitSensorId = 1
-
-    val kFeederRadius = 1.inches
-    val kFeederUnitModel = NativeUnitLengthModel(42.nativeUnits, kFeederRadius)
 
     val kCurrentLimit = 25.amps
 }
@@ -86,16 +93,10 @@ object HoodConstants {
 
 object HookConstants {
     const val kHookId = 13
-    const val kGearRatio = 50.0
-
-    val kWheelRadius = 2.inches
-    val kNativeUnitModel = NativeUnitLengthModel(kGearRatio.nativeUnits, kWheelRadius)
 }
 
 object IntakeConstants {
-    const val kMasterId = 9
-
-    const val kIntakeModuleId = 0
+    const val kIntakeId = 9
     const val kIntakePistonId = 0
 
     val kCurrentLimit = 25.amps
@@ -104,6 +105,27 @@ object IntakeConstants {
 object LEDConstants {
     const val kPort = 2
     const val kBufferSize = 72
+}
+
+object FortuneWheelConstants {
+    // Determines the bit-depth of colors when being compared.
+    const val kColorBitDepth = 8
+
+    // Spinner
+    const val kSpinnerMotorId = 8
+    val kSpinnerRadius = 1.5.inches // Radius of wheel connected to the spinner motor
+    val kSpinnerUnitModel = NativeUnitLengthModel(5.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
+
+    const val kFortuneWheelPistonId = 3
+
+    // Fortunewheel
+    val kColorDistance = 10.inches
+
+    // Controller
+    const val kP = 3E-5
+    const val kF = 0.0
+    val kMaxVelocity = 100.inches / 1.seconds
+    val kMaxAcceleration = 200.inches / 1.seconds / 1.seconds
 }
 
 object ShooterConstants {
@@ -122,30 +144,11 @@ object ShooterConstants {
     const val kF = 0.0
 }
 
-object FortuneWheelConstants {
-    // Determines the bit-depth of colors when being compared.
-    const val kColorBitDepth = 8
-
-    // Spinner
-    const val kSpinnerMotorId = 8
-    val kSpinnerRadius = 1.5.inches // Radius of wheel connected to the spinner motor
-    val kSpinnerUnitModel = NativeUnitLengthModel(5.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
-
-    // Fortunewheel
-    val kColorDistance = 10.inches
-
-    // Controller
-    const val kP = 3E-5
-    const val kF = 0.0
-    val kMaxVelocity = 100.inches / 1.seconds
-    val kMaxAcceleration = 200.inches / 1.seconds / 1.seconds
-}
-
 object TurretConstants {
     const val kTurretId = 5
     const val kHallEffectSensorId = 4
 
-    const val kGearRatio = 124.0 / 16.0 * 12.0
+    val kGearRatio = 124.0 / 16.0 * if (kIsRaceRobot) 15.0 else 12.0
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
     val kAcceptableRange = (-70).degrees..290.degrees
@@ -186,6 +189,5 @@ object VisionConstants {
 }
 
 object ForkConstants {
-    const val kPCMId = 41
-    const val kForkId = 2
+    const val kForksPistonId = 5
 }
