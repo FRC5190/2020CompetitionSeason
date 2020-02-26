@@ -167,8 +167,8 @@ object Superstructure {
     }
 
     fun exhaust() = parallel {
-        +IntakeCommand(-0.5)
-        +ManualFeederCommand(-0.6, -0.75)
+//        +IntakeCommand(-0.5)
+        +ManualFeederCommand(-0.3, -0.75)
     }
 
     private fun getHoldAndShootCommand(feederTime: Double = kShootTime) = sequential {

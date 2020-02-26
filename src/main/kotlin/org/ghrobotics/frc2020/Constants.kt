@@ -15,10 +15,13 @@ import org.ghrobotics.frc2020.subsystems.hood.HoodNativeUnitModel
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
+import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.amps
+import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
+import org.ghrobotics.lib.mathematics.units.inMeters
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.milli
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitLengthModel
@@ -26,6 +29,9 @@ import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitRotationModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
+import org.ghrobotics.lib.mathematics.units.unitlessValue
+import org.ghrobotics.lib.utils.InterpolatingTreeMap
+import kotlin.math.atan
 
 const val kIsRaceRobot = false
 
@@ -172,9 +178,9 @@ object TurretConstants {
 object VisionConstants {
     const val kLEDId = 2
 
-    val kGoalHeight = 104.inches
-    val kCameraHeight = 23.75.inches
-    val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(23.5)
+    val kGoalHeight = 93.inches
+    val kCameraHeight = 23.875.inches
+    val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(20.5)
 
     val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d.fromDegrees(2.0))
 
@@ -186,6 +192,8 @@ object VisionConstants {
 
     val kGoalLocation = Pose2d(54.feet, 94.66.inches, Rotation2d())
     val kOuterToInnerGoalTransform = Transform2d(27.inches, 0.inches, Rotation2d())
+
+
 }
 
 object ForkConstants {

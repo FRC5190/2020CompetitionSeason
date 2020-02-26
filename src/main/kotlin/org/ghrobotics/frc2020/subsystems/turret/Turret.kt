@@ -221,7 +221,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
                 master.encoder.resetPosition(periodicIO.resetTo)
             }
 
-            if (status == Status.READY) {
+            if (false) {
                 // Write motor outputs.
                 when (val desiredOutput = periodicIO.desiredOutput) {
                     is Output.Nothing -> master.setNeutral()

@@ -18,6 +18,7 @@ import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.meters
+import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.utils.isConnected
 
@@ -30,7 +31,7 @@ object Hook : FalconSubsystem() {
     private val masterMotor = FalconMAX(
         id = HookConstants.kHookId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
-        model = HookConstants.kNativeUnitModel
+        model = DefaultNativeUnitModel
     )
 
     private val periodicIO = PeriodicIO()
@@ -52,7 +53,6 @@ object Hook : FalconSubsystem() {
     override fun periodic() {
         periodicIO.voltage = masterMotor.voltageOutput
         periodicIO.current = masterMotor.drawnCurrent
-        periodicIO.position = masterMotor.encoder.position
 
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing ->

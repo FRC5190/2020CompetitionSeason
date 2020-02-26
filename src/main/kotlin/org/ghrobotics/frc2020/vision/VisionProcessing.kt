@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
-import kotlin.math.tan
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.Turret
@@ -21,7 +20,12 @@ import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.feet
+import org.ghrobotics.lib.mathematics.units.inInches
 import org.ghrobotics.lib.mathematics.units.seconds
+import org.ghrobotics.lib.utils.InterpolatingTreeMap
 import org.ghrobotics.lib.utils.toTransform
 
 /**
@@ -38,6 +42,24 @@ object VisionProcessing : FalconSubsystem() {
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
     private var lastDesiredOutput = true
+
+    val kLookupTable = InterpolatingTreeMap.createFromSI<Radian, Meter>()
+
+    init {
+        kLookupTable[19.30.degrees] = 8.feet
+        kLookupTable[14.67.degrees] = 9.feet
+        kLookupTable[12.60.degrees] = 10.feet
+        kLookupTable[08.99.degrees] = 11.feet
+        kLookupTable[06.31.degrees] = 12.feet
+        kLookupTable[03.24.degrees] = 13.feet
+        kLookupTable[02.50.degrees] = 14.feet
+        kLookupTable[00.76.degrees] = 15.feet
+        kLookupTable[00.15.degrees] = 16.feet
+        kLookupTable[-4.45.degrees] = 20.feet
+        kLookupTable[-7.70.degrees] = 24.feet
+        kLookupTable[-8.67.degrees] = 26.feet
+        kLookupTable[-9.52.degrees] = 28.feet
+    }
 
     /**
      * Returns the angle to the best target.
@@ -63,8 +85,7 @@ object VisionProcessing : FalconSubsystem() {
      */
     val distance: SIUnit<Meter>
         get() {
-            val deltaHeight = VisionConstants.kGoalHeight - VisionConstants.kCameraHeight
-            return deltaHeight / tan(camera.pitch.radians + VisionConstants.kCameraAngle.radians)
+            return kLookupTable[SIUnit(camera.pitch.radians)]!!
         }
 
     var estimatedRobotPose: Pose2d = Pose2d()
@@ -104,7 +125,7 @@ object VisionProcessing : FalconSubsystem() {
         periodicIO.desiredLEDState = true
     }
 
-    /**
+    /**T
      * Turns off the LEDs for vision tracking.
      */
     fun turnOffLEDs() {
