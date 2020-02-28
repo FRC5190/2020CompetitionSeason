@@ -13,6 +13,7 @@ package org.ghrobotics.frc2020.auto
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inches
@@ -60,11 +61,19 @@ object WaypointManager {
     )
 
     // Trench Autos
-    val kTrenchStart = Pose2d(
+    val kTrenchReverseStart = Pose2d(
         x = kInitiationLineX - kRobotLength / 2.0 - kBumperThickness,
         y = 2.18.feet,
         angle = Rotation2d()
     )
+
+    val kTrenchStart = Pose2d(
+        x = kInitiationLineX,
+        y = 2.18.feet,
+        angle = Rotation2d.fromDegrees(180.0)
+    )
+
+    val kScoreAfterTrenchStart = kTrenchStart + Transform2d(7.feet, 0.feet, Rotation2d())
 
     val kShortPickupAfterTrench = Pose2d(
         x = 28.80.feet, y = 2.18.feet, angle = Rotation2d.fromDegrees(180.0)

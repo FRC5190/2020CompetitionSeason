@@ -20,11 +20,11 @@ import org.ghrobotics.lib.commands.sequential
 
 class ThreeBallRoutine : AutoRoutine {
 
-    private val path1 = TrajectoryManager.trenchStartToInnerGoalScore
+    private val path1 = TrajectoryManager.trenchStartReversedToInnerGoalScore
 
     override fun getRoutine(): Command = sequential {
         // Reset odometry
-        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchStart) })
+        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchReverseStart) })
 
         // Follow trajectory while aligning, and shot balls at the end.
         +parallel {

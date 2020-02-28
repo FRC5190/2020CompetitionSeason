@@ -40,6 +40,7 @@ import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.inDegrees
+import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.operations.div
@@ -83,7 +84,7 @@ object Superstructure {
     private val kTurretErrorTolerance = 1.degrees
 
     // Amount of time it takes to shoot 5 balls.
-    private const val kShootTime = 2.5
+    private const val kShootTime = 2.7
 
     // Default intake speed
     private const val kIntakeSpeed = 1.0
@@ -196,14 +197,24 @@ object Superstructure {
                 isShooterAtReference(holdParams.shooterParams.speed) &&
                     isHoodAtReference(holdParams.shooterParams.angle) &&
                     isTurretAtReference(holdParams.angleToOuterGoal)
-            }.withTimeout(1.3)
-            +ManualFeederCommand(0.85, 1.0).withTimeout(feederTime)
+            }.withTimeout(1.2)
+            +ManualFeederCommand(0.70, 1.0).withTimeout(feederTime)
         }) {
             // Hold speeds and angles.
             +AutoTurretCommand { holdParams.turretAngle }
             +AutoShooterCommand { holdParams.shooterSpeed }
             +AutoHoodCommand { holdParams.hoodAngle }
         }
+    }
+
+    val backup = ShooterPlanner[20.feet]
+
+    fun backupShooting() = parallelDeadline(sequential {
+        +WaitCommand(2.0)
+        +ManualFeederCommand(0.75, 1.0).withTimeout(kShootTime)
+    }) {
+        +AutoShooterCommand { backup.speed }
+        +AutoHoodCommand { backup.angle }
     }
 
     /**

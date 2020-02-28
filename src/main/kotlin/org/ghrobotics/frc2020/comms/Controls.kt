@@ -88,6 +88,7 @@ object Controls {
              * to the shooter when the drivetrain comes to a complete stop.
              */
             button(kBumperRight).change(Superstructure.waitUntilStoppedThenShoot())
+            triggerAxisButton(GenericHID.Hand.kRight).changeOn(Superstructure.backupShooting())
 
             button(kBumperLeft).change(Superstructure.intake())
             triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.exhaust())

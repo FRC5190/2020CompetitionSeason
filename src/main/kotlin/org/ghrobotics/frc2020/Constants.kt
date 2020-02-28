@@ -64,7 +64,7 @@ object DriveConstants {
     val kTrackWidth = 27.75.inches
     val kNativeUnitModel = NativeUnitLengthModel(9.09.nativeUnits, kWheelRadius)
 
-    const val kP = 0.0004
+    const val kP = 0.00015
 }
 
 object FeederConstants {
@@ -93,7 +93,7 @@ object HoodConstants {
         (-784).nativeUnits, 9.degrees
     )
 
-    val kBadHoodOffset = if (kIsRaceRobot) 0.degrees else (-5).degrees
+    val kBadHoodOffset = if (kIsRaceRobot) -5.5.degrees else (-5).degrees
     val kAcceptableRange = 10.degrees..42.61.degrees
 }
 
@@ -146,7 +146,7 @@ object ShooterConstants {
     const val kV = 0.011
     const val kA = 0.0
 
-    const val kP = 0.00005
+    const val kP = 0.000010
     const val kF = 0.0
 }
 
@@ -164,7 +164,7 @@ object TurretConstants {
 
     val kS = 0.0.volts
 
-    const val kP = 1.50E-5
+    const val kP = 1.10E-5
     const val kF = 1.041667E-4
 
     val kMaxVelocity = 720.degrees / 1.seconds
@@ -182,11 +182,11 @@ object VisionConstants {
     val kCameraHeight = 23.875.inches
     val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(20.5)
 
-    val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d.fromDegrees(2.0))
+    val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d.fromDegrees(5.0))
 
     val kGoalFieldRelativeAngle = Rotation2d()
 
-    val kMaxTargetTrackingLifetime = 1.5.seconds
+    val kMaxTargetTrackingLifetime = 1.0.seconds
     val kTargetTrackingDistanceErrorTolerance = 25.inches
     const val kMedianWindowSize = 15
 
