@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import org.ghrobotics.frc2020.VisionConstants
+import org.ghrobotics.frc2020.kIsRaceRobot
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -46,19 +47,35 @@ object VisionProcessing : FalconSubsystem() {
     val kLookupTable = InterpolatingTreeMap.createFromSI<Radian, Meter>()
 
     init {
-        kLookupTable[19.30.degrees] = 8.feet
-        kLookupTable[14.67.degrees] = 9.feet
-        kLookupTable[12.60.degrees] = 10.feet
-        kLookupTable[08.99.degrees] = 11.feet
-        kLookupTable[06.31.degrees] = 12.feet
-        kLookupTable[03.24.degrees] = 13.feet
-        kLookupTable[02.50.degrees] = 14.feet
-        kLookupTable[00.76.degrees] = 15.feet
-        kLookupTable[00.15.degrees] = 16.feet
-        kLookupTable[-4.45.degrees] = 20.feet
-        kLookupTable[-7.70.degrees] = 24.feet
-        kLookupTable[-8.67.degrees] = 26.feet
-        kLookupTable[-9.52.degrees] = 28.feet
+        if (kIsRaceRobot) {
+            kLookupTable[13.90.degrees] = 7.feet
+            kLookupTable[10.10.degrees] = 8.feet
+            kLookupTable[06.84.degrees] = 9.feet
+            kLookupTable[04.17.degrees] = 10.feet
+            kLookupTable[02.26.degrees] = 11.feet
+            kLookupTable[00.60.degrees] = 12.feet
+            kLookupTable[-0.95.degrees] = 13.feet
+            kLookupTable[-2.96.degrees] = 14.feet
+            kLookupTable[-3.51.degrees] = 15.feet
+            kLookupTable[-4.35.degrees] = 16.feet
+            kLookupTable[-7.31.degrees] = 20.feet
+            kLookupTable[-10.17.degrees] = 25.feet
+            kLookupTable[-11.45.degrees] = 28.feet
+        } else {
+            kLookupTable[19.30.degrees] = 8.feet
+            kLookupTable[14.67.degrees] = 9.feet
+            kLookupTable[12.60.degrees] = 10.feet
+            kLookupTable[08.99.degrees] = 11.feet
+            kLookupTable[06.31.degrees] = 12.feet
+            kLookupTable[03.24.degrees] = 13.feet
+            kLookupTable[02.50.degrees] = 14.feet
+            kLookupTable[00.76.degrees] = 15.feet
+            kLookupTable[00.15.degrees] = 16.feet
+            kLookupTable[-4.45.degrees] = 20.feet
+            kLookupTable[-7.70.degrees] = 24.feet
+            kLookupTable[-8.67.degrees] = 26.feet
+            kLookupTable[-9.52.degrees] = 28.feet
+        }
     }
 
     /**
@@ -94,6 +111,8 @@ object VisionProcessing : FalconSubsystem() {
     override fun periodic() {
         // Update camera.
         camera.update()
+
+//        println(distance.inInches())
 
         // Substitute (albeit very accurate) for solvePnP until solvePnP is fixed.
         val cameraToTarget = Transform2d(Translation2d(distance * angle.cos, distance * angle.sin), Rotation2d())

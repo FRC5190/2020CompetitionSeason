@@ -32,11 +32,11 @@ class AutoFeederCommand : FalconCommand(Feeder) {
 //            return
 //        }
 
-        if (Timer.getFPGATimestamp() - sensorLastTriggered < 0.10) {
+        if (Timer.getFPGATimestamp() - sensorLastTriggered < 0.05) {
             if (Feeder.exitSensorTriggered) {
                 Feeder.setPercent(0.2, 1.0)
             } else {
-                Feeder.setPercent(0.9, 1.0)
+                Feeder.setPercent(0.2, 1.0)
             }
         } else {
             Feeder.setPercent(0.0, 1.0)

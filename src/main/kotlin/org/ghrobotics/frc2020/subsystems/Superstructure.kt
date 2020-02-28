@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
@@ -33,13 +34,15 @@ import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
+import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.inDegrees
+import org.ghrobotics.lib.mathematics.units.inInches
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
-import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import kotlin.math.absoluteValue
@@ -147,6 +150,7 @@ object Superstructure {
                         +AutoHoodCommand { latestParams.shooterParams.angle }
                     },
 
+                    InstantCommand(Runnable { println(latestParams.hoodAngle.inDegrees()) }),
                     getHoldAndShootCommand(feederTime)
                 )
             }
@@ -167,8 +171,11 @@ object Superstructure {
     }
 
     fun exhaust() = parallel {
-//        +IntakeCommand(-0.5)
-        +ManualFeederCommand(-0.3, -0.75)
+        +IntakeCommand(-0.5)
+        +sequential {
+            +WaitCommand(0.5)
+            +ManualFeederCommand(-0.5, -1.0)
+        }
     }
 
     private fun getHoldAndShootCommand(feederTime: Double = kShootTime) = sequential {
@@ -211,6 +218,7 @@ object Superstructure {
         val turretPose = robotPose + Transform2d(TurretConstants.kTurretRelativeToRobotCenter, Rotation2d())
 
         // Get the target that is closest to the turret pose.
+        println(GoalTracker.numberOfTargets)
         val target = GoalTracker.getClosestTarget(turretPose)
 
         val (turretToOuterGoal, turretToInnerGoal) = if (target != null) {
@@ -224,13 +232,15 @@ object Superstructure {
         }
 
         // Get the distance to the target.
-        val distance = turretToInnerGoal.translation.norm
+        val distance = turretToOuterGoal.translation.norm
 
         // Get the angle to the target.
         val angleOuter = Rotation2d(turretToOuterGoal.translation.x, turretToOuterGoal.translation.y)
         val angleInner = Rotation2d(turretToInnerGoal.translation.x, turretToInnerGoal.translation.y)
 
         // Return the distance and angle.
+        val ok = SIUnit<Meter>(distance)
+//        println(ok.inInches())
         return AimingParameters(angleOuter.toSI(), angleInner.toSI(), ShooterPlanner[SIUnit(distance)])
     }
 

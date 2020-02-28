@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.TurretConstants
+import org.ghrobotics.frc2020.kIsRaceRobot
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -127,6 +128,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             )
 
             enableClosedLoopControl()
+
+
         } else {
             println("Did not initialize Turret")
         }
@@ -139,7 +142,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun zero() {
         periodicIO.resetPosition = true
-        periodicIO.resetTo = 211.39.degrees
+        periodicIO.resetTo = if (kIsRaceRobot) 81.78.degrees else .39.degrees
         setStatus(Status.READY)
     }
 
@@ -221,7 +224,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
                 master.encoder.resetPosition(periodicIO.resetTo)
             }
 
-            if (false) {
+            if (status == Status.READY) {
                 // Write motor outputs.
                 when (val desiredOutput = periodicIO.desiredOutput) {
                     is Output.Nothing -> master.setNeutral()

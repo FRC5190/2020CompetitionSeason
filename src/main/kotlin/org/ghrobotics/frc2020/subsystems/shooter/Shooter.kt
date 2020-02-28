@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.ShooterConstants
+import org.ghrobotics.frc2020.kIsRaceRobot
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -66,6 +67,8 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         if (isConnected) {
             masterMotor.canSparkMax.restoreFactoryDefaults()
             slaveMotor.canSparkMax.restoreFactoryDefaults()
+
+            masterMotor.outputInverted = kIsRaceRobot
 
             slaveMotor.canSparkMax.follow(masterMotor.canSparkMax, true)
 

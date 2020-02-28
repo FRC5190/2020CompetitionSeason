@@ -33,7 +33,7 @@ import org.ghrobotics.lib.mathematics.units.unitlessValue
 import org.ghrobotics.lib.utils.InterpolatingTreeMap
 import kotlin.math.atan
 
-const val kIsRaceRobot = false
+const val kIsRaceRobot = true
 
 /**
  * Common constants that are shared across subsystems.
@@ -93,7 +93,7 @@ object HoodConstants {
         (-690).nativeUnits, 9.degrees
     )
 
-    val kBadHoodOffset = (-5).degrees
+    val kBadHoodOffset = if (kIsRaceRobot) 0.degrees else (-5).degrees
     val kAcceptableRange = 10.degrees..42.61.degrees
 }
 
@@ -110,7 +110,7 @@ object IntakeConstants {
 
 object LEDConstants {
     const val kPort = 2
-    const val kBufferSize = 72
+    const val kBufferSize = 60
 }
 
 object FortuneWheelConstants {
@@ -122,7 +122,7 @@ object FortuneWheelConstants {
     val kSpinnerRadius = 1.5.inches // Radius of wheel connected to the spinner motor
     val kSpinnerUnitModel = NativeUnitLengthModel(5.nativeUnits, kSpinnerRadius) // Unit model for the spinner motor
 
-    const val kFortuneWheelPistonId = 3
+    const val kFortuneWheelPistonId = 5
 
     // Fortunewheel
     val kColorDistance = 10.inches
@@ -197,5 +197,5 @@ object VisionConstants {
 }
 
 object ForkConstants {
-    const val kForksPistonId = 5
+    const val kForksPistonId = 3
 }

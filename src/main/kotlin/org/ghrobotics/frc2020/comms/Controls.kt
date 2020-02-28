@@ -20,6 +20,7 @@ import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneColor
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheelCommand
 import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
 import org.ghrobotics.frc2020.subsystems.hook.ManualHookCommand
+import org.ghrobotics.frc2020.subsystems.shooter.ManualShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -103,7 +104,7 @@ object Controls {
             /**
              * Perform rotation control when the POV up button is pressed.
              */
-//            pov(0).change(FortuneWheelCommand(28))
+            pov(0).change(FortuneWheelCommand(28))
 
             /**
              * Perform position control when the POV down button is pressed.
@@ -122,6 +123,10 @@ object Controls {
             } else {
                 Turret.defaultCommand.schedule()
             }
+        }
+
+        axisButton(XboxController.Axis.kRightY.value, threshold = 0.04) {
+            change(ManualHoodCommand(source))
         }
     }
 
