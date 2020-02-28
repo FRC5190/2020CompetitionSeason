@@ -105,6 +105,21 @@ object LED : FalconSubsystem() {
                 }
             }
 
+            Robot.isFortuneWheelMode -> when {
+                currentTime.inMilliseconds() % 2000 < 500 -> {
+                    setSolidColor(Color.kRed)
+                }
+                currentTime.inMilliseconds() % 2000 < 1000 -> {
+                    setSolidColor(Color.kBlue)
+                }
+                currentTime.inMilliseconds() % 2000 < 1500 -> {
+                    setSolidColor(Color.kGreen)
+                }
+                else -> {
+                    setSolidColor(Color.kYellow)
+                }
+            }
+
             // Green when vision aligning.
             Superstructure.visionAlign -> setSolidColor(kVision)
 

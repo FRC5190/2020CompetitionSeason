@@ -142,7 +142,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun zero() {
         periodicIO.resetPosition = true
-        periodicIO.resetTo = if (kIsRaceRobot) 81.78.degrees else .39.degrees
+        periodicIO.resetTo = if (kIsRaceRobot) 81.78.degrees else 211.39.degrees
         setStatus(Status.READY)
     }
 

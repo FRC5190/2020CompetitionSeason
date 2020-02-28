@@ -17,10 +17,9 @@ import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
 import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneColor
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheelCommand
-import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
 import org.ghrobotics.frc2020.subsystems.hook.ManualHookCommand
-import org.ghrobotics.frc2020.subsystems.shooter.ManualShooterCommand
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -31,6 +30,7 @@ import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.kB
 import org.ghrobotics.lib.wrappers.hid.kBumperLeft
 import org.ghrobotics.lib.wrappers.hid.kBumperRight
+import org.ghrobotics.lib.wrappers.hid.kY
 import org.ghrobotics.lib.wrappers.hid.triggerAxisButton
 import org.ghrobotics.lib.wrappers.hid.xboxController
 
@@ -109,7 +109,7 @@ object Controls {
             /**
              * Perform position control when the POV down button is pressed.
              */
-//            pov(180).change(FortuneWheelCommand { GameData.getColor() ?: FortuneColor.RED })
+            pov(180).change(FortuneWheelCommand { GameData.getColor() ?: FortuneColor.RED })
         }
 
         /**
@@ -125,8 +125,13 @@ object Controls {
             }
         }
 
-        axisButton(XboxController.Axis.kRightY.value, threshold = 0.04) {
-            change(ManualHoodCommand(source))
+        button(kY).changeOn {
+            Robot.isFortuneWheelMode = !Robot.isFortuneWheelMode
+            if (Robot.isFortuneWheelMode) {
+                FortuneWheel.extendSpinnerPiston(true)
+            } else {
+                FortuneWheel.extendSpinnerPiston(false)
+            }
         }
     }
 

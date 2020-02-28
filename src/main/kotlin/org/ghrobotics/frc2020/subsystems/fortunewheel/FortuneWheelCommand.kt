@@ -50,7 +50,6 @@ class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
 
     override fun initialize() {
         targetColor = targetColorSource() + 2
-        FortuneWheel.extendSpinnerPiston(true)
     }
 
     override fun execute() {

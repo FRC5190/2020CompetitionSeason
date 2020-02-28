@@ -24,7 +24,6 @@ import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.feet
-import org.ghrobotics.lib.mathematics.units.inInches
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.utils.InterpolatingTreeMap
 import org.ghrobotics.lib.utils.toTransform
@@ -42,39 +41,39 @@ object VisionProcessing : FalconSubsystem() {
 
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
-    private var lastDesiredOutput = true
 
-    val kLookupTable = InterpolatingTreeMap.createFromSI<Radian, Meter>()
+    // Lookup table for pitch to distance
+    private val lookupTable = InterpolatingTreeMap.createFromSI<Radian, Meter>()
 
     init {
         if (kIsRaceRobot) {
-            kLookupTable[13.90.degrees] = 7.feet
-            kLookupTable[10.10.degrees] = 8.feet
-            kLookupTable[06.84.degrees] = 9.feet
-            kLookupTable[04.17.degrees] = 10.feet
-            kLookupTable[02.26.degrees] = 11.feet
-            kLookupTable[00.60.degrees] = 12.feet
-            kLookupTable[-0.95.degrees] = 13.feet
-            kLookupTable[-2.96.degrees] = 14.feet
-            kLookupTable[-3.51.degrees] = 15.feet
-            kLookupTable[-4.35.degrees] = 16.feet
-            kLookupTable[-7.31.degrees] = 20.feet
-            kLookupTable[-10.17.degrees] = 25.feet
-            kLookupTable[-11.45.degrees] = 28.feet
+            lookupTable[13.90.degrees] = 7.feet
+            lookupTable[10.10.degrees] = 8.feet
+            lookupTable[06.84.degrees] = 9.feet
+            lookupTable[04.17.degrees] = 10.feet
+            lookupTable[02.26.degrees] = 11.feet
+            lookupTable[00.60.degrees] = 12.feet
+            lookupTable[(-0.95).degrees] = 13.feet
+            lookupTable[(-2.96).degrees] = 14.feet
+            lookupTable[(-3.51).degrees] = 15.feet
+            lookupTable[(-4.35).degrees] = 16.feet
+            lookupTable[(-7.31).degrees] = 20.feet
+            lookupTable[(-10.17).degrees] = 25.feet
+            lookupTable[(-11.45).degrees] = 28.feet
         } else {
-            kLookupTable[19.30.degrees] = 8.feet
-            kLookupTable[14.67.degrees] = 9.feet
-            kLookupTable[12.60.degrees] = 10.feet
-            kLookupTable[08.99.degrees] = 11.feet
-            kLookupTable[06.31.degrees] = 12.feet
-            kLookupTable[03.24.degrees] = 13.feet
-            kLookupTable[02.50.degrees] = 14.feet
-            kLookupTable[00.76.degrees] = 15.feet
-            kLookupTable[00.15.degrees] = 16.feet
-            kLookupTable[-4.45.degrees] = 20.feet
-            kLookupTable[-7.70.degrees] = 24.feet
-            kLookupTable[-8.67.degrees] = 26.feet
-            kLookupTable[-9.52.degrees] = 28.feet
+            lookupTable[19.30.degrees] = 8.feet
+            lookupTable[14.67.degrees] = 9.feet
+            lookupTable[12.60.degrees] = 10.feet
+            lookupTable[08.99.degrees] = 11.feet
+            lookupTable[06.31.degrees] = 12.feet
+            lookupTable[03.24.degrees] = 13.feet
+            lookupTable[02.50.degrees] = 14.feet
+            lookupTable[00.76.degrees] = 15.feet
+            lookupTable[00.15.degrees] = 16.feet
+            lookupTable[(-4.45).degrees] = 20.feet
+            lookupTable[(-7.70).degrees] = 24.feet
+            lookupTable[(-8.67).degrees] = 26.feet
+            lookupTable[(-9.52).degrees] = 28.feet
         }
     }
 
@@ -101,9 +100,7 @@ object VisionProcessing : FalconSubsystem() {
      * @return The distance along the ground to the goal.
      */
     val distance: SIUnit<Meter>
-        get() {
-            return kLookupTable[SIUnit(camera.pitch.radians)]!!
-        }
+        get() = lookupTable[SIUnit(camera.pitch.radians)]!!
 
     var estimatedRobotPose: Pose2d = Pose2d()
         private set
@@ -111,8 +108,6 @@ object VisionProcessing : FalconSubsystem() {
     override fun periodic() {
         // Update camera.
         camera.update()
-
-//        println(distance.inInches())
 
         // Substitute (albeit very accurate) for solvePnP until solvePnP is fixed.
         val cameraToTarget = Transform2d(Translation2d(distance * angle.cos, distance * angle.sin), Rotation2d())
