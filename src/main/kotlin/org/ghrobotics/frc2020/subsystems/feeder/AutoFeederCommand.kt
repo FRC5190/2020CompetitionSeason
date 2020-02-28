@@ -36,7 +36,7 @@ class AutoFeederCommand : FalconCommand(Feeder) {
             if (Feeder.exitSensorTriggered) {
                 Feeder.setPercent(0.2, 1.0)
             } else {
-                Feeder.setPercent(0.2, 1.0)
+                Feeder.setPercent(0.6, 1.0)
             }
         } else {
             Feeder.setPercent(0.0, 1.0)

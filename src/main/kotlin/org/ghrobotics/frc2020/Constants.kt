@@ -90,7 +90,7 @@ object HoodConstants {
 
     val kNativeUnitModel = HoodNativeUnitModel(
         0.nativeUnits, 42.61.degrees,
-        (-690).nativeUnits, 9.degrees
+        (-784).nativeUnits, 9.degrees
     )
 
     val kBadHoodOffset = if (kIsRaceRobot) 0.degrees else (-5).degrees
@@ -146,7 +146,7 @@ object ShooterConstants {
     const val kV = 0.011
     const val kA = 0.0
 
-    const val kP = 0.00025
+    const val kP = 0.00005
     const val kF = 0.0
 }
 

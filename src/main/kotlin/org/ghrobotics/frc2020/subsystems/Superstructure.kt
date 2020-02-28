@@ -197,7 +197,7 @@ object Superstructure {
                     isHoodAtReference(holdParams.shooterParams.angle) &&
                     isTurretAtReference(holdParams.angleToOuterGoal)
             }.withTimeout(1.3)
-            +ManualFeederCommand(1.0, 1.0).withTimeout(feederTime)
+            +ManualFeederCommand(0.85, 1.0).withTimeout(feederTime)
         }) {
             // Hold speeds and angles.
             +AutoTurretCommand { holdParams.turretAngle }
