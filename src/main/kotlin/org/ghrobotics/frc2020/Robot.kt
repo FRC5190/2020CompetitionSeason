@@ -82,7 +82,7 @@ object Robot : FalconTimedRobot() {
 
     // Runs once when robot is disabled
     override fun disabledInit() {
-        Drivetrain.setBrakeMode(false)
+        Drivetrain.setBrakeMode(true)
         Turret.setBrakeMode(false)
     }
 

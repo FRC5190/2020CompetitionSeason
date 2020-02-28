@@ -75,8 +75,8 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     override val odometry = DifferentialDriveOdometry(gyro())
 
     // Motor characterization
-    override val leftCharacterization = SimpleMotorFeedforward(0.291, 2.86, 0.64)
-    override val rightCharacterization = SimpleMotorFeedforward(0.246, 2.53, 0.456)
+    override val leftCharacterization = SimpleMotorFeedforward(0.198, 2.4, 0.483)
+    override val rightCharacterization = SimpleMotorFeedforward(0.191, 2.37, 0.437)
 
     // Getters for current
     val leftCurrent get() = periodicIO.leftCurrent

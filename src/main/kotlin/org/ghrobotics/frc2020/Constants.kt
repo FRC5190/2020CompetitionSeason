@@ -142,8 +142,8 @@ object ShooterConstants {
 
     val kNativeUnitModel = NativeUnitRotationModel(kGearRatio.nativeUnits)
 
-    const val kS = 0.112
-    const val kV = 0.00986
+    const val kS = 0.085
+    const val kV = 0.011
     const val kA = 0.0
 
     const val kP = 0.00025
