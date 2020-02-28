@@ -21,6 +21,7 @@ import org.ghrobotics.lib.mathematics.units.derived.inDegrees
 import org.ghrobotics.lib.mathematics.units.inAmps
 import org.ghrobotics.lib.mathematics.units.inFeet
 import org.ghrobotics.lib.mathematics.units.inInches
+import org.ghrobotics.lib.mathematics.units.inMeters
 import org.ghrobotics.lib.wrappers.networktables.enumSendableChooser
 import org.ghrobotics.lib.wrappers.networktables.tab
 
@@ -92,7 +93,7 @@ object Network {
                 double("Turret Hold Angle") { Superstructure.holdParams.turretAngle.inDegrees() }
                 double("Shooter Hold Speed") { Superstructure.holdParams.shooterSpeed.value * 60 / 2 / Math.PI }
                 double("Hood Hold Angle") { Superstructure.holdParams.hoodAngle.inDegrees() }
-                double("Distance to Goal (in)") { Superstructure.holdParams.distance.inInches() }
+                double("Distance to Goal (m)") { Superstructure.holdParams.distance.inMeters() }
             }
         }
     }
