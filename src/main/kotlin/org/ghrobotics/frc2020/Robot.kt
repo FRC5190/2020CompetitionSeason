@@ -36,6 +36,9 @@ object Robot : FalconTimedRobot() {
     // Whether the robot is in climb mode.
     var isClimbMode = false
 
+    // Whether the robot is in fortune wheel mode.
+    var isFortuneWheelMode = false
+
     // Runs once when robot boots up
     override fun robotInit() {
         // Initialize auto paths

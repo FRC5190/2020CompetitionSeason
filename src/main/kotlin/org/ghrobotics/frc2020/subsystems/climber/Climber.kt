@@ -45,6 +45,8 @@ object Climber : FalconSubsystem() {
 
     private val periodicIO = PeriodicIO()
 
+    val current get() = periodicIO.current
+
     // Getters
     var isWinchLocked = false
         private set

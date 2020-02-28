@@ -40,7 +40,6 @@ import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.inDegrees
-import org.ghrobotics.lib.mathematics.units.inInches
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.operations.div
@@ -53,18 +52,20 @@ import kotlin.math.absoluteValue
  */
 object Superstructure {
     // Latest aiming parameters based on Vision or odometry data.
-    private var latestParams =
+    var latestParams =
         AimingParameters(
             angleToOuterGoal = SIUnit(0.0), angleToInnerGoal = SIUnit(0.0),
-            shooterParams = ShooterPlanner.ShooterParameters(SIUnit(0.0), SIUnit(0.0))
+            distance = SIUnit(0.0)
         )
+        private set
 
     // Holding parameters
-    private var holdParams =
+    var holdParams =
         AimingParameters(
             angleToOuterGoal = SIUnit(0.0), angleToInnerGoal = SIUnit(0.0),
-            shooterParams = ShooterPlanner.ShooterParameters(SIUnit(0.0), SIUnit(0.0))
+            distance = SIUnit(0.0)
         )
+        private set
 
     // Velocity threshold for drivetrain.
     private val kVelocityThreshold = 0.2.inches / 1.seconds
@@ -218,7 +219,6 @@ object Superstructure {
         val turretPose = robotPose + Transform2d(TurretConstants.kTurretRelativeToRobotCenter, Rotation2d())
 
         // Get the target that is closest to the turret pose.
-        println(GoalTracker.numberOfTargets)
         val target = GoalTracker.getClosestTarget(turretPose)
 
         val (turretToOuterGoal, turretToInnerGoal) = if (target != null) {
@@ -232,16 +232,14 @@ object Superstructure {
         }
 
         // Get the distance to the target.
-        val distance = turretToOuterGoal.translation.norm
+        val distance = SIUnit<Meter>(turretToOuterGoal.translation.norm)
 
         // Get the angle to the target.
         val angleOuter = Rotation2d(turretToOuterGoal.translation.x, turretToOuterGoal.translation.y)
         val angleInner = Rotation2d(turretToInnerGoal.translation.x, turretToInnerGoal.translation.y)
 
         // Return the distance and angle.
-        val ok = SIUnit<Meter>(distance)
-//        println(ok.inInches())
-        return AimingParameters(angleOuter.toSI(), angleInner.toSI(), ShooterPlanner[SIUnit(distance)])
+        return AimingParameters(angleOuter.toSI(), angleInner.toSI(), distance)
     }
 
     /**
@@ -288,8 +286,9 @@ object Superstructure {
     data class AimingParameters(
         val angleToOuterGoal: SIUnit<Radian>,
         val angleToInnerGoal: SIUnit<Radian>,
-        val shooterParams: ShooterPlanner.ShooterParameters
+        val distance: SIUnit<Meter>
     ) {
+        val shooterParams = ShooterPlanner[distance]
         val shooterSpeed get() = shooterParams.speed
         val hoodAngle get() = shooterParams.angle
         val turretAngle get() = angleToOuterGoal
