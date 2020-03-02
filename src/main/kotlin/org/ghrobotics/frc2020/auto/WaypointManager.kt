@@ -13,6 +13,7 @@ package org.ghrobotics.frc2020.auto
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inches
@@ -53,24 +54,32 @@ object WaypointManager {
         angle = Rotation2d.fromDegrees(180.0)
     )
     val kOpponentTrenchBalls = Pose2d(
-        x = 33.31.feet, y = 25.38.feet, angle = Rotation2d.fromDegrees(156.0)
+        x = 33.80.feet, y = 25.38.feet, angle = Rotation2d.fromDegrees(170.0)
     )
     val kStealAutoIntermediate = Pose2d(
         x = 39.10.feet, y = 24.17.feet, angle = Rotation2d.fromDegrees(-153.0)
     )
 
     // Trench Autos
-    val kTrenchStart = Pose2d(
+    val kTrenchReverseStart = Pose2d(
         x = kInitiationLineX - kRobotLength / 2.0 - kBumperThickness,
         y = 2.18.feet,
         angle = Rotation2d()
     )
 
+    val kTrenchStart = Pose2d(
+        x = kInitiationLineX,
+        y = 2.18.feet,
+        angle = Rotation2d.fromDegrees(180.0)
+    )
+
+    val kScoreAfterTrenchStart = kTrenchStart + Transform2d(7.feet, 0.feet, Rotation2d())
+
     val kShortPickupAfterTrench = Pose2d(
         x = 28.80.feet, y = 2.18.feet, angle = Rotation2d.fromDegrees(180.0)
     )
     val kLongPickupAfterTrench = Pose2d(
-        x = 23.50.feet, y = 2.18.feet, angle = Rotation2d.fromDegrees(182.0)
+        x = 23.50.feet, y = 2.32.feet, angle = Rotation2d.fromDegrees(182.0)
     )
 
     // Scoring Locations
@@ -82,5 +91,8 @@ object WaypointManager {
     )
     val kGoodAfterStealScoringLocation = Pose2d(
         x = 38.98.feet, y = 9.21.feet, angle = Rotation2d.fromDegrees(-90.0)
+    )
+    val kOk = Pose2d(
+        x = 41.555.feet, y = 10.319.feet, angle = Rotation2d.fromDegrees(145.0)
     )
 }

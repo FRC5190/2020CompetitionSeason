@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.subsystems.climber
 
 import edu.wpi.first.wpilibj.Solenoid
 import org.ghrobotics.frc2020.ClimberConstants
+import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -37,12 +38,18 @@ object Climber : FalconSubsystem() {
     )
 
     // Extension piston and brake to lock winch.
-    private val extensionPiston = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kExtensionPistonId)
-    private val winchBrake = Solenoid(ClimberConstants.kPCMId, ClimberConstants.kWinchBrakeId)
+    private val extensionPiston = Solenoid(kPCMId, ClimberConstants.kExtensionPistonId)
+    private val winchBrake = Solenoid(kPCMId, ClimberConstants.kWinchBrakeId)
 
     private var isConnected = true
 
     private val periodicIO = PeriodicIO()
+
+    val current get() = periodicIO.current
+
+    // Getters
+    var isWinchLocked = false
+        private set
 
     override fun lateInit() {
         if (isConnected) {
@@ -52,7 +59,7 @@ object Climber : FalconSubsystem() {
             // Set default command.
             defaultCommand = ManualClimberCommand { 0.0 }
 
-            setWinchBrake(true)
+            setWinchBrake(false)
         } else {
             println("Did not initialize Climber.")
         }
@@ -72,8 +79,6 @@ object Climber : FalconSubsystem() {
                 }
             }
         }
-
-        setWinchBrake(true)
     }
 
     /**
@@ -109,7 +114,8 @@ object Climber : FalconSubsystem() {
      * @param braked Whether to enable the brake or not.
      */
     fun setWinchBrake(braked: Boolean) {
-        winchBrake.set(true)
+        isWinchLocked = braked
+        winchBrake.set(!braked)
     }
 
     private class PeriodicIO {

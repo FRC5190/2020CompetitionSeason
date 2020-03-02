@@ -25,7 +25,7 @@ class FiveBallStealRoutine : AutoRoutine {
 
     // Paths
     private val path1 = TrajectoryManager.stealStartToOpponentTrenchBalls
-    private val path2 = TrajectoryManager.opponentTrenchBallsToIntermediate
+    private val path2 = TrajectoryManager.opponentTrenchBallsToOk
     private val path3 = TrajectoryManager.stealIntermediateToStealScore
 
     override fun getRoutine(): Command = sequential {
@@ -35,7 +35,6 @@ class FiveBallStealRoutine : AutoRoutine {
         // Drive and steal opponent trench balls.
         +parallelDeadline(sequential {
             +Drivetrain.followTrajectory(path1)
-            +Drivetrain.followTrajectory(path2)
         }) {
             +Superstructure.intake()
         }
@@ -43,9 +42,12 @@ class FiveBallStealRoutine : AutoRoutine {
         // Drive to scoring location while aligning to the goal
         // and shoot when path ends.
         +parallel {
-            +Drivetrain.followTrajectory(path3)
+            +Drivetrain.followTrajectory(path2)
             +sequential {
-                +AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d()).withTimeout(1.5)
+                +parallel {
+                    +AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d.fromDegrees(-15.0))
+                    +Superstructure.intake()
+                }.withTimeout(path2.totalTimeSeconds - 1.3)
                 +Superstructure.waitUntilStoppedThenShoot()
             }
         }

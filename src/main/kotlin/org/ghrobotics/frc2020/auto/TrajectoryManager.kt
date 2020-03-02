@@ -9,12 +9,14 @@
 package org.ghrobotics.frc2020.auto
 
 import edu.wpi.first.wpilibj.geometry.Pose2d
+import edu.wpi.first.wpilibj.geometry.Translation2d
 import edu.wpi.first.wpilibj.trajectory.Trajectory
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator
 import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.twodim.trajectory.FalconTrajectoryConfig
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
@@ -27,13 +29,13 @@ import org.ghrobotics.lib.mathematics.units.seconds
 object TrajectoryManager {
 
     // Constraints
-    private val kMaxVelocity = 12.feet / 1.seconds
+    private val kMaxVelocity = 9.feet / 1.seconds
     private val kMaxPickupVelocity = 7.feet / 1.seconds
 
-    private val kMaxAcceleration = 11.feet / 1.seconds / 1.seconds
-    private val kMaxPickupAcceleration = 10.feet / 1.seconds / 1.seconds
+    private val kMaxAcceleration = 6.feet / 1.seconds / 1.seconds
+    private val kMaxPickupAcceleration = 6.feet / 1.seconds / 1.seconds
 
-    private val kMaxCentripetalAcceleration = 12.feet / 1.seconds / 1.seconds
+    private val kMaxCentripetalAcceleration = 7.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
 
     private val kCentripetalAccelerationConstraint =
@@ -70,6 +72,9 @@ object TrajectoryManager {
     val stealStartToOpponentTrenchBalls: Trajectory =
         generate(WaypointManager.kStealStart, WaypointManager.kOpponentTrenchBalls, kFwdPickupConfig)
 
+    val opponentTrenchBallsToOk: Trajectory =
+        generate(WaypointManager.kOpponentTrenchBalls, WaypointManager.kOk, kRevConfig)
+
     val opponentTrenchBallsToIntermediate: Trajectory =
         generate(WaypointManager.kOpponentTrenchBalls, WaypointManager.kStealAutoIntermediate, kRevConfig)
 
@@ -80,18 +85,27 @@ object TrajectoryManager {
         generate(WaypointManager.kGoodAfterStealScoringLocation, WaypointManager.kLongPickupAfterTrench, kFwdPickupConfig)
 
     // Trench Autos
-    val trenchStartToInnerGoalScore: Trajectory =
-        generate(WaypointManager.kTrenchStart, WaypointManager.kGoodInnerGoalScoringLocation, kRevConfig)
+    val trenchStartReversedToInnerGoalScore: Trajectory =
+        generate(WaypointManager.kTrenchReverseStart, WaypointManager.kGoodInnerGoalScoringLocation, kRevConfig)
+
+    val trenchStartForwardToScore: Trajectory =
+        generate(WaypointManager.kTrenchStart, WaypointManager.kScoreAfterTrenchStart, kFwdConfig)
+
+    val scoreToShortTrenchPickup: Trajectory =
+        generate(WaypointManager.kScoreAfterTrenchStart, WaypointManager.kShortPickupAfterTrench, kFwdConfig)
+
+    val scoreToLongTrenchPickup: Trajectory =
+        generate(WaypointManager.kScoreAfterTrenchStart, WaypointManager.kLongPickupAfterTrench, kFwdConfig)
 
     val innerGoalScoreToShortTrenchPickup: Trajectory =
         TrajectoryGenerator.generateTrajectory(
-            WaypointManager.kGoodInnerGoalScoringLocation, listOf(/*Translation2d(35.41.feet, 3.23.feet)*/),
+            WaypointManager.kGoodInnerGoalScoringLocation, listOf(Translation2d(35.41.feet, 3.23.feet)),
             WaypointManager.kShortPickupAfterTrench, kFwdPickupConfig
         )
 
     val innerGoalScoreToLongTrenchPickup: Trajectory =
         TrajectoryGenerator.generateTrajectory(
-            WaypointManager.kGoodInnerGoalScoringLocation, listOf(/*Translation2d(35.41.feet, 3.23.feet)*/),
+            WaypointManager.kGoodInnerGoalScoringLocation, listOf(Translation2d(35.41.feet, 3.23.feet)),
             WaypointManager.kLongPickupAfterTrench, kFwdPickupConfig
         )
 

@@ -19,4 +19,8 @@ class ManualShooterCommand(val source: DoubleSource) : FalconCommand(Shooter) {
         println(source() * 12)
         Shooter.setPercent(source())
     }
+
+    override fun end(interrupted: Boolean) {
+        Shooter.setNeutral()
+    }
 }

@@ -34,7 +34,9 @@ class ZeroTurretCommand : FalconCommand(Turret) {
 
     override fun end(interrupted: Boolean) {
         timer.stop()
-        Turret.zero()
+        if (!interrupted) {
+            Turret.zero()
+        }
     }
 
     override fun isFinished() = timer.get() > 3.0

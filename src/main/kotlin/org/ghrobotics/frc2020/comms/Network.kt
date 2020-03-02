@@ -8,7 +8,10 @@
 
 package org.ghrobotics.frc2020.comms
 
+import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.auto.Autonomous
+import org.ghrobotics.frc2020.subsystems.Superstructure
+import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.hood.Hood
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
@@ -19,6 +22,7 @@ import org.ghrobotics.lib.mathematics.units.derived.inDegrees
 import org.ghrobotics.lib.mathematics.units.inAmps
 import org.ghrobotics.lib.mathematics.units.inFeet
 import org.ghrobotics.lib.mathematics.units.inInches
+import org.ghrobotics.lib.mathematics.units.inMeters
 import org.ghrobotics.lib.wrappers.networktables.enumSendableChooser
 import org.ghrobotics.lib.wrappers.networktables.tab
 
@@ -76,6 +80,25 @@ object Network {
 
                 double("Encoder Raw") { Hood.rawEncoder }
                 double("Angle") { Hood.angle.inDegrees() }
+            }
+            grid("Climber") {
+                position(row = 2, column = 2)
+                size(width = 2, height = 1)
+
+                double("Current (A)") { Climber.current.inAmps() }
+            }
+            grid("Superstructure") {
+                position(row = 2, column = 4)
+                size(width = 2, height = 2)
+
+                double("Turret Hold Angle") { Superstructure.holdParams.turretAngle.inDegrees() }
+                double("Shooter Hold Speed") { Superstructure.holdParams.shooterSpeed.value * 60 / 2 / Math.PI }
+                double("Hood Hold Angle") { Superstructure.holdParams.hoodAngle.inDegrees() }
+                double("Distance to Goal (m)") { Superstructure.holdParams.distance.inMeters() }
+            }
+            booleanBox("Climb Mode", Robot::isClimbMode) {
+                position(row = 2, column = 6)
+                size(width = 1, height = 1)
             }
         }
     }

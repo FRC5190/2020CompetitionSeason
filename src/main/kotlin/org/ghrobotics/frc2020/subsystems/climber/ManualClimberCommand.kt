@@ -17,19 +17,12 @@ import org.ghrobotics.lib.utils.DoubleSource
  * @param percentSource The percent source to run the winch.
  */
 class ManualClimberCommand(private val percentSource: DoubleSource) : FalconCommand(Climber) {
-    override fun initialize() {
-        // Release the winch brake.
-        Climber.setWinchBrake(false)
-    }
-
     override fun execute() {
         // Run the winch.
         Climber.setPercent(percentSource())
     }
 
     override fun end(interrupted: Boolean) {
-        // Set winch brake and set neutral.
-        Climber.setWinchBrake(true)
         Climber.setNeutral()
     }
 }

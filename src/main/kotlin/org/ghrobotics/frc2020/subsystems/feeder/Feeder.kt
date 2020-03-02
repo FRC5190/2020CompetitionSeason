@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.Solenoid
 import org.ghrobotics.frc2020.FeederConstants
+import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
 import org.ghrobotics.lib.motors.rev.FalconMAX
@@ -22,7 +23,7 @@ object Feeder : FalconSubsystem() {
     private val feederMotor = FalconMAX(
         id = FeederConstants.kFeederId,
         type = CANSparkMaxLowLevel.MotorType.kBrushless,
-        model = FeederConstants.kFeederUnitModel
+        model = DefaultNativeUnitModel
     )
     private val bridgeMotor = FalconMAX(
         id = FeederConstants.kBridgeId,
@@ -30,7 +31,7 @@ object Feeder : FalconSubsystem() {
         model = DefaultNativeUnitModel
     )
 
-    private val exitPiston = Solenoid(FeederConstants.kPCMId, FeederConstants.kExitPistonId)
+    private val exitPiston = Solenoid(kPCMId, FeederConstants.kExitPistonId)
 
     private val intakeSensor = AnalogInput(FeederConstants.kIntakeSensorId)
     private val exitSensor = AnalogInput(FeederConstants.kExitSensorId)

@@ -6,8 +6,7 @@ flyWheelDia = 4.0
 launchHeight = 26.0
 trajectories = []
 
-measuredTerminalVelocity = 35.0  # ft/s
-dragCoefficient = 0.79
+dragCoefficient = 0.8
 airDensity = 1.23  # kg/m3
 liftCoefficient = 0.2
 
@@ -16,7 +15,6 @@ ballDiameter = 7.0  # in
 powerCellMass = 0.14  # kg
 dt = 0.005
 
-measuredTerminalVelocityMs = measuredTerminalVelocity * 12 * 2.54 / 100  # m/s
 ballDiameterMet = ballDiameter * 2.54 / 100  # m
 frontalArea = math.pi * ballDiameterMet * ballDiameterMet / 4  # m2
 mud = airDensity * frontalArea * dragCoefficient / 2  # kg/m

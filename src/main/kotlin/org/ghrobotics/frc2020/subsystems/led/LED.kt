@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.util.Color
 import org.ghrobotics.frc2020.LEDConstants
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.subsystems.Superstructure
+import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.vision.VisionProcessing
@@ -37,11 +38,13 @@ object LED : FalconSubsystem() {
 
     // LED Colors
     private val kFault = Color.kRed
-    private val kWaitingForCamera = Color.kLimeGreen
+    private val kWaitingForCamera = Color.kPurple
     private val kZeroingTurret = Color.kGreen
-    private val kClimb = Color.kOrange
-    private val kVision = Color.kGreen
+    private val kClimbing = Color.kOrange
+    private val kClimbLocked = Color.kGreen
+    private val kVision = Color.kPurple
     private val kIntakeSensor = Color.kBlue
+    private val kExitSensor = Color.kDarkGoldenrod
 
     // Current time
     private var currentTime = Timer.getFPGATimestamp().seconds
@@ -52,7 +55,7 @@ object LED : FalconSubsystem() {
     private var snakeMultiplier = 1
 
     // Constants for snake pattern
-    private const val kNumLEDsInSnake = 5
+    private const val kNumLEDsInSnake = 10
     private const val kSnakeAdvancement = 1
 
     init {
@@ -92,16 +95,36 @@ object LED : FalconSubsystem() {
             !VisionProcessing.isConnected -> setSnakePattern(kWaitingForCamera)
 
             // Blink orange in climb mode.
-            Robot.isClimbMode -> {
+            Robot.isClimbMode -> if (Climber.isWinchLocked) {
+                setSolidColor(kClimbLocked)
+            } else {
                 if (currentTime.inMilliseconds() % 1000 > 500) {
-                    setSolidColor(kClimb)
+                    setSolidColor(kClimbing)
                 } else {
                     setSolidColor(Color.kBlack)
                 }
             }
 
+            Robot.isFortuneWheelMode -> when {
+                currentTime.inMilliseconds() % 2000 < 500 -> {
+                    setSolidColor(Color.kRed)
+                }
+                currentTime.inMilliseconds() % 2000 < 1000 -> {
+                    setSolidColor(Color.kBlue)
+                }
+                currentTime.inMilliseconds() % 2000 < 1500 -> {
+                    setSolidColor(Color.kGreen)
+                }
+                else -> {
+                    setSolidColor(Color.kYellow)
+                }
+            }
+
             // Green when vision aligning.
             Superstructure.visionAlign -> setSolidColor(kVision)
+
+            // Goldenrod when exit sensor is triggered.
+            Feeder.exitSensorTriggered -> setSolidColor(kExitSensor)
 
             // Blue when intake sensor is triggered.
             Feeder.intakeSensorTriggered -> setSolidColor(kIntakeSensor)

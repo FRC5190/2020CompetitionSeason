@@ -13,15 +13,19 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
-import kotlin.math.tan
 import org.ghrobotics.frc2020.VisionConstants
+import org.ghrobotics.frc2020.kIsRaceRobot
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.seconds
+import org.ghrobotics.lib.utils.InterpolatingTreeMap
 import org.ghrobotics.lib.utils.toTransform
 
 /**
@@ -37,7 +41,41 @@ object VisionProcessing : FalconSubsystem() {
 
     // PeriodicIO.
     private val periodicIO = PeriodicIO()
-    private var lastDesiredOutput = true
+
+    // Lookup table for pitch to distance
+    private val lookupTable = InterpolatingTreeMap.createFromSI<Radian, Meter>()
+
+    init {
+        if (kIsRaceRobot) {
+            lookupTable[13.90.degrees] = 7.feet
+            lookupTable[10.10.degrees] = 8.feet
+            lookupTable[06.84.degrees] = 9.feet
+            lookupTable[04.17.degrees] = 10.feet
+            lookupTable[02.26.degrees] = 11.feet
+            lookupTable[00.60.degrees] = 12.feet
+            lookupTable[(-0.95).degrees] = 13.feet
+            lookupTable[(-2.96).degrees] = 14.feet
+            lookupTable[(-3.51).degrees] = 15.feet
+            lookupTable[(-4.35).degrees] = 16.feet
+            lookupTable[(-7.31).degrees] = 20.feet
+            lookupTable[(-10.17).degrees] = 25.feet
+            lookupTable[(-11.45).degrees] = 28.feet
+        } else {
+            lookupTable[19.30.degrees] = 8.feet
+            lookupTable[14.67.degrees] = 9.feet
+            lookupTable[12.60.degrees] = 10.feet
+            lookupTable[08.99.degrees] = 11.feet
+            lookupTable[06.31.degrees] = 12.feet
+            lookupTable[03.24.degrees] = 13.feet
+            lookupTable[02.50.degrees] = 14.feet
+            lookupTable[00.76.degrees] = 15.feet
+            lookupTable[00.15.degrees] = 16.feet
+            lookupTable[(-4.45).degrees] = 20.feet
+            lookupTable[(-7.70).degrees] = 24.feet
+            lookupTable[(-8.67).degrees] = 26.feet
+            lookupTable[(-9.52).degrees] = 28.feet
+        }
+    }
 
     /**
      * Returns the angle to the best target.
@@ -62,10 +100,7 @@ object VisionProcessing : FalconSubsystem() {
      * @return The distance along the ground to the goal.
      */
     val distance: SIUnit<Meter>
-        get() {
-            val deltaHeight = VisionConstants.kGoalHeight - VisionConstants.kCameraHeight
-            return deltaHeight / tan(camera.pitch.radians + VisionConstants.kCameraAngle.radians)
-        }
+        get() = lookupTable[SIUnit(camera.pitch.radians)]!!
 
     var estimatedRobotPose: Pose2d = Pose2d()
         private set
@@ -78,7 +113,7 @@ object VisionProcessing : FalconSubsystem() {
         val cameraToTarget = Transform2d(Translation2d(distance * angle.cos, distance * angle.sin), Rotation2d())
 
         // Add solvePnP pose to GoalTracker.
-        if (cameraToTarget != Transform2d() && camera.isValid) {
+        if (camera.isValid && periodicIO.desiredLEDState) {
             val latency = camera.latency
             val timestamp = Timer.getFPGATimestamp().seconds - latency
 
@@ -87,8 +122,6 @@ object VisionProcessing : FalconSubsystem() {
             val fieldRelativeTarget = Drivetrain.getPose(timestamp) + robotToTarget.toTransform()
 
             GoalTracker.addSample(timestamp, fieldRelativeTarget)
-            estimatedRobotPose =
-                GoalLocalizer.calculateRobotPose(timestamp, cameraToTarget, Drivetrain.getPose().rotation)
         }
 
         // Update GoalTracker.
@@ -104,7 +137,7 @@ object VisionProcessing : FalconSubsystem() {
         periodicIO.desiredLEDState = true
     }
 
-    /**
+    /**T
      * Turns off the LEDs for vision tracking.
      */
     fun turnOffLEDs() {

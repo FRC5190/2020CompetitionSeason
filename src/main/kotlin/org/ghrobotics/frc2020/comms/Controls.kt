@@ -10,25 +10,26 @@ package org.ghrobotics.frc2020.comms
 
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.CommandScheduler
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
+import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
 import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
-import org.ghrobotics.frc2020.subsystems.feeder.Feeder
-import org.ghrobotics.frc2020.subsystems.forks.DropForksCommand
-import org.ghrobotics.frc2020.subsystems.hood.ManualHoodCommand
-import org.ghrobotics.frc2020.subsystems.shooter.AutoShooterCommand
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneColor
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheelCommand
+import org.ghrobotics.frc2020.subsystems.hook.ManualHookCommand
 import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.minutes
-import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.utils.map
 import org.ghrobotics.lib.utils.not
 import org.ghrobotics.lib.wrappers.hid.button
 import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.kB
+import org.ghrobotics.lib.wrappers.hid.kBack
 import org.ghrobotics.lib.wrappers.hid.kBumperLeft
 import org.ghrobotics.lib.wrappers.hid.kBumperRight
 import org.ghrobotics.lib.wrappers.hid.kY
@@ -69,10 +70,14 @@ object Controls {
                 change(ManualClimberCommand(source.map { it * -1.0 }))
             }
 
+            axisButton(XboxController.Axis.kRightY.value) {
+                change(ManualHookCommand(source))
+            }
+
             /**
-             * Extends the buddy climb platform
+             * Toggles the winch brake.
              */
-            button(kA).change(DropForksCommand(true))
+            button(kA).changeOn { Climber.setWinchBrake(!Climber.isWinchLocked) }
         }
 
         /**
@@ -84,7 +89,8 @@ object Controls {
              * The turret and shooter will aim and the feeder will feed all balls
              * to the shooter when the drivetrain comes to a complete stop.
              */
-            button(kBumperRight).change(Superstructure.waitUntilStoppedThenShoot())
+            button(kBumperRight).change(Superstructure.waitUntilStoppedThenShoot(timeout = 2.3))
+            triggerAxisButton(GenericHID.Hand.kRight).changeOn(Superstructure.backupShooting())
 
             button(kBumperLeft).change(Superstructure.intake())
             triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.exhaust())
@@ -97,6 +103,16 @@ object Controls {
              */
             pov(270).changeOn { Turret.jogZero(TurretConstants.kDefaultJogAmount) }
             pov(90).changeOn { Turret.jogZero(-TurretConstants.kDefaultJogAmount) }
+
+            /**
+             * Perform rotation control when the POV up button is pressed.
+             */
+            pov(0).change(FortuneWheelCommand(28))
+
+            /**
+             * Perform position control when the POV down button is pressed.
+             */
+            pov(180).change(FortuneWheelCommand { GameData.getColor() ?: FortuneColor.RED })
         }
 
         /**
@@ -106,21 +122,23 @@ object Controls {
         button(kB).changeOn {
             Robot.isClimbMode = !Robot.isClimbMode
             if (Robot.isClimbMode) {
-                AutoTurretCommand { 90.degrees }.schedule()
+                AutoTurretCommand { 55.degrees }.schedule()
             } else {
                 Turret.defaultCommand.schedule()
             }
         }
 
-        pov(90).changeOn { Feeder.setExitPiston(true) }
-        pov(270).changeOn { Feeder.setExitPiston(false) }
+        button(kY).changeOn {
+            Robot.isFortuneWheelMode = !Robot.isFortuneWheelMode
+            if (Robot.isFortuneWheelMode) {
+                FortuneWheel.extendSpinnerPiston(true)
+            } else {
+                FortuneWheel.extendSpinnerPiston(false)
+            }
+        }
 
-        /**
-         * These are just buttons for debugging, will be removed for competition.
-         */
-        button(kY).change(AutoShooterCommand { 360.degrees / 1.minutes * 5000 })
-        axisButton(XboxController.Axis.kRightY.value) {
-            change(ManualHoodCommand(source))
+        button(kBack).changeOn {
+            CommandScheduler.getInstance().cancelAll()
         }
     }
 

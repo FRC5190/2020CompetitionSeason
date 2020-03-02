@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand
+import kotlin.math.absoluteValue
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.planners.ShooterPlanner
@@ -35,12 +37,13 @@ import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.derived.inDegrees
+import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
-import org.ghrobotics.lib.mathematics.units.minutes
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 
@@ -49,23 +52,30 @@ import org.ghrobotics.lib.mathematics.units.seconds
  * shooter, intake, and climbing mechanisms.
  */
 object Superstructure {
-    // Aiming and shooting parameters.
-    private var latestAimingParameters = AimingParameters(SIUnit(0.0), SIUnit(0.0), SIUnit(0.0))
-    private var latestShootingParameters = ShooterPlanner.ShooterParameters(SIUnit(0.0), SIUnit(0.0))
+    // Latest aiming parameters based on Vision or odometry data.
+    var latestParams =
+        AimingParameters(
+            angleToOuterGoal = SIUnit(0.0), angleToInnerGoal = SIUnit(0.0),
+            distance = SIUnit(0.0)
+        )
+        private set
 
-    // Hold angles and speeds.
-    private var turretHoldAngle = 0.degrees
-    private var shooterHoldSpeed = 0.radians / 1.seconds
-    private var hoodHoldAngle = 0.degrees
+    // Holding parameters
+    var holdParams =
+        AimingParameters(
+            angleToOuterGoal = SIUnit(0.0), angleToInnerGoal = SIUnit(0.0),
+            distance = SIUnit(0.0)
+        )
+        private set
 
     // Velocity threshold for drivetrain.
-    private val kVelocityTreshold = 0.0.inches / 1.seconds
+    private val kVelocityThreshold = 0.2.inches / 1.seconds
 
     // Amount of time required to stop.
-    private val kStopTimeTreshold = 0.7.seconds
+    private val kStopTimeThreshold = 0.5.seconds
 
     // Error tolerance for the shooter.
-    private val kShooterErrorTolerance = 360.degrees / 1.minutes * 225
+    private val kShooterErrorTolerance = SIUnit<AngularVelocity>(10.0)
 
     // Error tolerance for the hood.
     private val kHoodErrorTolerance = 1.degrees
@@ -74,7 +84,10 @@ object Superstructure {
     private val kTurretErrorTolerance = 1.degrees
 
     // Amount of time it takes to shoot 5 balls.
-    private const val kShootTime = 10.0
+    private const val kShootTime = 2.5
+
+    // Default intake speed
+    private const val kIntakeSpeed = 1.0
 
     // Whether the turret is aligning or not.
     var visionAlign = false
@@ -84,144 +97,129 @@ object Superstructure {
      * Intakes power cells until the robot is stopped, then
      * shoot. This is primarily used for auto.
      */
-    fun intakeUntilStoppedThenShoot() = object : SequentialCommandGroup() {
-        init {
-            addCommands(
-                // Turn on LEDs
-                InstantCommand(Runnable {
-                    VisionProcessing.turnOnLEDs()
-                    visionAlign = true
-                }),
+    fun intakeUntilStoppedThenShoot(intakeSpeed: Double = kIntakeSpeed, feederTime: Double = kShootTime, timeout: Double = 1.3) =
+        object : SequentialCommandGroup() {
+            init {
+                addCommands(
+                    // Turn on LEDs
+                    InstantCommand(Runnable {
+                        VisionProcessing.turnOnLEDs()
+                        visionAlign = true
+                    }),
 
-                // Intake and align until drivetrain stops.
-                parallelDeadline(WaitForDrivetrainToStopCommand()) {
-                    // Run and intake and feeder.
-                    +IntakeCommand(1.0)
-                    +AutoFeederCommand()
+                    WaitCommand(0.3),
 
-                    // Run turret, shooter, and hood.
-                    +AutoTurretCommand { latestAimingParameters.turretAngleOuterGoal }
-                    +AutoShooterCommand { latestShootingParameters.speed }
-                    +AutoHoodCommand { latestShootingParameters.angle }
-                },
+                    // Intake and align until drivetrain stops.
+                    parallelDeadline(WaitForDrivetrainToStopCommand()) {
+                        // Run and intake and feeder.
+                        +IntakeCommand(intakeSpeed)
+                        +AutoFeederCommand()
 
-                // Lock speeds and angles.
-                InstantCommand(Runnable {
-                    // Set hold angles and speeds.
-                    turretHoldAngle = latestAimingParameters.turretAngleOuterGoal
-                    shooterHoldSpeed = latestShootingParameters.speed
-                    hoodHoldAngle = latestShootingParameters.angle
+                        // Run turret, shooter, and hood.
+                        +AutoTurretCommand { Turret.getAngle() + VisionProcessing.angle.toSI() + 3.degrees }
+                        +AutoShooterCommand { latestParams.shooterSpeed }
+                        +AutoHoodCommand { latestParams.hoodAngle }
+                    },
 
-                    // Turn off LEDs.
-                    VisionProcessing.turnOffLEDs()
-                    visionAlign = false
-                }),
+                    getHoldAndShootCommand(feederTime, timeout)
+                )
+            }
 
-                // Set speeds and angles, run feeder when ready.
-                parallelDeadline(sequential {
-                    +WaitUntilCommand {
-//                        (Shooter.velocity - shooterHoldSpeed).absoluteValue < kShooterErrorTolerance &&
-                            (Hood.angle - hoodHoldAngle).absoluteValue < kHoodErrorTolerance &&
-                            (Turret.getAngle() - turretHoldAngle).absoluteValue < kTurretErrorTolerance
-                    }
-                    +ManualFeederCommand(1.0, 1.0).withTimeout(kShootTime)
-                }) {
-                    // Hold speeds and angles.
-                    +AutoTurretCommand { turretHoldAngle }
-                    +AutoShooterCommand { shooterHoldSpeed }
-                    +AutoHoodCommand { hoodHoldAngle }
-                }
-            )
+            override fun end(interrupted: Boolean) {
+                super.end(interrupted)
+//                VisionProcessing.turnOffLEDs()
+                visionAlign = false
+            }
         }
-
-        override fun end(interrupted: Boolean) {
-            super.end(interrupted)
-            VisionProcessing.turnOffLEDs()
-            visionAlign = false
-        }
-    }
-
-    val lockStart = Timer.getFPGATimestamp()
-    val shooterPercent = 0.0
 
     /**
      * Aligns to the goal until the drivetrain has stopped, then
      * shoots power cells into the goal.
      */
-    fun waitUntilStoppedThenShoot(feederTime: Double = kShootTime) = object : SequentialCommandGroup() {
-        init {
-            addCommands(
-                // Turn on LEDs
-                InstantCommand(Runnable {
-                    VisionProcessing.turnOnLEDs()
-                    visionAlign = true
-                }),
+    fun waitUntilStoppedThenShoot(feederTime: Double = kShootTime, timeout: Double = 1.3) =
+        object : SequentialCommandGroup() {
+            init {
+                addCommands(
+                    // Turn on LEDs
+                    InstantCommand(Runnable {
+                        VisionProcessing.turnOnLEDs()
+                        visionAlign = true
+                    }),
 
-                // Intake and align until drivetrain stops.
-                parallelDeadline(WaitForDrivetrainToStopCommand()) {
-                    // Run turret, shooter, and hood.
-                    +AutoTurretCommand { latestAimingParameters.turretAngleOuterGoal }
-                    +AutoShooterCommand { latestShootingParameters.speed }
-                    +AutoHoodCommand { latestShootingParameters.angle }
-                },
+                    WaitCommand(0.3),
 
-                // Lock speeds and angles.
-                InstantCommand(Runnable {
-                    // Set hold angles and speeds.
-                    turretHoldAngle = latestAimingParameters.turretAngleOuterGoal
-                    shooterHoldSpeed = latestShootingParameters.speed
-                    hoodHoldAngle = latestShootingParameters.angle
+                    // Intake and align until drivetrain stops.
+                    parallelDeadline(WaitForDrivetrainToStopCommand()) {
+                        // Run turret, shooter, and hood.
+                        +AutoTurretCommand { Turret.getAngle() + VisionProcessing.angle.toSI() + 3.degrees }
+                        +AutoShooterCommand { latestParams.shooterParams.speed }
+                        +AutoHoodCommand { latestParams.shooterParams.angle }
+                    },
 
-                    // Turn off LEDs.
-                    VisionProcessing.turnOffLEDs()
-                    visionAlign = false
-                }),
+                    InstantCommand(Runnable { println(latestParams.hoodAngle.inDegrees()) }),
+                    getHoldAndShootCommand(feederTime, timeout)
+                )
+            }
 
-                // Set speeds and angles, run feeder when ready.
-                parallelDeadline(sequential {
-                    +WaitUntilCommand {
-//                        println("Shooter: " + (Shooter.velocity - shooterHoldSpeed).value * 60 / 6.28)
-//                        println("Hood: " + (Hood.angle - hoodHoldAngle).inDegrees())
-//                        println("Turret: " + (Turret.getAngle() - turretHoldAngle).inDegrees())
-
-                        (Shooter.velocity - shooterHoldSpeed).absoluteValue < kShooterErrorTolerance &&
-                            (Hood.angle - hoodHoldAngle).absoluteValue < kHoodErrorTolerance &&
-                            ((Turret.getAngle() - turretHoldAngle).absoluteValue.value % (2 * Math.PI)) < kTurretErrorTolerance.value
-                    }
-                    +ManualFeederCommand(1.0, 1.0).withTimeout(feederTime)
-                }) {
-                    // Hold speeds and angles.
-                    +AutoTurretCommand { turretHoldAngle }
-                    +AutoShooterCommand { shooterHoldSpeed }
-                    +AutoHoodCommand { hoodHoldAngle }
-                }.withInterrupt {
-                    System.out.printf("%2.2f, %4.2f, %4.2f %n",
-                        Timer.getFPGATimestamp() - lockStart, shooterHoldSpeed.value, Shooter.velocity.value)
-                    false
-                }
-            )
+            override fun end(interrupted: Boolean) {
+                super.end(interrupted)
+//                VisionProcessing.turnOffLEDs()
+                visionAlign = false
+            }
         }
-
-        override fun end(interrupted: Boolean) {
-            super.end(interrupted)
-            VisionProcessing.turnOffLEDs()
-            visionAlign = false
-        }
-    }
 
     /**
      * Intakes power cells.
      */
-    fun intake(speed: Double = 0.75) = parallel {
-        // Run the intake with a base speed of 0.5, scaling up linearly
-        // to the robot's max speed.
-        +IntakeCommand { speed }
+    fun intake(speed: Double = kIntakeSpeed) = parallel {
+        +IntakeCommand(speed)
         +AutoFeederCommand()
     }
 
     fun exhaust() = parallel {
         +IntakeCommand(-0.5)
-        +ManualFeederCommand(-0.6, -0.75)
+        +sequential {
+            +WaitCommand(0.5)
+            +ManualFeederCommand(-0.5, -1.0)
+        }
+    }
+
+    private fun getHoldAndShootCommand(feederTime: Double = kShootTime, timeout: Double = 1.3) = sequential {
+        // Lock speeds and angles.
+        +InstantCommand(Runnable {
+            // Set hold angles and speeds.
+            holdParams = latestParams
+            holdParams.turretAngle = Turret.getAngle() + VisionProcessing.angle.toSI() + 3.degrees
+
+            // Turn off LEDs.
+//            VisionProcessing.turnOffLEDs()
+            visionAlign = false
+        })
+
+        // Set speeds and angles, run feeder when ready.
+        +parallelDeadline(sequential {
+            +WaitUntilCommand {
+                isShooterAtReference(holdParams.shooterParams.speed) &&
+                    isHoodAtReference(holdParams.shooterParams.angle) &&
+                    isTurretAtReference(holdParams.angleToOuterGoal)
+            }.withTimeout(timeout)
+            +ManualFeederCommand(0.60, 1.0).withTimeout(feederTime)
+        }) {
+            // Hold speeds and angles.
+            +AutoTurretCommand { holdParams.turretAngle }
+            +AutoShooterCommand { holdParams.shooterSpeed }
+            +AutoHoodCommand { holdParams.hoodAngle }
+        }
+    }
+
+    val backup = ShooterPlanner[20.feet]
+
+    fun backupShooting() = parallelDeadline(sequential {
+        +WaitCommand(2.0)
+        +ManualFeederCommand(0.75, 1.0).withTimeout(kShootTime)
+    }) {
+        +AutoShooterCommand { backup.speed }
+        +AutoHoodCommand { backup.angle }
     }
 
     /**
@@ -250,22 +248,49 @@ object Superstructure {
         }
 
         // Get the distance to the target.
-        val distance = turretToInnerGoal.translation.norm
+        val distance = SIUnit<Meter>(turretToOuterGoal.translation.norm)
 
         // Get the angle to the target.
         val angleOuter = Rotation2d(turretToOuterGoal.translation.x, turretToOuterGoal.translation.y)
         val angleInner = Rotation2d(turretToInnerGoal.translation.x, turretToInnerGoal.translation.y)
 
         // Return the distance and angle.
-        return AimingParameters(angleOuter.toSI(), angleInner.toSI(), SIUnit(distance))
+        return AimingParameters(angleOuter.toSI(), angleInner.toSI(), distance)
+    }
+
+    /**
+     * Returns whether the shooter is at the specified reference.
+     *
+     * @param reference The reference.
+     */
+    private fun isShooterAtReference(reference: SIUnit<AngularVelocity>): Boolean {
+        return (Shooter.velocity - reference).absoluteValue < kShooterErrorTolerance
+    }
+
+    /**
+     * Returns whether the hood is at the specified reference.
+     *
+     * @param reference The reference.
+     */
+    private fun isHoodAtReference(reference: SIUnit<Radian>): Boolean {
+        return (Hood.angle - reference).absoluteValue < kHoodErrorTolerance
+    }
+
+    /**
+     * Returns whether the turret is at the specified tolerance.
+     *
+     * @param reference The reference.
+     */
+    private fun isTurretAtReference(reference: SIUnit<Radian>): Boolean {
+        return Rotation2d((Turret.getAngle() - reference).value).radians.absoluteValue <
+            kTurretErrorTolerance.value
     }
 
     /**
      * Updates all superstructure states.
      */
     fun update() {
-        latestAimingParameters = getAimingParameters()
-        latestShootingParameters = ShooterPlanner[latestAimingParameters.distance]
+        latestParams = getAimingParameters()
     }
 
     private fun Rotation2d.toSI() = SIUnit<Radian>(radians)
@@ -274,10 +299,15 @@ object Superstructure {
      * Aiming parameters for the shooter and the turret.
      */
     data class AimingParameters(
-        val turretAngleOuterGoal: SIUnit<Radian>,
-        val turretAngleInnerGoal: SIUnit<Radian>,
+        val angleToOuterGoal: SIUnit<Radian>,
+        val angleToInnerGoal: SIUnit<Radian>,
         val distance: SIUnit<Meter>
-    )
+    ) {
+        val shooterParams = ShooterPlanner[distance]
+        val shooterSpeed get() = shooterParams.speed
+        val hoodAngle get() = shooterParams.angle
+        var turretAngle = angleToOuterGoal
+    }
 
     /**
      * A command that does not exit until the drivetrain has stopped
@@ -293,13 +323,12 @@ object Superstructure {
 
         // Check the drivetrain's velocity.
         override fun execute() {
-            if (Drivetrain.averageVelocity.absoluteValue > kVelocityTreshold) {
+            if (Drivetrain.averageVelocity.absoluteValue > kVelocityThreshold) {
                 timer.reset()
             }
         }
 
         // End the command when the desired period has passed.
-
-        override fun isFinished() = timer.hasPeriodPassed(kStopTimeTreshold.inSeconds())
+        override fun isFinished() = timer.hasPeriodPassed(kStopTimeThreshold.inSeconds())
     }
 }
