@@ -14,7 +14,7 @@ import org.ghrobotics.lib.commands.FalconCommand
 /**
  * Automatically moves the feeder based on sensor data.
  */
-class AutoFeederCommand : FalconCommand(Feeder) {
+class FeederPositionCommand : FalconCommand(Feeder) {
 
     // Keeps track of the time when the sensor was last triggered.
     private var sensorLastTriggered = -1.0
@@ -23,14 +23,6 @@ class AutoFeederCommand : FalconCommand(Feeder) {
         if (Feeder.intakeSensorTriggered) {
             sensorLastTriggered = Timer.getFPGATimestamp()
         }
-
-        // Check if the sensor is triggered or it has been under 250 ms
-        // since the sensor was last triggered.
-
-//        if (Timer.getFPGATimestamp() - sensorLastTriggered < 0.10 && Feeder.exitPistons) {
-//            Feeder.setPercent(0.0, 0.4)
-//            return
-//        }
 
         if (Timer.getFPGATimestamp() - sensorLastTriggered < 0.05) {
             if (Feeder.exitSensorTriggered) {

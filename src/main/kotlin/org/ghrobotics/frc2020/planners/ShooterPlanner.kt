@@ -10,9 +10,7 @@
 
 package org.ghrobotics.frc2020.planners
 
-import java.io.InputStreamReader
 import java.util.Objects
-import org.ghrobotics.frc2020.HoodConstants
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
@@ -25,21 +23,11 @@ import org.ghrobotics.lib.utils.InterpolatingTreeMap
  * returns interpolated values.
  */
 object ShooterPlanner {
-    // Map to store distance to ShooterPlanner values.
+    // Map to store pitch to ShooterPlanner values.
     private val map = InterpolatingTreeMap.createFromInterpolatable<Meter, ShooterParameters>()
 
     init {
-        // Load table from CSV.
-        javaClass.classLoader.getResourceAsStream("trajectory.csv").use { stream ->
-            InputStreamReader(stream).readLines().forEach { line ->
-                val data = line.split(",").map { it.trim() }
-                map[SIUnit(data[0].toDouble())] =
-                    ShooterParameters(
-                        SIUnit(data[2].toDouble()),
-                        SIUnit(Math.toRadians(data[3].toDouble()) + HoodConstants.kBadHoodOffset.value)
-                    )
-            }
-        }
+        // Add values to map.
     }
 
     /**

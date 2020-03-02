@@ -6,15 +6,21 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems.fortunewheel
+package org.ghrobotics.frc2020.subsystems.shooter
 
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
-class ManualFortuneWheelCommand(val speed: DoubleSource) : FalconCommand(FortuneWheel) {
+/**
+ * A command that allows manual control of the shooter.
+ */
+class ShooterPercentCommand(val source: DoubleSource) : FalconCommand(Shooter) {
     override fun execute() {
-        var color = FortuneWheel.rawColor
-        FortuneWheel.setPercent(speed() / 5)
-        println("Red: " + color.red + " | Green: " + color.green + " | Blue: " + color.blue)
+        println(source() * 12)
+        Shooter.setPercent(source())
+    }
+
+    override fun end(interrupted: Boolean) {
+        Shooter.setNeutral()
     }
 }

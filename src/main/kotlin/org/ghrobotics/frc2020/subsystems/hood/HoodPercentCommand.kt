@@ -6,23 +6,20 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems.hook
+package org.ghrobotics.frc2020.subsystems.hood
 
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
 /**
- * Moves the hook using a manual percent command.
- *
- * @param percentSource The percent command.
+ * Allows for manual duty cycle control of the hood.
  */
-class ManualHookCommand(private val percentSource: DoubleSource) : FalconCommand(Hook) {
-
+class HoodPercentCommand(val percent: DoubleSource) : FalconCommand(Hood) {
     override fun execute() {
-        Hook.setPercent(percentSource())
+        Hood.setPercent(percent())
     }
 
     override fun end(interrupted: Boolean) {
-        Hook.setNeutral()
+        Hood.setNeutral()
     }
 }

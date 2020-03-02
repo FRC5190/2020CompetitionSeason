@@ -11,36 +11,28 @@ package org.ghrobotics.frc2020.subsystems.turret
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
-import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.geometry.Pose2d
 import org.ghrobotics.frc2020.TurretConstants
-import org.ghrobotics.frc2020.kIsRaceRobot
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.vision.LimelightManager
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.Second
 import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.Volt
-import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
-import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
-import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
-import org.ghrobotics.lib.utils.InterpolatingTreeMapBuffer
 import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the turret on the robot.
  */
-object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
+object Turret : FalconSubsystem() {
 
     // Hardware
     private val master = FalconMAX(
@@ -57,44 +49,11 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     // Connection status
     private var isConnected = false
 
-    // Buffer to store previous turret angles for latency compensation.
-    private val buffer =
-        InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(1.seconds) { Timer.getFPGATimestamp().seconds }
-
     // Getters
     val speed get() = periodicIO.velocity
     val current get() = periodicIO.current
     val hallEffectEngaged get() = periodicIO.hallEffect
-
-    /**
-     * Returns the angle at the specified timestamp.
-     *
-     * @param timestamp The timestamp.
-     * @return The angle at the specified timestamp.
-     */
-    fun getAngle(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): SIUnit<Radian> {
-        return buffer[timestamp] ?: {
-            DriverStation.reportError("[Turret] Buffer was empty!", false)
-            0.degrees
-        }()
-    }
-
-    fun getFieldRelativeAngle(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): SIUnit<Radian> {
-        val robotAngle = Drivetrain.getPose(timestamp).rotation.radians
-        return getAngle(timestamp) + SIUnit(robotAngle)
-    }
-
-    /**
-     * Returns the turret position with the robot's center as the origin of
-     * the coordinate frame at the specified timestamp.
-     *
-     * @param timestamp The timestamp.
-     * @return The turret position with the robot's center as the origin of
-     *         the coordinate frame at the specified timestamp.
-     */
-    fun getRobotToTurret(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): Pose2d {
-        return Pose2d(TurretConstants.kTurretRelativeToRobotCenter, getAngle(timestamp).toRotation2d())
-    }
+    val angle get() = periodicIO.position
 
     // Status (zeroing or ready)
     var status = Status.NOT_ZEROED
@@ -126,12 +85,19 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
                     .value.toFloat()
             )
 
-            enableClosedLoopControl()
+            master.controller.p = TurretConstants.kP
+            master.controller.ff = TurretConstants.kF
         } else {
             println("Did not initialize Turret")
         }
 
-        defaultCommand = AlignOrFieldRelativeZeroCommand()
+        defaultCommand = TurretPositionCommand {
+            if (LimelightManager.hasValidTarget) {
+                angle + LimelightManager.yaw
+            } else {
+                SIUnit(-Drivetrain.getPose().rotation.radians)
+            }
+        }
     }
 
     /**
@@ -139,7 +105,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun zero() {
         periodicIO.resetPosition = true
-        periodicIO.resetTo = if (kIsRaceRobot) 81.78.degrees else 211.39.degrees
+        periodicIO.resetTo = TurretConstants.kZeroLocation
         setStatus(Status.READY)
     }
 
@@ -193,16 +159,6 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         master.brakeMode = brakeMode
     }
 
-    override fun enableClosedLoopControl() {
-        master.controller.p = TurretConstants.kP
-        master.controller.ff = TurretConstants.kF
-    }
-
-    override fun disableClosedLoopControl() {
-        master.controller.p = 0.0
-        master.controller.ff = 0.0
-    }
-
     override fun periodic() {
         if (isConnected) {
             // Read sensor values.
@@ -212,9 +168,6 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             periodicIO.current = master.drawnCurrent
 
             periodicIO.hallEffect = !hallEffectSensor.get()
-
-            // Update the buffer.
-            buffer[Timer.getFPGATimestamp().seconds] = periodicIO.position
 
             if (periodicIO.resetPosition) {
                 periodicIO.resetPosition = false

@@ -9,12 +9,14 @@
 package org.ghrobotics.frc2020.subsystems.turret
 
 import org.ghrobotics.lib.commands.FalconCommand
-import org.ghrobotics.lib.utils.DoubleSource
+import org.ghrobotics.lib.utils.Source
 
-/**
- * A command that can be used for manual control of the turret.
- */
-class ManualTurretCommand(val percent: DoubleSource) : FalconCommand(Turret) {
-    override fun execute() = Turret.setPercent(percent())
-    override fun end(interrupted: Boolean) = Turret.setPercent(0.0)
+class TurretPercentCommand(private val percent: Source<Double>) : FalconCommand(Turret) {
+    override fun execute() {
+        Turret.setPercent(percent())
+    }
+
+    override fun end(interrupted: Boolean) {
+        Turret.setNeutral()
+    }
 }

@@ -16,7 +16,7 @@ import org.ghrobotics.lib.mathematics.units.derived.velocity
 /**
  * A command that zeros the turret when the robot is being setup.
  */
-class ZeroTurretCommand : FalconCommand(Turret) {
+class TurretZeroCommand : FalconCommand(Turret) {
     private val timer = Timer()
 
     override fun initialize() = timer.start()

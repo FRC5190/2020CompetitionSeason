@@ -15,7 +15,7 @@ import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.utils.Source
 
-class FortuneWheelCommand() : FalconCommand(FortuneWheel) {
+class FortuneWheelPositionCommand() : FalconCommand(FortuneWheel) {
 
     private var status = Status.INITIALIZING
 

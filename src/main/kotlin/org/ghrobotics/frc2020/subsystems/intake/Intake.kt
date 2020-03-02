@@ -10,7 +10,6 @@ package org.ghrobotics.frc2020.subsystems.intake
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
-import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.IntakeConstants
 import org.ghrobotics.frc2020.IntakeConstants.kIntakePistonId
 import org.ghrobotics.frc2020.kPCMId
@@ -102,9 +101,5 @@ object Intake : FalconSubsystem() {
 
     fun resetPosition(position: SIUnit<NativeUnit>) {
         intakeMaster.encoder.resetPosition(position)
-    }
-
-    override fun checkSubsystem(): Command {
-        return TestIntakeCommand().withTimeout(3.0)
     }
 }

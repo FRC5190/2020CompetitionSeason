@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Twist2d
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
-import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.DriveConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
@@ -95,10 +94,6 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         rightMotor.controller.p = DriveConstants.kP
     }
 
-    override fun checkSubsystem(): Command {
-        return TestDrivetrainCommand().withTimeout(2.0)
-    }
-
     override fun lateInit() {
         super.lateInit()
         isConnected = leftMotor.isConnected() && rightMotor.isConnected() &&
@@ -124,7 +119,7 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         }
 
         // Set the default command
-        defaultCommand = ManualDriveCommand()
+        defaultCommand = DrivetrainTeleopCommand()
     }
 
     override fun periodic() {

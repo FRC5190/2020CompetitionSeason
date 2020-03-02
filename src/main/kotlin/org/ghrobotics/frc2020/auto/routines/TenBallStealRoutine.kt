@@ -17,8 +17,7 @@ import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.auto.WaypointManager
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
-import org.ghrobotics.frc2020.subsystems.hood.AutoHoodCommand
-import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
+import org.ghrobotics.frc2020.subsystems.hood.HoodPositionCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
@@ -57,7 +56,7 @@ class TenBallStealRoutine : AutoRoutine {
         +parallelDeadline(Drivetrain.followTrajectory(path4)) {
             +Superstructure.intake()
             +AutoTurretCommand.createFromFieldOrientedAngle(Rotation2d())
-            +AutoHoodCommand { HoodConstants.kAcceptableRange.endInclusive }
+            +HoodPositionCommand { HoodConstants.kAcceptableRange.endInclusive }
         }
 
         // Return to scoring location, then shoot.

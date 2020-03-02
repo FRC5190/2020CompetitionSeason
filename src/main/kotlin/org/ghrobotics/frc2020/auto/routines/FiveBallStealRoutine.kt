@@ -16,7 +16,6 @@ import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.auto.WaypointManager
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
-import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential

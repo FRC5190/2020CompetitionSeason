@@ -9,14 +9,19 @@
 package org.ghrobotics.frc2020.subsystems.hood
 
 import org.ghrobotics.lib.commands.FalconCommand
-import org.ghrobotics.lib.utils.DoubleSource
+import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.utils.Source
 
 /**
- * Allows for manual duty cycle control of the hood.
+ * Sets the hood to a specific angle.
  */
-class ManualHoodCommand(val percent: DoubleSource) : FalconCommand(Hood) {
+class HoodPositionCommand(private val angle: Source<SIUnit<Radian>>) : FalconCommand(Hood) {
+
+    constructor(angle: SIUnit<Radian>) : this({ angle })
+
     override fun execute() {
-        Hood.setPercent(percent())
+        Hood.setAngle(angle())
     }
 
     override fun end(interrupted: Boolean) {

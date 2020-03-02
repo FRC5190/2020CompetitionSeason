@@ -6,17 +6,19 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems.shooter
+package org.ghrobotics.frc2020.subsystems.turret
 
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
+import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.utils.Source
 
-/**
- * A command that sets the speed of the shooter.
- */
-class AutoShooterCommand(val speed: Source<SIUnit<AngularVelocity>>) : FalconCommand(Shooter) {
-    override fun execute() = Shooter.setSpeed(speed())
-    override fun end(interrupted: Boolean) = Shooter.setNeutral()
+class TurretPositionCommand(private val angle: Source<SIUnit<Radian>>) : FalconCommand(Turret) {
+    override fun execute() {
+        Turret.setAngle(angle())
+    }
+
+    override fun end(interrupted: Boolean) {
+        Turret.setNeutral()
+    }
 }

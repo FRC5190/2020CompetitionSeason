@@ -47,7 +47,7 @@ object Hook : FalconSubsystem() {
         } else {
             println("Did not initialize Hook")
         }
-        defaultCommand = ManualHookCommand { 0.0 }
+        defaultCommand = HookPercentCommand { 0.0 }
     }
 
     override fun periodic() {

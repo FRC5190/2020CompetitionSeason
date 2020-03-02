@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.Timer
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.derived.inRadians
 
-class CharacterizeShooterCommand : FalconCommand(Shooter) {
+class ShooterCharacterizationCommand : FalconCommand(Shooter) {
 
     private val numberArray = DoubleArray(6)
 

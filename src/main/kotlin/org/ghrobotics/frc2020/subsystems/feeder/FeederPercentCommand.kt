@@ -17,7 +17,7 @@ import org.ghrobotics.lib.utils.DoubleSource
  * @param feederPercent The percent to run the feeder at.
  * @param bridgePercent The percent to run the bridge at.
  */
-class ManualFeederCommand(
+class FeederPercentCommand(
     private val feederPercent: DoubleSource,
     private val bridgePercent: DoubleSource
 ) : FalconCommand(Feeder) {

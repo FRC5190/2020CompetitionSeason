@@ -10,7 +10,6 @@ package org.ghrobotics.frc2020.subsystems.shooter
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
-import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.ShooterConstants
 import org.ghrobotics.frc2020.kIsRaceRobot
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -82,13 +81,6 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
         } else {
             println("Did not initialize Shooter")
         }
-    }
-
-    /**
-     * Returns the shooter subsystem check command.
-     */
-    override fun checkSubsystem(): Command {
-        return TestShooterCommand().withTimeout(3.0)
     }
 
     /**

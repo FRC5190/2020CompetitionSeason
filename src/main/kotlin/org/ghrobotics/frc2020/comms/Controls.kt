@@ -15,14 +15,13 @@ import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
-import org.ghrobotics.frc2020.subsystems.climber.ExtendClimberCommand
-import org.ghrobotics.frc2020.subsystems.climber.ManualClimberCommand
+import org.ghrobotics.frc2020.subsystems.climber.ClimberPercentCommand
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneColor
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
-import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheelCommand
-import org.ghrobotics.frc2020.subsystems.hook.ManualHookCommand
-import org.ghrobotics.frc2020.subsystems.turret.AutoTurretCommand
+import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheelPositionCommand
+import org.ghrobotics.frc2020.subsystems.hook.HookPercentCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
+import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.utils.map
 import org.ghrobotics.lib.utils.not
@@ -49,29 +48,29 @@ object Controls {
             /**
              * Retract the climber when the left bumper is pressed.
              */
-            button(kBumperLeft).changeOn(ExtendClimberCommand(false))
+            button(kBumperLeft).changeOn { Climber.extend(false) }
 
             /**
              * Extend the climber the right bumper is pressed.
              */
-            button(kBumperRight).changeOn(ExtendClimberCommand(true))
+            button(kBumperRight).changeOn { Climber.extend(true) }
 
             /**
              * Pull the robot up when the left trigger is pressed.
              */
             triggerAxisButton(GenericHID.Hand.kLeft, threshold = 0.04) {
-                change(ManualClimberCommand(source))
+                change(ClimberPercentCommand(source))
             }
 
             /**
              * Pull the robot down when the right trigger is pressed.
              */
             triggerAxisButton(GenericHID.Hand.kRight, threshold = 0.04) {
-                change(ManualClimberCommand(source.map { it * -1.0 }))
+                change(ClimberPercentCommand(source.map { it * -1.0 }))
             }
 
             axisButton(XboxController.Axis.kRightY.value) {
-                change(ManualHookCommand(source))
+                change(HookPercentCommand(source))
             }
 
             /**
@@ -107,12 +106,12 @@ object Controls {
             /**
              * Perform rotation control when the POV up button is pressed.
              */
-            pov(0).change(FortuneWheelCommand(28))
+            pov(0).change(FortuneWheelPositionCommand(28))
 
             /**
              * Perform position control when the POV down button is pressed.
              */
-            pov(180).change(FortuneWheelCommand { GameData.getColor() ?: FortuneColor.RED })
+            pov(180).change(FortuneWheelPositionCommand { GameData.getColor() ?: FortuneColor.RED })
         }
 
         /**
@@ -122,7 +121,7 @@ object Controls {
         button(kB).changeOn {
             Robot.isClimbMode = !Robot.isClimbMode
             if (Robot.isClimbMode) {
-                AutoTurretCommand { 55.degrees }.schedule()
+                TurretPositionCommand { 55.degrees }.schedule()
             } else {
                 Turret.defaultCommand.schedule()
             }

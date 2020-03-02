@@ -8,26 +8,23 @@
 
 package org.ghrobotics.frc2020.subsystems.intake
 
-import org.ghrobotics.frc2020.subsystems.SubsystemTestManager
 import org.ghrobotics.lib.commands.FalconCommand
-import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
+import org.ghrobotics.lib.utils.DoubleSource
 
-class TestIntakeCommand : FalconCommand(Intake) {
-    private var success = true
+class IntakePercentCommand(private val percentSource: DoubleSource) : FalconCommand(Intake) {
+
+    constructor(percent: Double) : this({ percent })
 
     override fun initialize() {
-        Intake.resetPosition(0.nativeUnits)
         Intake.extendPiston(true)
     }
 
     override fun execute() {
-        Intake.setPercent(0.0)
+        Intake.setPercent(percentSource())
     }
 
     override fun end(interrupted: Boolean) {
         Intake.extendPiston(false)
-        success = Intake.position > 2.nativeUnits
         Intake.setNeutral()
-        SubsystemTestManager.intakeCheck = success
     }
 }

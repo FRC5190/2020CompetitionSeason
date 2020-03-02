@@ -6,21 +6,22 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems.shooter
+package org.ghrobotics.frc2020.subsystems.climber
 
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
 /**
- * A command that allows manual control of the shooter.
+ * Runs the climber winch with a given percent output.
+ *
+ * @param percent The percent source to run the winch.
  */
-class ManualShooterCommand(val source: DoubleSource) : FalconCommand(Shooter) {
+class ClimberPercentCommand(private val percent: DoubleSource) : FalconCommand(Climber) {
     override fun execute() {
-        println(source() * 12)
-        Shooter.setPercent(source())
+        Climber.setPercent(percent())
     }
 
     override fun end(interrupted: Boolean) {
-        Shooter.setNeutral()
+        Climber.setNeutral()
     }
 }

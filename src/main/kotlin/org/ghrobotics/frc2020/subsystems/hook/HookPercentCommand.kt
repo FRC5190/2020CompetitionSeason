@@ -6,25 +6,23 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.frc2020.subsystems.intake
+package org.ghrobotics.frc2020.subsystems.hook
 
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.DoubleSource
 
-class IntakeCommand(private val percentSource: DoubleSource) : FalconCommand(Intake) {
-
-    constructor(percent: Double) : this({ percent })
-
-    override fun initialize() {
-        Intake.extendPiston(true)
-    }
+/**
+ * Moves the hook using a manual percent command.
+ *
+ * @param percentSource The percent command.
+ */
+class HookPercentCommand(private val percentSource: DoubleSource) : FalconCommand(Hook) {
 
     override fun execute() {
-        Intake.setPercent(percentSource())
+        Hook.setPercent(percentSource())
     }
 
     override fun end(interrupted: Boolean) {
-        Intake.extendPiston(false)
-        Intake.setNeutral()
+        Hook.setNeutral()
     }
 }
