@@ -8,6 +8,7 @@
 
 package org.ghrobotics.frc2020.comms
 
+import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
@@ -94,6 +95,10 @@ object Network {
                 double("Shooter Hold Speed") { Superstructure.holdParams.shooterSpeed.value * 60 / 2 / Math.PI }
                 double("Hood Hold Angle") { Superstructure.holdParams.hoodAngle.inDegrees() }
                 double("Distance to Goal (m)") { Superstructure.holdParams.distance.inMeters() }
+            }
+            booleanBox("Climb Mode", Robot::isClimbMode) {
+                position(row = 2, column = 6)
+                size(width = 1, height = 1)
             }
         }
     }

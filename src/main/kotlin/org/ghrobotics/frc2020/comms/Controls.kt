@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.comms
 
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.CommandScheduler
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
@@ -28,6 +29,7 @@ import org.ghrobotics.lib.utils.not
 import org.ghrobotics.lib.wrappers.hid.button
 import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.kB
+import org.ghrobotics.lib.wrappers.hid.kBack
 import org.ghrobotics.lib.wrappers.hid.kBumperLeft
 import org.ghrobotics.lib.wrappers.hid.kBumperRight
 import org.ghrobotics.lib.wrappers.hid.kY
@@ -87,7 +89,7 @@ object Controls {
              * The turret and shooter will aim and the feeder will feed all balls
              * to the shooter when the drivetrain comes to a complete stop.
              */
-            button(kBumperRight).change(Superstructure.waitUntilStoppedThenShoot())
+            button(kBumperRight).change(Superstructure.waitUntilStoppedThenShoot(timeout = 2.3))
             triggerAxisButton(GenericHID.Hand.kRight).changeOn(Superstructure.backupShooting())
 
             button(kBumperLeft).change(Superstructure.intake())
@@ -133,6 +135,10 @@ object Controls {
             } else {
                 FortuneWheel.extendSpinnerPiston(false)
             }
+        }
+
+        button(kBack).changeOn {
+            CommandScheduler.getInstance().cancelAll()
         }
     }
 

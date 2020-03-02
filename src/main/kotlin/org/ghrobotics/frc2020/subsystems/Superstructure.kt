@@ -72,7 +72,7 @@ object Superstructure {
     private val kVelocityThreshold = 0.2.inches / 1.seconds
 
     // Amount of time required to stop.
-    private val kStopTimeThreshold = 0.7.seconds
+    private val kStopTimeThreshold = 0.5.seconds
 
     // Error tolerance for the shooter.
     private val kShooterErrorTolerance = SIUnit<AngularVelocity>(10.0)
@@ -84,7 +84,7 @@ object Superstructure {
     private val kTurretErrorTolerance = 1.degrees
 
     // Amount of time it takes to shoot 5 balls.
-    private const val kShootTime = 2.7
+    private const val kShootTime = 2.5
 
     // Default intake speed
     private const val kIntakeSpeed = 1.0
@@ -97,7 +97,7 @@ object Superstructure {
      * Intakes power cells until the robot is stopped, then
      * shoot. This is primarily used for auto.
      */
-    fun intakeUntilStoppedThenShoot(intakeSpeed: Double = kIntakeSpeed, feederTime: Double = kShootTime) =
+    fun intakeUntilStoppedThenShoot(intakeSpeed: Double = kIntakeSpeed, feederTime: Double = kShootTime, timeout: Double = 1.3) =
         object : SequentialCommandGroup() {
             init {
                 addCommands(
@@ -106,6 +106,8 @@ object Superstructure {
                         VisionProcessing.turnOnLEDs()
                         visionAlign = true
                     }),
+
+                    WaitCommand(0.3),
 
                     // Intake and align until drivetrain stops.
                     parallelDeadline(WaitForDrivetrainToStopCommand()) {
@@ -114,18 +116,18 @@ object Superstructure {
                         +AutoFeederCommand()
 
                         // Run turret, shooter, and hood.
-                        +AutoTurretCommand { latestParams.turretAngle }
+                        +AutoTurretCommand { Turret.getAngle() + VisionProcessing.angle.toSI() + 3.degrees }
                         +AutoShooterCommand { latestParams.shooterSpeed }
                         +AutoHoodCommand { latestParams.hoodAngle }
                     },
 
-                    getHoldAndShootCommand(feederTime)
+                    getHoldAndShootCommand(feederTime, timeout)
                 )
             }
 
             override fun end(interrupted: Boolean) {
                 super.end(interrupted)
-                VisionProcessing.turnOffLEDs()
+//                VisionProcessing.turnOffLEDs()
                 visionAlign = false
             }
         }
@@ -134,7 +136,7 @@ object Superstructure {
      * Aligns to the goal until the drivetrain has stopped, then
      * shoots power cells into the goal.
      */
-    fun waitUntilStoppedThenShoot(feederTime: Double = kShootTime) =
+    fun waitUntilStoppedThenShoot(feederTime: Double = kShootTime, timeout: Double = 1.3) =
         object : SequentialCommandGroup() {
             init {
                 addCommands(
@@ -144,22 +146,24 @@ object Superstructure {
                         visionAlign = true
                     }),
 
+                    WaitCommand(0.3),
+
                     // Intake and align until drivetrain stops.
                     parallelDeadline(WaitForDrivetrainToStopCommand()) {
                         // Run turret, shooter, and hood.
-                        +AutoTurretCommand { latestParams.angleToOuterGoal }
+                        +AutoTurretCommand { Turret.getAngle() + VisionProcessing.angle.toSI() + 3.degrees }
                         +AutoShooterCommand { latestParams.shooterParams.speed }
                         +AutoHoodCommand { latestParams.shooterParams.angle }
                     },
 
                     InstantCommand(Runnable { println(latestParams.hoodAngle.inDegrees()) }),
-                    getHoldAndShootCommand(feederTime)
+                    getHoldAndShootCommand(feederTime, timeout)
                 )
             }
 
             override fun end(interrupted: Boolean) {
                 super.end(interrupted)
-                VisionProcessing.turnOffLEDs()
+//                VisionProcessing.turnOffLEDs()
                 visionAlign = false
             }
         }
@@ -180,14 +184,15 @@ object Superstructure {
         }
     }
 
-    private fun getHoldAndShootCommand(feederTime: Double = kShootTime) = sequential {
+    private fun getHoldAndShootCommand(feederTime: Double = kShootTime, timeout: Double = 1.3) = sequential {
         // Lock speeds and angles.
         +InstantCommand(Runnable {
             // Set hold angles and speeds.
             holdParams = latestParams
+            holdParams.turretAngle = Turret.getAngle() + VisionProcessing.angle.toSI() + 3.degrees
 
             // Turn off LEDs.
-            VisionProcessing.turnOffLEDs()
+//            VisionProcessing.turnOffLEDs()
             visionAlign = false
         })
 
@@ -197,8 +202,8 @@ object Superstructure {
                 isShooterAtReference(holdParams.shooterParams.speed) &&
                     isHoodAtReference(holdParams.shooterParams.angle) &&
                     isTurretAtReference(holdParams.angleToOuterGoal)
-            }.withTimeout(1.2)
-            +ManualFeederCommand(0.70, 1.0).withTimeout(feederTime)
+            }.withTimeout(timeout)
+            +ManualFeederCommand(0.60, 1.0).withTimeout(feederTime)
         }) {
             // Hold speeds and angles.
             +AutoTurretCommand { holdParams.turretAngle }
@@ -302,7 +307,7 @@ object Superstructure {
         val shooterParams = ShooterPlanner[distance]
         val shooterSpeed get() = shooterParams.speed
         val hoodAngle get() = shooterParams.angle
-        val turretAngle get() = angleToOuterGoal
+        var turretAngle= angleToOuterGoal
     }
 
     /**

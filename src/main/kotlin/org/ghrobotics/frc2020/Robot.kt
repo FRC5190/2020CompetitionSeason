@@ -64,7 +64,7 @@ object Robot : FalconTimedRobot() {
         +Turret
 
         ZeroTurretCommand().schedule()
-        VisionProcessing.turnOffLEDs()
+        VisionProcessing.turnOnLEDs()
     }
 
     // Runs once when autonomous period starts
@@ -76,6 +76,7 @@ object Robot : FalconTimedRobot() {
 
     // Runs once when teleop period starts
     override fun teleopInit() {
+        Autonomous.cancel()
         Drivetrain.setBrakeMode(true)
         Turret.setBrakeMode(true)
     }
@@ -87,19 +88,24 @@ object Robot : FalconTimedRobot() {
     }
 
     // Runs every 20 ms when robot is on
-    override fun robotPeriodic() {
+    override fun robotPeriodic() {}
+
+    // Runs every 20 ms when autonomous is enabled
+    override fun autonomousPeriodic() {
+        Superstructure.update()
+    }
+
+    // Runs every 20 ms when teleop is enabled
+    override fun teleopPeriodic() {
         Controls.update()
         Superstructure.update()
     }
 
-    // Runs every 20 ms when autonomous is enabled
-    override fun autonomousPeriodic() {}
-
-    // Runs every 20 ms when teleop is enabled
-    override fun teleopPeriodic() {}
-
     // Runs every 20 ms when robot is disabled
-    override fun disabledPeriodic() {}
+    override fun disabledPeriodic() {
+        Controls.update()
+        Superstructure.update()
+    }
 
     fun getChecks() = getSubsystemChecks()
 }

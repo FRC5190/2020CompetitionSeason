@@ -33,7 +33,7 @@ object TrajectoryManager {
     private val kMaxPickupVelocity = 7.feet / 1.seconds
 
     private val kMaxAcceleration = 6.feet / 1.seconds / 1.seconds
-    private val kMaxPickupAcceleration = 9.feet / 1.seconds / 1.seconds
+    private val kMaxPickupAcceleration = 6.feet / 1.seconds / 1.seconds
 
     private val kMaxCentripetalAcceleration = 7.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
@@ -71,6 +71,9 @@ object TrajectoryManager {
     // Steal Autos
     val stealStartToOpponentTrenchBalls: Trajectory =
         generate(WaypointManager.kStealStart, WaypointManager.kOpponentTrenchBalls, kFwdPickupConfig)
+
+    val opponentTrenchBallsToOk: Trajectory =
+        generate(WaypointManager.kOpponentTrenchBalls, WaypointManager.kOk, kRevConfig)
 
     val opponentTrenchBallsToIntermediate: Trajectory =
         generate(WaypointManager.kOpponentTrenchBalls, WaypointManager.kStealAutoIntermediate, kRevConfig)

@@ -113,7 +113,7 @@ object VisionProcessing : FalconSubsystem() {
         val cameraToTarget = Transform2d(Translation2d(distance * angle.cos, distance * angle.sin), Rotation2d())
 
         // Add solvePnP pose to GoalTracker.
-        if (cameraToTarget != Transform2d() && camera.isValid) {
+        if (camera.isValid && periodicIO.desiredLEDState) {
             val latency = camera.latency
             val timestamp = Timer.getFPGATimestamp().seconds - latency
 
@@ -122,8 +122,6 @@ object VisionProcessing : FalconSubsystem() {
             val fieldRelativeTarget = Drivetrain.getPose(timestamp) + robotToTarget.toTransform()
 
             GoalTracker.addSample(timestamp, fieldRelativeTarget)
-            estimatedRobotPose =
-                GoalLocalizer.calculateRobotPose(timestamp, cameraToTarget, Drivetrain.getPose().rotation)
         }
 
         // Update GoalTracker.

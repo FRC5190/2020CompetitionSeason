@@ -23,6 +23,7 @@ import org.ghrobotics.frc2020.auto.routines.TenBallStealRoutine
 import org.ghrobotics.frc2020.auto.routines.TestingRoutine
 import org.ghrobotics.frc2020.auto.routines.ThreeBallRoutine
 import org.ghrobotics.frc2020.comms.Network
+import org.ghrobotics.lib.commands.sequential
 
 /**
  * Handles the autonomous portion of the game -- the first 15 seconds.
@@ -31,10 +32,11 @@ object Autonomous {
 
     // Empty string to make the meme work.
     private const val IT = ""
+    private var JUST: Command = sequential {  }
 
     fun start() {
         // Start the auto mode based on what is selected.
-        @Suppress("LocalVariableName") val JUST = when (Network.autoModeSelector.selected) {
+        JUST = when (Network.autoModeSelector.selected) {
             Mode.CHECK_SUBSYSTEMS -> CheckSubsystemsRoutine()
             Mode.DRIVE_CHARACTERIZE -> DriveCharacterizationRoutine()
             Mode.SHOOTER_CHARACTERIZE -> ShooterCharacterizationRoutine()
@@ -60,6 +62,10 @@ object Autonomous {
 
         // Start auto.
         JUST S3ND IT
+    }
+
+    fun cancel() {
+        JUST.cancel()
     }
 
     /**

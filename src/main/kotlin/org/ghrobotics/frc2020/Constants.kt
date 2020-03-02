@@ -86,14 +86,14 @@ object HoodConstants {
     const val kEncoderAId = 0
     const val kEncoderBId = 1
 
-    const val kP = 8.2
+    const val kP = 12.3
 
     val kNativeUnitModel = HoodNativeUnitModel(
         0.nativeUnits, 42.61.degrees,
         (-784).nativeUnits, 9.degrees
     )
 
-    val kBadHoodOffset = if (kIsRaceRobot) -5.5.degrees else (-5).degrees
+    val kBadHoodOffset = if (kIsRaceRobot) -8.5.degrees else (-5).degrees
     val kAcceptableRange = 10.degrees..42.61.degrees
 }
 
@@ -146,7 +146,7 @@ object ShooterConstants {
     const val kV = 0.011
     const val kA = 0.0
 
-    const val kP = 0.000010
+    const val kP = 0.000025
     const val kF = 0.0
 }
 
@@ -182,11 +182,11 @@ object VisionConstants {
     val kCameraHeight = 23.875.inches
     val kCameraAngle: Rotation2d = Rotation2d.fromDegrees(20.5)
 
-    val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d.fromDegrees(5.0))
+    val kTurretToCamera = Pose2d(10.5.inches, 0.inches, Rotation2d.fromDegrees(4.0))
 
     val kGoalFieldRelativeAngle = Rotation2d()
 
-    val kMaxTargetTrackingLifetime = 1.0.seconds
+    val kMaxTargetTrackingLifetime = 1.5.seconds
     val kTargetTrackingDistanceErrorTolerance = 25.inches
     const val kMedianWindowSize = 15
 

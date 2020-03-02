@@ -25,7 +25,7 @@ class SixBallTrenchRoutine : AutoRoutine {
         +parallel {
             +Drivetrain.followTrajectory(path1)
             +sequential {
-                +AutoTurretCommand { 210.degrees }.withTimeout(0.5)
+                +AutoTurretCommand { 220.degrees }.withTimeout(1.0)
                 +Superstructure.waitUntilStoppedThenShoot()
             }
         }
