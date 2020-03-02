@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand
+import kotlin.math.absoluteValue
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.VisionConstants
 import org.ghrobotics.frc2020.planners.ShooterPlanner
@@ -45,7 +46,6 @@ import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
-import kotlin.math.absoluteValue
 
 /**
  * Represents the overall superstructure of the robot, including the turret,
@@ -286,7 +286,6 @@ object Superstructure {
             kTurretErrorTolerance.value
     }
 
-
     /**
      * Updates all superstructure states.
      */
@@ -307,7 +306,7 @@ object Superstructure {
         val shooterParams = ShooterPlanner[distance]
         val shooterSpeed get() = shooterParams.speed
         val hoodAngle get() = shooterParams.angle
-        var turretAngle= angleToOuterGoal
+        var turretAngle = angleToOuterGoal
     }
 
     /**

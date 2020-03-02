@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Pose2d
-import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.frc2020.TurretConstants
 import org.ghrobotics.frc2020.kIsRaceRobot
 import org.ghrobotics.frc2020.planners.TurretPlanner
@@ -128,8 +127,6 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             )
 
             enableClosedLoopControl()
-
-
         } else {
             println("Did not initialize Turret")
         }

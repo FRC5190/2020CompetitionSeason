@@ -60,7 +60,6 @@ object Climber : FalconSubsystem() {
             defaultCommand = ManualClimberCommand { 0.0 }
 
             setWinchBrake(false)
-
         } else {
             println("Did not initialize Climber.")
         }

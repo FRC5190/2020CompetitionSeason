@@ -32,7 +32,7 @@ object Autonomous {
 
     // Empty string to make the meme work.
     private const val IT = ""
-    private var JUST: Command = sequential {  }
+    private var JUST: Command = sequential { }
 
     fun start() {
         // Start the auto mode based on what is selected.
@@ -50,7 +50,6 @@ object Autonomous {
             Mode.SIX_BALL_TRENCH -> SixBallTrenchRoutine()
             Mode.REVERSE_SIX_BALL_TRENCH -> SixBallReverseTrenchRoutine()
             Mode.ASSIST_WITH_REVERSE_SIX_BALL_TRENCH -> SixBallReverseTrenchRoutine(pushOff = true)
-
 
             Mode.EIGHT_BALL_TRENCH -> EightBallTrenchRoutine()
             Mode.REVERSE_EIGHT_BALL_TRENCH -> EightBallReverseTrenchRoutine()
