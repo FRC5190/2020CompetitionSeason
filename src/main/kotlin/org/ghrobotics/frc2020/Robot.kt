@@ -12,7 +12,6 @@ import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
-import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder

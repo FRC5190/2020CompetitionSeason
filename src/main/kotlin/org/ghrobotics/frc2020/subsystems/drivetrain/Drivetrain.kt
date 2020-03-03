@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
 import org.ghrobotics.frc2020.DriveConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
+import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.operations.div
@@ -136,24 +137,10 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     }
 
     /**
-     * Returns the predicted pose at some point in the future
-     * based on current movements.
-     *
-     * @param lookahead The amount of time to lookahead to.
-     * @return The predicted pose.
+     * Returns the angle of the robot relative to the field.
      */
-    fun getPredictedPose(lookahead: SIUnit<Second>): Pose2d {
-        // Get the predicted distance traveled.
-        val dx = (leftVelocity + rightVelocity) / 2.0 * lookahead
-
-        val rawGyroData = DoubleArray(3)
-        pigeon.getRawGyro(rawGyroData)
-
-        // Get the predicted change in the angle.
-        val dtheta = Math.toRadians(rawGyroData[0]) * lookahead.value
-
-        // Integrate the pose forward in time.
-        return getPose().exp(Twist2d(dx.value, 0.0, dtheta))
+    fun getAngle(): SIUnit<Radian> {
+        return SIUnit(robotPosition.rotation.radians)
     }
 
     /**

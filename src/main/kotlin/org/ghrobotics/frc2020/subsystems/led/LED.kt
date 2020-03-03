@@ -82,7 +82,7 @@ object LED : FalconSubsystem() {
             }
 
             // Snake pattern when waiting for camera.
-            !LimelightManager.isConnected -> setSnakePattern(Color.kPurple)
+            !LimelightManager.isTurretLimelightConnected() -> setSnakePattern(Color.kPurple)
 
             // Blink orange in climb mode.
             Robot.isClimbMode -> if (Climber.isWinchLocked) {
@@ -111,7 +111,7 @@ object LED : FalconSubsystem() {
             }
 
             // Green when vision aligning.
-            Superstructure.visionAlign -> if (currentTime.inMilliseconds() % 250 > 125) {
+            Superstructure.isAiming -> if (currentTime.inMilliseconds() % 250 > 125) {
                 setSolidColor(Color.kGreen)
             } else {
                 setSolidColor(Color.kBlack)
@@ -124,7 +124,7 @@ object LED : FalconSubsystem() {
             Feeder.intakeSensorTriggered -> setSolidColor(Color.kBlue)
 
             Robot.currentMode != FalconTimedRobot.Mode.DISABLED -> when {
-                LimelightManager.hasValidTarget -> setSolidColor(Color.kGreen)
+                LimelightManager.doesTurretLimelightHaveValidTarget() -> setSolidColor(Color.kGreen)
                 else -> setSolidColor(Color.kMaroon)
             }
 

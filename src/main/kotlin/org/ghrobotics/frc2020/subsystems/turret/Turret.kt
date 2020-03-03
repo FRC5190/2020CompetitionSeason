@@ -92,10 +92,10 @@ object Turret : FalconSubsystem() {
         }
 
         defaultCommand = TurretPositionCommand {
-            if (LimelightManager.hasValidTarget) {
-                angle + LimelightManager.yaw
+            if (LimelightManager.doesTurretLimelightHaveValidTarget()) {
+                angle + LimelightManager.getAngleToGoal()
             } else {
-                SIUnit(-Drivetrain.getPose().rotation.radians)
+                -Drivetrain.getAngle()
             }
         }
     }

@@ -70,7 +70,7 @@ object Network {
                 position(row = 0, column = 8)
                 size(width = 2, height = 1)
 
-                double("Angle (Degrees)") { Turret.getAngle().inDegrees() }
+                double("Angle (Degrees)") { Turret.angle.inDegrees() }
                 double("Speed") { Math.toDegrees(Turret.speed.value) }
                 double("Current (A)") { Turret.current.inAmps() }
             }
@@ -86,15 +86,6 @@ object Network {
                 size(width = 2, height = 1)
 
                 double("Current (A)") { Climber.current.inAmps() }
-            }
-            grid("Superstructure") {
-                position(row = 2, column = 4)
-                size(width = 2, height = 2)
-
-                double("Turret Hold Angle") { Superstructure.holdParams.turretAngle.inDegrees() }
-                double("Shooter Hold Speed") { Superstructure.holdParams.shooterSpeed.value * 60 / 2 / Math.PI }
-                double("Hood Hold Angle") { Superstructure.holdParams.hoodAngle.inDegrees() }
-                double("Distance to Goal (m)") { Superstructure.holdParams.distance.inMeters() }
             }
             booleanBox("Climb Mode", Robot::isClimbMode) {
                 position(row = 2, column = 6)

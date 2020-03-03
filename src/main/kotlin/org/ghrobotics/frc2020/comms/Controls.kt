@@ -88,11 +88,10 @@ object Controls {
              * The turret and shooter will aim and the feeder will feed all balls
              * to the shooter when the drivetrain comes to a complete stop.
              */
-            button(kBumperRight).change(Superstructure.waitUntilStoppedThenShoot(timeout = 2.3))
-            triggerAxisButton(GenericHID.Hand.kRight).changeOn(Superstructure.backupShooting())
+            button(kBumperRight).change(Superstructure.scoreWhenStopped())
 
             button(kBumperLeft).change(Superstructure.intake())
-            triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.exhaust())
+            triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.release())
 
             /**
              * Jogs the turret zero a certain amount. This is useful when vision

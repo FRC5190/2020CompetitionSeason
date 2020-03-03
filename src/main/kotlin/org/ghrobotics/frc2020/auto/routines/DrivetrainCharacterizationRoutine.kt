@@ -15,7 +15,7 @@ import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 /**
  * Characterizes the robot using the frc-characterization tool.
  */
-class DriveCharacterizationRoutine : AutoRoutine {
+class DrivetrainCharacterizationRoutine : AutoRoutine {
     /**
      * Returns the characterization routine.
      */
