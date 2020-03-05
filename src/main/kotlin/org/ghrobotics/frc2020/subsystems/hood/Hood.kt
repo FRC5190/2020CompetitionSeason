@@ -8,29 +8,23 @@
 
 package org.ghrobotics.frc2020.subsystems.hood
 
-import edu.wpi.first.wpilibj.Encoder
-import edu.wpi.first.wpilibj.PWM
-import edu.wpi.first.wpilibj.controller.PIDController
-import org.ghrobotics.frc2020.HoodConstants
+import com.revrobotics.CANSparkMaxLowLevel
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.nativeunit.nativeUnits
+import org.ghrobotics.lib.motors.rev.FalconMAX
 
 /**
  * Represents the adjustable hood on the robot.
  */
 object Hood : FalconSubsystem() {
-    // Servos
-    private val servoA = PWM(HoodConstants.kServoAId)
-    private val servoB = PWM(HoodConstants.kServoBId)
-
-    // Encoder
-    private val encoder = Encoder(HoodConstants.kEncoderAId, HoodConstants.kEncoderBId)
-
-    // PID Controller
-    private val controller = PIDController(HoodConstants.kP, 0.0, 0.0)
+    // Motor
+    private val master = FalconMAX(
+        id = HoodConstants.kHoodId,
+        model = HoodConstants.kNativeUnitModel,
+        type = CANSparkMaxLowLevel.MotorType.kBrushless
+    )
 
     // PeriodicIO
     private val periodicIO = PeriodicIO()
@@ -38,38 +32,21 @@ object Hood : FalconSubsystem() {
     val rawEncoder get() = periodicIO.rawEncoder
     val angle get() = periodicIO.angle
 
-    // Initialize PWM Continuous Servos.
     init {
-        // Set pulse width bounds.
-        servoA.setBounds(2.0, 1.52, 1.5, 1.48, 1.0)
-        servoB.setBounds(2.0, 1.52, 1.5, 1.48, 1.0)
-
-        // Remove deadbands.
-        servoA.enableDeadbandElimination(true)
-        servoB.enableDeadbandElimination(true)
+        master.controller.p = HoodConstants.kP
+        master.controller.ff = HoodConstants.kF
 
         defaultCommand = HoodPositionCommand { HoodConstants.kAcceptableRange.endInclusive - 0.2.degrees }
     }
 
     override fun periodic() {
-        periodicIO.rawEncoder = encoder.get().toDouble()
-        periodicIO.angle = HoodConstants.kNativeUnitModel.fromNativeUnitPosition(encoder.distance.nativeUnits)
+        periodicIO.rawEncoder = master.encoder.rawPosition.value
+        periodicIO.angle = master.encoder.position
 
         when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing -> {
-                servoA.speed = 0.0
-                servoB.speed = 0.0
-            }
-            is Output.Percent -> {
-                servoA.speed = -desiredOutput.percent
-                servoB.speed = desiredOutput.percent
-                println(desiredOutput.percent)
-            }
-            is Output.Position -> {
-                val output = controller.calculate(periodicIO.angle.value, desiredOutput.angle.value)
-                servoA.speed = -output
-                servoB.speed = output
-            }
+            is Output.Nothing -> master.setNeutral()
+            is Output.Percent -> master.setDutyCycle(desiredOutput.percent)
+            is Output.Position -> master.setPosition(desiredOutput.angle)
         }
     }
 

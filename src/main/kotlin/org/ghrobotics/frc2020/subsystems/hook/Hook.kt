@@ -9,7 +9,6 @@
 package org.ghrobotics.frc2020.subsystems.hook
 
 import com.revrobotics.CANSparkMaxLowLevel
-import org.ghrobotics.frc2020.HookConstants
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.Meter

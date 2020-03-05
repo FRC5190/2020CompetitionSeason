@@ -8,7 +8,6 @@
 
 package org.ghrobotics.frc2020.subsystems.fortunewheel
 
-import org.ghrobotics.frc2020.FortuneWheelConstants
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.mathematics.units.derived.inInchesPerSecond
 import org.ghrobotics.lib.mathematics.units.inches

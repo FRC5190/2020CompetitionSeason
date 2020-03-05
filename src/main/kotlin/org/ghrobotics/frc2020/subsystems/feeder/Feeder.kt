@@ -11,7 +11,6 @@ package org.ghrobotics.frc2020.subsystems.feeder
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.Solenoid
-import org.ghrobotics.frc2020.FeederConstants
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel

@@ -8,7 +8,7 @@
 
 package org.ghrobotics.frc2020.planners
 
-import org.ghrobotics.frc2020.TurretConstants
+import org.ghrobotics.frc2020.subsystems.turret.TurretConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees

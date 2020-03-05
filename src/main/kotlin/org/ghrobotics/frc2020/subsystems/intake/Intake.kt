@@ -10,8 +10,7 @@ package org.ghrobotics.frc2020.subsystems.intake
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
-import org.ghrobotics.frc2020.IntakeConstants
-import org.ghrobotics.frc2020.IntakeConstants.kIntakePistonId
+import org.ghrobotics.frc2020.subsystems.intake.IntakeConstants.kIntakePistonId
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere

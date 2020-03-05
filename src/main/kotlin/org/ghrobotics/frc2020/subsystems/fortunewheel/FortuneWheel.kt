@@ -13,7 +13,6 @@ import com.revrobotics.ColorSensorV3
 import edu.wpi.first.wpilibj.I2C
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.util.Color
-import org.ghrobotics.frc2020.FortuneWheelConstants
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Frac

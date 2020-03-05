@@ -53,6 +53,14 @@ class Limelight(name: String = "limelight") {
     val area get() = periodicIO.area
     val skew get() = periodicIO.skew
     val latency get() = periodicIO.latency
+    val selectedPipeline get() = periodicIO.selectedPipeline
+
+    /**
+     * Constructor that reverts to default pipeline.
+     */
+    init {
+        setPipeline(0)
+    }
 
     /**
      * Turns on the LED.
@@ -72,7 +80,10 @@ class Limelight(name: String = "limelight") {
     /**
      * Sets the currently selected pipeline.
      */
-    fun setPipeline(id: Int) = pipeline.setNumber(id)
+    fun setPipeline(id: Int): Boolean {
+        periodicIO.selectedPipeline = id
+        return pipeline.setNumber(id)
+    }
 
     /**
      * Switches between processing and driver mode.
@@ -114,5 +125,6 @@ class Limelight(name: String = "limelight") {
         var skew: SIUnit<Radian> = 0.radians
 
         var latency: SIUnit<Second> = (-1).seconds
+        var selectedPipeline: Int = 0
     }
 }

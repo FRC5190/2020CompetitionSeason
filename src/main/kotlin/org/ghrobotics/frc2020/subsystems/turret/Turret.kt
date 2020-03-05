@@ -11,23 +11,31 @@ package org.ghrobotics.frc2020.subsystems.turret
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
-import org.ghrobotics.frc2020.TurretConstants
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.geometry.Rotation2d
+import edu.wpi.first.wpilibj.geometry.Transform2d
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
-import org.ghrobotics.frc2020.vision.LimelightManager
+import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.Second
 import org.ghrobotics.lib.mathematics.units.amps
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.Volt
+import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
+import org.ghrobotics.lib.utils.InterpolatingTreeMapBuffer
 import org.ghrobotics.lib.utils.isConnected
+import kotlin.math.atan2
 
 /**
  * Represents the turret on the robot.
@@ -49,11 +57,39 @@ object Turret : FalconSubsystem() {
     // Connection status
     private var isConnected = false
 
+    // Buffer to store previous turret angles for latency compensation.
+    private val buffer =
+        InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(1.seconds) { Timer.getFPGATimestamp().seconds }
+
     // Getters
     val speed get() = periodicIO.velocity
     val current get() = periodicIO.current
     val hallEffectEngaged get() = periodicIO.hallEffect
-    val angle get() = periodicIO.position
+
+    /**
+     * Returns the angle at the specified timestamp.
+     *
+     * @param timestamp The timestamp.
+     * @return The angle at the specified timestamp.
+     */
+    fun getAngle(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): SIUnit<Radian> {
+        return buffer[timestamp] ?: {
+            DriverStation.reportError("[Turret] Buffer was empty!", false)
+            0.degrees
+        }()
+    }
+
+    /**
+     * Returns the turret position with the robot's center as the origin of
+     * the coordinate frame at the specified timestamp.
+     *
+     * @param timestamp The timestamp.
+     * @return The turret position with the robot's center as the origin of
+     *         the coordinate frame at the specified timestamp.
+     */
+    fun getRobotToTurret(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): Transform2d {
+        return Transform2d(TurretConstants.kTurretRelativeToRobotCenter, getAngle(timestamp).toRotation2d())
+    }
 
     // Status (zeroing or ready)
     var status = Status.NOT_ZEROED
@@ -76,13 +112,16 @@ object Turret : FalconSubsystem() {
 
             master.canSparkMax.setSoftLimit(
                 CANSparkMax.SoftLimitDirection.kReverse,
-                TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.start)
+                TurretConstants.kNativeUnitModel.toNativeUnitPosition(
+                    TurretConstants.kAcceptableRange.start
+                )
                     .value.toFloat()
             )
             master.canSparkMax.setSoftLimit(
                 CANSparkMax.SoftLimitDirection.kForward,
-                TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.endInclusive)
-                    .value.toFloat()
+                TurretConstants.kNativeUnitModel.toNativeUnitPosition(
+                    TurretConstants.kAcceptableRange.endInclusive
+                ).value.toFloat()
             )
 
             master.controller.p = TurretConstants.kP
@@ -92,8 +131,15 @@ object Turret : FalconSubsystem() {
         }
 
         defaultCommand = TurretPositionCommand {
-            if (LimelightManager.doesTurretLimelightHaveValidTarget()) {
-                angle + LimelightManager.getAngleToGoal()
+            // Get field-relative turret pose.
+            val fieldToTurret = Drivetrain.getPose() +
+                Transform2d(TurretConstants.kTurretRelativeToRobotCenter, Rotation2d())
+
+            // Get goal in turret's coordinates.
+            val turretToGoal = GoalTracker.getClosestTarget(fieldToTurret)
+
+            if (turretToGoal != null) {
+                SIUnit(atan2(turretToGoal.averagePose.translation.y, turretToGoal.averagePose.translation.x))
             } else {
                 -Drivetrain.getAngle()
             }
@@ -166,6 +212,8 @@ object Turret : FalconSubsystem() {
             periodicIO.velocity = master.encoder.velocity
             periodicIO.voltage = master.voltageOutput
             periodicIO.current = master.drawnCurrent
+
+            buffer[Timer.getFPGATimestamp().seconds] = periodicIO.position
 
             periodicIO.hallEffect = !hallEffectSensor.get()
 

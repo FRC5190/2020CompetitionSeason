@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
-import org.ghrobotics.frc2020.LEDConstants
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder
 import org.ghrobotics.frc2020.subsystems.turret.Turret
+import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.frc2020.vision.LimelightManager
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.inMilliseconds
@@ -124,7 +124,7 @@ object LED : FalconSubsystem() {
             Feeder.intakeSensorTriggered -> setSolidColor(Color.kBlue)
 
             Robot.currentMode != FalconTimedRobot.Mode.DISABLED -> when {
-                LimelightManager.doesTurretLimelightHaveValidTarget() -> setSolidColor(Color.kGreen)
+                GoalTracker.isTrackingTargets -> setSolidColor(Color.kGreen)
                 else -> setSolidColor(Color.kMaroon)
             }
 

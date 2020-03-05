@@ -9,7 +9,6 @@
 package org.ghrobotics.frc2020.subsystems.climber
 
 import edu.wpi.first.wpilibj.Solenoid
-import org.ghrobotics.frc2020.ClimberConstants
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere

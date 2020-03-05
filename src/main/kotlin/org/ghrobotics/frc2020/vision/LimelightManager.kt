@@ -8,13 +8,21 @@
 
 package org.ghrobotics.frc2020.vision
 
-import edu.wpi.first.wpilibj.geometry.Transform2d
+import edu.wpi.first.wpilibj.MedianFilter
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.geometry.Rotation2d
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.commands.FalconSubsystem
+import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.inches
+import org.ghrobotics.lib.mathematics.units.seconds
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.tan
 
 /**
@@ -27,8 +35,19 @@ object LimelightManager : FalconSubsystem() {
     private val kGoalHeight = 89.5.inches
     private val kCameraAngle = 35.degrees
 
+    private val kSwitchToZoomedPipelineThresold = (-10).degrees
+    private val kPitchOffsetWhenZoomed = 10.degrees
+
+    private const val kDefaultPipelineId = 0
+    private const val kZoomedPipelineId = 1
+
+    private const val kPitchFilterDataPoints = 5
+
     // Shooter Limelight
     private val turretLimelight = Limelight()
+
+    // Private states
+    private val pitchFilter = MedianFilter(kPitchFilterDataPoints)
 
     /**
      * Returns whether the turret limelight is connected.
@@ -44,6 +63,14 @@ object LimelightManager : FalconSubsystem() {
      * Returns the distance to the target.
      */
     fun getDistanceToGoal(): SIUnit<Meter> {
+        // Adjust pitch for zoom setting.
+        val adjustedPitch = if (getSelectedPipeline() == kDefaultPipelineId) {
+            turretLimelight.pitch
+        } else {
+            turretLimelight.pitch * 2 + kPitchOffsetWhenZoomed
+        }
+
+        // Calculate and return distance.
         return (kGoalHeight - kCameraHeight) / tan((turretLimelight.pitch + kCameraAngle).value)
     }
 
@@ -51,6 +78,11 @@ object LimelightManager : FalconSubsystem() {
      * Returns the angle to the target.
      */
     fun getAngleToGoal(): SIUnit<Radian> = turretLimelight.yaw
+
+    /**
+     * Returns the selected pipeline.
+     */
+    fun getSelectedPipeline(): Int = turretLimelight.selectedPipeline
 
     /**
      * Turns on the Limelight LED.
@@ -72,5 +104,32 @@ object LimelightManager : FalconSubsystem() {
      */
     override fun periodic() {
         turretLimelight.update()
+
+        // Handle switching of pipelines.
+        if (getSelectedPipeline() == kDefaultPipelineId
+            && pitchFilter.calculate(turretLimelight.pitch.value) < kSwitchToZoomedPipelineThresold.value
+        ) {
+            // Zoom in if the zoomed pipeline can see the target.
+            turretLimelight.setPipeline(kZoomedPipelineId)
+        } else if (getSelectedPipeline() == kZoomedPipelineId && !doesTurretLimelightHaveValidTarget()) {
+            // Zoom out if the zoomed pipeline cannot see the target.
+            turretLimelight.setPipeline(kDefaultPipelineId)
+        }
+
+        // Calculate image timestamp.
+        val timestamp = Timer.getFPGATimestamp().seconds - turretLimelight.latency
+
+        // Get camera-relative goal pose at timestamp.
+        val cameraToGoal = Transform2d(
+            getDistanceToGoal() * cos(getAngleToGoal().value),
+            getDistanceToGoal() * sin(getAngleToGoal().value), Rotation2d()
+        )
+
+        // Get field-relative goal pose at timestamp.
+        val fieldToGoal = Drivetrain.getPose(timestamp) +
+            Turret.getRobotToTurret(timestamp) + VisionConstants.kTurretToCamera + cameraToGoal
+
+        // Add goal pose to GoalTracker.
+        GoalTracker.addSample(timestamp, fieldToGoal)
     }
 }
