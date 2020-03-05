@@ -135,11 +135,15 @@ object Turret : FalconSubsystem() {
             val fieldToTurret = Drivetrain.getPose() +
                 Transform2d(TurretConstants.kTurretRelativeToRobotCenter, Rotation2d())
 
-            // Get goal in turret's coordinates.
-            val turretToGoal = GoalTracker.getClosestTarget(fieldToTurret)
+            // Get goal pose.
+            val fieldToGoal = GoalTracker.getClosestTarget(fieldToTurret)
 
-            if (turretToGoal != null) {
-                SIUnit(atan2(turretToGoal.averagePose.translation.y, turretToGoal.averagePose.translation.x))
+            if (fieldToGoal != null) {
+                // Get goal in turret coordinates.
+                val turretToGoal = fieldToGoal.averagePose.relativeTo(fieldToTurret)
+
+                // Calculate angle to goal.
+                SIUnit(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
             } else {
                 -Drivetrain.getAngle()
             }
