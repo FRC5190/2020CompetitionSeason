@@ -81,7 +81,7 @@ object Superstructure {
      * to a stop. This method uses a fixed distance to the goal, and is
      * therefore helpful for autonomous mode.
      */
-    fun scoreWhenStopped(distance: SIUnit<Meter>, feedRate: Double = kDefaultFeedRate): Command =
+    fun scoreWhenStopped(distance: SIUnit<Meter>): Command =
         object : ParallelCommandGroup() {
             // Get the shooter parameters for this distance.
             val shooterParams = ShooterPlanner[distance]
@@ -112,7 +112,8 @@ object Superstructure {
                         // Feed balls.
                         +parallel {
                             +TurretPositionCommand { lockedTurretAngle }
-                            +FeederPercentCommand(feedRate, 0.8).withTimeout(feedRate / kMaxFeedRateShootingTime)
+                            +FeederPercentCommand(lockedShooterParams.feedRate, 0.8)
+                                .withTimeout(lockedShooterParams.feedRate / kMaxFeedRateShootingTime)
                         }
                     }
                 )
@@ -128,7 +129,7 @@ object Superstructure {
      * Scores power cells into the high goal once the robot comes
      * to a stop.
      */
-    fun scoreWhenStopped(feedRate: Double = kDefaultFeedRate): Command =
+    fun scoreWhenStopped(): Command =
         object : ParallelCommandGroup() {
             init {
                 addCommands(
@@ -159,7 +160,8 @@ object Superstructure {
                         // Feed balls.
                         +parallel {
                             +TurretPositionCommand { lockedTurretAngle }
-                            +FeederPercentCommand(feedRate, 0.8).withTimeout(feedRate / kMaxFeedRateShootingTime)
+                            +FeederPercentCommand(lockedShooterParams.feedRate, 0.8)
+                                .withTimeout(lockedShooterParams.feedRate / kMaxFeedRateShootingTime)
                         }
                     }
                 )

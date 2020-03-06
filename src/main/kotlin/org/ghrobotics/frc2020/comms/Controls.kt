@@ -8,28 +8,21 @@
 
 package org.ghrobotics.frc2020.comms
 
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.climber.ClimberPercentCommand
-import org.ghrobotics.frc2020.subsystems.feeder.FeederPercentCommand
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneColor
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheelPositionCommand
 import org.ghrobotics.frc2020.subsystems.hood.HoodPercentCommand
 import org.ghrobotics.frc2020.subsystems.hood.HoodPositionCommand
-import org.ghrobotics.frc2020.subsystems.shooter.ShooterVelocityCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.TurretConstants
 import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
-import org.ghrobotics.lib.commands.parallel
-import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
@@ -120,7 +113,8 @@ object Controls {
                         +FeederPercentCommand({ feederSpeed }, { 1.0 })
                     }
                 }
-            }*/Superstructure.scoreWhenStopped())
+            }*/Superstructure.scoreWhenStopped()
+            )
 
             button(kBumperLeft).change(Superstructure.intake())
             triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.release())
