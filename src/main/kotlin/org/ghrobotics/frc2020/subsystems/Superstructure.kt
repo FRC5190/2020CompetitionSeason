@@ -24,6 +24,7 @@ import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.shooter.ShooterVelocityCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
+import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.frc2020.vision.LimelightManager
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.commands.parallel
@@ -52,7 +53,7 @@ object Superstructure {
     private val kHoodTolerance = 0.5.degrees
 
     // Locking parameters
-    private var lockedShooterParams = ShooterPlanner.ShooterParameters(SIUnit(0.0), SIUnit(0.0))
+    private var lockedShooterParams = ShooterPlanner.ShooterParameters(SIUnit(0.0), SIUnit(0.0), 0.0)
     private var lockedTurretAngle = 0.degrees
 
     // States
@@ -135,8 +136,8 @@ object Superstructure {
                     InstantCommand(Runnable { isAiming = true }),
 
                     // Spin and shooter and move hood to desired angle.
-                    ShooterVelocityCommand { ShooterPlanner[LimelightManager.getDistanceToGoal()].speed },
-                    HoodPositionCommand { ShooterPlanner[LimelightManager.getDistanceToGoal()].angle },
+                    ShooterVelocityCommand { ShooterPlanner[GoalTracker.latestTurretToGoalDistance].speed },
+                    HoodPositionCommand { ShooterPlanner[GoalTracker.latestTurretToGoalDistance].angle },
 
                     // Wait until drivetrain is stopped, shooter is at reference,
                     // and hood is at reference; then fire.

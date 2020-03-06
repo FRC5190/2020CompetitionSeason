@@ -9,6 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.climber
 
 import edu.wpi.first.wpilibj.Solenoid
+import edu.wpi.first.wpilibj.Timer
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
@@ -66,6 +67,7 @@ object Climber : FalconSubsystem() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             periodicIO.voltage = winchMasterMotor.voltageOutput
             periodicIO.current = winchMasterMotor.drawnCurrent
@@ -74,6 +76,9 @@ object Climber : FalconSubsystem() {
                 is Output.Nothing -> winchMasterMotor.setNeutral()
                 is Output.Percent -> winchMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
             }
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Climber periodic() loop overrun.")
         }
     }
 

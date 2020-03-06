@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.subsystems.drivetrain
 
 import com.ctre.phoenix.sensors.PigeonIMU
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.controller.RamseteController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
@@ -119,8 +120,12 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             super.periodic()
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Drivetrain periodic() loop overrun.")
         }
     }
 

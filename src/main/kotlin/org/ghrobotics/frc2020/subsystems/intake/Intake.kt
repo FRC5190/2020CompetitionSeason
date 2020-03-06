@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.subsystems.intake
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
+import edu.wpi.first.wpilibj.Timer
 import org.ghrobotics.frc2020.subsystems.intake.IntakeConstants.kIntakePistonId
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -64,6 +65,7 @@ object Intake : FalconSubsystem() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             periodicIO.voltage = intakeMaster.voltageOutput
             periodicIO.current = intakeMaster.drawnCurrent
@@ -74,6 +76,9 @@ object Intake : FalconSubsystem() {
                     intakeMaster.setNeutral()
                 is Output.Percent -> intakeMaster.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
             }
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Intake periodic() loop overrun.")
         }
     }
 

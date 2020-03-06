@@ -9,6 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.hood
 
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.Timer
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
@@ -55,6 +56,7 @@ object Hood : FalconSubsystem() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         periodicIO.rawEncoder = master.encoder.rawPosition.value
         periodicIO.angle = master.encoder.position
         periodicIO.speed = master.encoder.velocity
@@ -63,6 +65,9 @@ object Hood : FalconSubsystem() {
             is Output.Nothing -> master.setNeutral()
             is Output.Percent -> master.setDutyCycle(desiredOutput.percent)
             is Output.Position -> master.setPosition(desiredOutput.angle)
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Hood periodic() loop overrun.")
         }
     }
 

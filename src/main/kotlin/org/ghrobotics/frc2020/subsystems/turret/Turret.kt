@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
@@ -28,7 +27,6 @@ import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.derived.inDegrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 import org.ghrobotics.lib.mathematics.units.derived.volts
@@ -137,25 +135,11 @@ object Turret : FalconSubsystem() {
         }
 
         defaultCommand = TurretPositionCommand {
-            // Get field-relative turret pose.
-            val fieldToTurret = Drivetrain.getPose() +
-                Transform2d(TurretConstants.kTurretRelativeToRobotCenter, Rotation2d())
-
-            // Get goal pose.
-            val fieldToGoal = GoalTracker.getClosestTarget(fieldToTurret)
-
-            if (fieldToGoal != null) {
-                // Get goal in turret coordinates.
-                val turretToGoal = fieldToGoal.averagePose.relativeTo(fieldToTurret)
-
-                distance = SIUnit(turretToGoal.translation.norm)
+            if (GoalTracker.isTrackingTargets) {
+                val turretToGoal = GoalTracker.latestTurretToGoal
 
                 // Calculate angle to goal.
-                val angle = SIUnit<Radian>(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
-
-                println(angle.inDegrees())
-
-                angle
+                SIUnit(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
             } else {
                 -Drivetrain.getAngle()
             }
@@ -222,6 +206,7 @@ object Turret : FalconSubsystem() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             // Read sensor values.
             periodicIO.position = master.encoder.position
@@ -248,6 +233,9 @@ object Turret : FalconSubsystem() {
             } else {
                 master.setNeutral()
             }
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Turret periodic() loop overrun.")
         }
     }
 

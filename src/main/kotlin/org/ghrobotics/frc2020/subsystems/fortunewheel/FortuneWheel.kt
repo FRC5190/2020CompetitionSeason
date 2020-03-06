@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.ColorSensorV3
 import edu.wpi.first.wpilibj.I2C
 import edu.wpi.first.wpilibj.Solenoid
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -86,6 +87,7 @@ object FortuneWheel : FalconSubsystem() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         // Update PeriodicIO variables
         periodicIO.sensorColor = FortuneColor.getFortune(colorSensor.color)
         periodicIO.rawColor = colorSensor.color
@@ -102,6 +104,9 @@ object FortuneWheel : FalconSubsystem() {
             is Output.Nothing -> spinnerMotor.setNeutral()
             is Output.Percent -> spinnerMotor.setDutyCycle(desiredOutput.speed, 0.0.volts)
             is Output.Position -> spinnerMotor.setPosition(desiredOutput.position, 0.0.volts)
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("FortuneWheel periodic() loop overrun.")
         }
     }
 

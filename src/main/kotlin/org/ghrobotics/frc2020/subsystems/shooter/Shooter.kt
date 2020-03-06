@@ -9,6 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.shooter
 
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import org.ghrobotics.frc2020.kIsRaceRobot
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -127,6 +128,7 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             periodicIO.position = masterMotor.encoder.position
             periodicIO.velocity = masterMotor.encoder.velocity
@@ -138,6 +140,9 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
                 is Output.Percent -> masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
                 is Output.Velocity -> masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
             }
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Shooter periodic() loop overrun.")
         }
     }
 

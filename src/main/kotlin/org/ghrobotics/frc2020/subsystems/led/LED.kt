@@ -59,6 +59,7 @@ object LED : FalconSubsystem() {
     override fun periodic() {
         // Update current time.
         currentTime = Timer.getFPGATimestamp().seconds
+        val now = Timer.getFPGATimestamp()
 
         when {
             // Blink red when turret is not zeroed.
@@ -137,6 +138,10 @@ object LED : FalconSubsystem() {
 
         // Update with new data.
         led.setData(ledBuffer)
+
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("LED periodic() loop overrun.")
+        }
     }
 
     /**

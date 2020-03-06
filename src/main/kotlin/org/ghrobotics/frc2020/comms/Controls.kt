@@ -104,7 +104,7 @@ object Controls {
              * The turret and shooter will aim and the feeder will feed all balls
              * to the shooter when the drivetrain comes to a complete stop.
              */
-            button(kBumperRight).change(sequential {
+            button(kBumperRight).change(/*sequential {
                 +InstantCommand(Runnable {
                     val string = DriverStation.getInstance().gameSpecificMessage
                     val array = string.split(",")
@@ -120,7 +120,7 @@ object Controls {
                         +FeederPercentCommand({ feederSpeed }, { 1.0 })
                     }
                 }
-            })
+            }*/Superstructure.scoreWhenStopped())
 
             button(kBumperLeft).change(Superstructure.intake())
             triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.release())
