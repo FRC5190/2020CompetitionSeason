@@ -21,4 +21,8 @@ class TurretPositionCommand(private val angle: Source<SIUnit<Radian>>) : FalconC
     override fun end(interrupted: Boolean) {
         Turret.setNeutral()
     }
+
+    override fun runsWhenDisabled(): Boolean {
+        return true
+    }
 }

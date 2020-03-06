@@ -10,7 +10,6 @@ package org.ghrobotics.frc2020.comms
 
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.auto.Autonomous
-import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.hood.Hood
@@ -22,7 +21,6 @@ import org.ghrobotics.lib.mathematics.units.derived.inDegrees
 import org.ghrobotics.lib.mathematics.units.inAmps
 import org.ghrobotics.lib.mathematics.units.inFeet
 import org.ghrobotics.lib.mathematics.units.inInches
-import org.ghrobotics.lib.mathematics.units.inMeters
 import org.ghrobotics.lib.wrappers.networktables.enumSendableChooser
 import org.ghrobotics.lib.wrappers.networktables.tab
 
@@ -70,7 +68,7 @@ object Network {
                 position(row = 0, column = 8)
                 size(width = 2, height = 1)
 
-                double("Angle (Degrees)") { Turret.angle.inDegrees() }
+                double("Angle (Degrees)") { Turret.getAngle().inDegrees() }
                 double("Speed") { Math.toDegrees(Turret.speed.value) }
                 double("Current (A)") { Turret.current.inAmps() }
             }
@@ -80,12 +78,13 @@ object Network {
 
                 double("Encoder Raw") { Hood.rawEncoder }
                 double("Angle") { Hood.angle.inDegrees() }
+                double("Speed") { Math.toDegrees(Hood.speed.value) }
             }
-            grid("Climber") {
+            grid("Shooting") {
                 position(row = 2, column = 2)
                 size(width = 2, height = 1)
 
-                double("Current (A)") { Climber.current.inAmps() }
+                double("Distance") { Turret.distance.inInches() }
             }
             booleanBox("Climb Mode", Robot::isClimbMode) {
                 position(row = 2, column = 6)

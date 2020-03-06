@@ -20,6 +20,7 @@ import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
+import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
 import org.ghrobotics.lib.mathematics.units.amps
@@ -27,9 +28,11 @@ import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.inDegrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 import org.ghrobotics.lib.mathematics.units.derived.volts
+import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
@@ -78,6 +81,9 @@ object Turret : FalconSubsystem() {
             0.degrees
         }()
     }
+
+    var distance: SIUnit<Meter> = 0.meters
+        private set
 
     /**
      * Returns the turret position with the robot's center as the origin of
@@ -142,8 +148,14 @@ object Turret : FalconSubsystem() {
                 // Get goal in turret coordinates.
                 val turretToGoal = fieldToGoal.averagePose.relativeTo(fieldToTurret)
 
+                distance = SIUnit(turretToGoal.translation.norm)
+
                 // Calculate angle to goal.
-                SIUnit(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
+                val angle = SIUnit<Radian>(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
+
+                println(angle.inDegrees())
+
+                angle
             } else {
                 -Drivetrain.getAngle()
             }

@@ -8,20 +8,31 @@
 
 package org.ghrobotics.frc2020.comms
 
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ghrobotics.frc2020.Robot
-import org.ghrobotics.frc2020.subsystems.turret.TurretConstants
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.climber.ClimberPercentCommand
+import org.ghrobotics.frc2020.subsystems.feeder.FeederPercentCommand
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneColor
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheelPositionCommand
-import org.ghrobotics.frc2020.subsystems.hook.HookPercentCommand
+import org.ghrobotics.frc2020.subsystems.hood.HoodPercentCommand
+import org.ghrobotics.frc2020.subsystems.hood.HoodPositionCommand
+import org.ghrobotics.frc2020.subsystems.shooter.ShooterVelocityCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
+import org.ghrobotics.frc2020.subsystems.turret.TurretConstants
 import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
+import org.ghrobotics.lib.commands.parallel
+import org.ghrobotics.lib.commands.sequential
+import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
+import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.utils.map
 import org.ghrobotics.lib.utils.not
@@ -39,6 +50,11 @@ import org.ghrobotics.lib.wrappers.hid.xboxController
  * Contains all the teleop controls for the robot.
  */
 object Controls {
+
+    var shooterSpeed = SIUnit<AngularVelocity>(0.0)
+    var hoodAngle = SIUnit<Radian>(Math.toRadians(25.0))
+    var feederSpeed = 1.0
+
     val driverController = xboxController(0) {
 
         /**
@@ -69,8 +85,8 @@ object Controls {
                 change(ClimberPercentCommand(source.map { it * -1.0 }))
             }
 
-            axisButton(XboxController.Axis.kRightY.value) {
-                change(HookPercentCommand(source))
+            axisButton(XboxController.Axis.kRightY.value, threshold = 0.04) {
+                change(HoodPercentCommand(source))
             }
 
             /**
@@ -88,7 +104,23 @@ object Controls {
              * The turret and shooter will aim and the feeder will feed all balls
              * to the shooter when the drivetrain comes to a complete stop.
              */
-            button(kBumperRight).change(Superstructure.scoreWhenStopped())
+            button(kBumperRight).change(sequential {
+                +InstantCommand(Runnable {
+                    val string = DriverStation.getInstance().gameSpecificMessage
+                    val array = string.split(",")
+                    shooterSpeed = SIUnit(array[0].toDouble() * 2 * Math.PI / 60.0)
+                    hoodAngle = SIUnit(Math.toRadians(array[1].toDouble()))
+                    feederSpeed = array[2].toDouble()
+                })
+                +parallel {
+                    +ShooterVelocityCommand { shooterSpeed }
+                    +HoodPositionCommand { hoodAngle }
+                    +sequential {
+                        +WaitCommand(2.0)
+                        +FeederPercentCommand({ feederSpeed }, { 1.0 })
+                    }
+                }
+            })
 
             button(kBumperLeft).change(Superstructure.intake())
             triggerAxisButton(GenericHID.Hand.kLeft).change(Superstructure.release())
@@ -111,6 +143,11 @@ object Controls {
              * Perform position control when the POV down button is pressed.
              */
             pov(180).change(FortuneWheelPositionCommand { GameData.getColor() ?: FortuneColor.RED })
+
+            axisButton(XboxController.Axis.kRightY.value, threshold = 0.04) {
+                change(HoodPercentCommand(source))
+            }
+            button(kA).change(HoodPositionCommand(25.degrees))
         }
 
         /**

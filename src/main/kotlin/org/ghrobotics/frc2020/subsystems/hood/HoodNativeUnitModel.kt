@@ -9,9 +9,13 @@
 package org.ghrobotics.frc2020.subsystems.hood
 
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.Acceleration
 import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.mathematics.units.derived.Velocity
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnit
+import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitAcceleration
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitModel
+import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitVelocity
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.operations.times
 
@@ -34,5 +38,13 @@ class HoodNativeUnitModel(
 
     override fun toNativeUnitPosition(modelledUnit: SIUnit<Radian>): SIUnit<NativeUnit> {
         return (modelledUnit - b) / m
+    }
+
+    override fun fromNativeUnitVelocity(nativeUnitVelocity: SIUnit<NativeUnitVelocity>): SIUnit<Velocity<Radian>> {
+        return SIUnit((m * nativeUnitVelocity).value)
+    }
+
+    override fun toNativeUnitVelocity(modelledUnitVelocity: SIUnit<Velocity<Radian>>): SIUnit<NativeUnitVelocity> {
+        return SIUnit((modelledUnitVelocity / m).value)
     }
 }

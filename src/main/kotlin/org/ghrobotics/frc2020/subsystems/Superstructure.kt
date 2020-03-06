@@ -106,7 +106,7 @@ object Superstructure {
                         }
 
                         // Store locked turret angle.
-                        +InstantCommand(Runnable { lockedTurretAngle = Turret.angle })
+                        +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
 
                         // Feed balls.
                         +parallel {
@@ -153,7 +153,7 @@ object Superstructure {
                         }
 
                         // Store locked turret angle.
-                        +InstantCommand(Runnable { lockedTurretAngle = Turret.angle })
+                        +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
 
                         // Feed balls.
                         +parallel {

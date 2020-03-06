@@ -23,6 +23,7 @@ import org.ghrobotics.frc2020.subsystems.led.LED
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.TurretZeroCommand
+import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.frc2020.vision.LimelightManager
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
@@ -84,7 +85,9 @@ object Robot : FalconTimedRobot() {
     }
 
     // Runs every 20 ms when robot is on
-    override fun robotPeriodic() {}
+    override fun robotPeriodic() {
+        GoalTracker.update()
+    }
 
     // Runs every 20 ms when autonomous is enabled
     override fun autonomousPeriodic() {

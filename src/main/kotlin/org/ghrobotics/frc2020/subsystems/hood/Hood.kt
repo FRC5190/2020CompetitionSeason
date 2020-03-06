@@ -11,8 +11,11 @@ package org.ghrobotics.frc2020.subsystems.hood
 import com.revrobotics.CANSparkMaxLowLevel
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.SIUnit
+import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.operations.div
+import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 
 /**
@@ -31,10 +34,22 @@ object Hood : FalconSubsystem() {
 
     val rawEncoder get() = periodicIO.rawEncoder
     val angle get() = periodicIO.angle
+    val speed get() = periodicIO.speed
 
     init {
+        master.canSparkMax.restoreFactoryDefaults()
+
+        master.outputInverted = false
+        master.brakeMode = true
+
+        master.encoder.resetPosition(HoodConstants.kAcceptableRange.endInclusive)
+
         master.controller.p = HoodConstants.kP
         master.controller.ff = HoodConstants.kF
+
+        master.useMotionProfileForPosition = true
+        master.motionProfileCruiseVelocity = 40.degrees / 1.seconds
+        master.motionProfileAcceleration = 120.degrees / 1.seconds / 1.seconds
 
         defaultCommand = HoodPositionCommand { HoodConstants.kAcceptableRange.endInclusive - 0.2.degrees }
     }
@@ -42,6 +57,7 @@ object Hood : FalconSubsystem() {
     override fun periodic() {
         periodicIO.rawEncoder = master.encoder.rawPosition.value
         periodicIO.angle = master.encoder.position
+        periodicIO.speed = master.encoder.velocity
 
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> master.setNeutral()
@@ -64,6 +80,7 @@ object Hood : FalconSubsystem() {
 
     private class PeriodicIO {
         var angle: SIUnit<Radian> = 0.degrees
+        var speed: SIUnit<AngularVelocity> = SIUnit(0.0)
         var desiredOutput: Output = Output.Nothing
 
         var rawEncoder: Double = 0.0
