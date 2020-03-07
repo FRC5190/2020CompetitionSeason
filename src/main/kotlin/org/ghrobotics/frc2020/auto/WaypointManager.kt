@@ -13,7 +13,6 @@ package org.ghrobotics.frc2020.auto
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
-import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inches
@@ -47,52 +46,33 @@ object WaypointManager {
     )
 
     // Waypoints
-    // Steal Autos
     val kStealStart = Pose2d(
-        x = kInitiationLineX,
+        x = kInitiationLineX - kRobotLength / 2.0,
         y = 24.82.feet,
         angle = Rotation2d.fromDegrees(180.0)
     )
+
     val kOpponentTrenchBalls = Pose2d(
-        x = 33.80.feet, y = 25.38.feet, angle = Rotation2d.fromDegrees(170.0)
-    )
-    val kStealAutoIntermediate = Pose2d(
-        x = 39.10.feet, y = 24.17.feet, angle = Rotation2d.fromDegrees(-153.0)
+        x = 34.00.feet, y = 24.82.feet, angle = Rotation2d.fromDegrees(181.0)
     )
 
-    // Trench Autos
-    val kTrenchReverseStart = Pose2d(
-        x = kInitiationLineX - kRobotLength / 2.0 - kBumperThickness,
-        y = 2.18.feet,
-        angle = Rotation2d()
+    val kProtectedScoringLocation = Pose2d(
+        x = 50.21.feet, y = 09.06.feet, angle = Rotation2d.fromDegrees(102.0)
     )
 
-    val kTrenchStart = Pose2d(
-        x = kInitiationLineX,
-        y = 2.18.feet,
-        angle = Rotation2d.fromDegrees(180.0)
+    val kInitLineScoringLocation = Pose2d(
+        x = 42.54.feet, y = 11.20.feet, angle = Rotation2d.fromDegrees(132.0)
     )
 
-    val kScoreAfterTrenchStart = kTrenchStart + Transform2d(7.feet, 0.feet, Rotation2d())
-
-    val kShortPickupAfterTrench = Pose2d(
-        x = 28.80.feet, y = 2.18.feet, angle = Rotation2d.fromDegrees(180.0)
-    )
-    val kLongPickupAfterTrench = Pose2d(
-        x = 23.50.feet, y = 2.32.feet, angle = Rotation2d.fromDegrees(182.0)
+    val kDoubleRendezvousPickup = Pose2d(
+        x = 31.15.feet, y = 19.94.feet, angle = Rotation2d.fromDegrees(-157.0)
     )
 
-    // Scoring Locations
-    val kGoodInnerGoalScoringLocation = Pose2d(
-        x = 37.54.feet, y = 6.95.feet, angle = Rotation2d.fromDegrees(-90.0)
+    val kRendezvousPickupIntermediate = Pose2d(
+        x = 39.03.feet, y = 14.28.feet, angle = Rotation2d.fromDegrees(-157.0)
     )
-    val kGoodTrenchScoringLocation = Pose2d(
-        x = 35.98.feet, y = 5.91.feet, angle = Rotation2d.fromDegrees(215.0)
-    )
-    val kGoodAfterStealScoringLocation = Pose2d(
-        x = 38.98.feet, y = 9.21.feet, angle = Rotation2d.fromDegrees(-90.0)
-    )
-    val kOk = Pose2d(
-        x = 41.555.feet, y = 10.319.feet, angle = Rotation2d.fromDegrees(145.0)
+
+    val kSingleRendezvousPickup = Pose2d(
+        x = 25.74.feet, y = 14.28.feet, angle = Rotation2d.fromDegrees(-157.0)
     )
 }

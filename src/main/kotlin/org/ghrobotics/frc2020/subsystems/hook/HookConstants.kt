@@ -6,13 +6,8 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-@file:Suppress("MemberVisibilityCanBePrivate", "unused", "ConstantConditionIf")
+package org.ghrobotics.frc2020.subsystems.hook
 
-package org.ghrobotics.frc2020
-
-const val kIsRaceRobot = true
-
-/**
- * Common constants that are shared across subsystems.
- */
-const val kPCMId = 0
+object HookConstants {
+    const val kHookId = 13
+}

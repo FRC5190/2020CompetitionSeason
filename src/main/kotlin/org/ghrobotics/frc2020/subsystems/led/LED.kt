@@ -12,13 +12,13 @@ import edu.wpi.first.wpilibj.AddressableLED
 import edu.wpi.first.wpilibj.AddressableLEDBuffer
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
-import org.ghrobotics.frc2020.LEDConstants
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder
 import org.ghrobotics.frc2020.subsystems.turret.Turret
-import org.ghrobotics.frc2020.vision.VisionProcessing
+import org.ghrobotics.frc2020.vision.GoalTracker
+import org.ghrobotics.frc2020.vision.LimelightManager
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.inMilliseconds
 import org.ghrobotics.lib.mathematics.units.seconds
@@ -35,16 +35,6 @@ object LED : FalconSubsystem() {
     // LED and its buffer.
     private val led = AddressableLED(LEDConstants.kPort)
     private val ledBuffer = AddressableLEDBuffer(LEDConstants.kBufferSize)
-
-    // LED Colors
-    private val kFault = Color.kRed
-    private val kWaitingForCamera = Color.kPurple
-    private val kZeroingTurret = Color.kGreen
-    private val kClimbing = Color.kOrange
-    private val kClimbLocked = Color.kGreen
-    private val kVision = Color.kPurple
-    private val kIntakeSensor = Color.kBlue
-    private val kExitSensor = Color.kDarkGoldenrod
 
     // Current time
     private var currentTime = Timer.getFPGATimestamp().seconds
@@ -69,13 +59,14 @@ object LED : FalconSubsystem() {
     override fun periodic() {
         // Update current time.
         currentTime = Timer.getFPGATimestamp().seconds
+        val now = Timer.getFPGATimestamp()
 
         when {
             // Blink red when turret is not zeroed.
             Robot.currentMode == FalconTimedRobot.Mode.DISABLED
                 && Turret.status == Turret.Status.NOT_ZEROED -> {
                 if (currentTime.inMilliseconds() % 1000 > 500) {
-                    setSolidColor(kFault)
+                    setSolidColor(Color.kRed)
                 } else {
                     setSolidColor(Color.kBlack)
                 }
@@ -85,21 +76,21 @@ object LED : FalconSubsystem() {
             Robot.currentMode == FalconTimedRobot.Mode.DISABLED
                 && Turret.status == Turret.Status.ZEROING -> {
                 if (currentTime.inMilliseconds() % 250 > 125) {
-                    setSolidColor(kZeroingTurret)
+                    setSolidColor(Color.kGreen)
                 } else {
                     setSolidColor(Color.kBlack)
                 }
             }
 
             // Snake pattern when waiting for camera.
-            !VisionProcessing.isConnected -> setSnakePattern(kWaitingForCamera)
+            !LimelightManager.isTurretLimelightConnected() -> setSnakePattern(Color.kPurple)
 
             // Blink orange in climb mode.
             Robot.isClimbMode -> if (Climber.isWinchLocked) {
-                setSolidColor(kClimbLocked)
+                setSolidColor(Color.kGreen)
             } else {
                 if (currentTime.inMilliseconds() % 1000 > 500) {
-                    setSolidColor(kClimbing)
+                    setSolidColor(Color.kOrange)
                 } else {
                     setSolidColor(Color.kBlack)
                 }
@@ -121,13 +112,22 @@ object LED : FalconSubsystem() {
             }
 
             // Green when vision aligning.
-            Superstructure.visionAlign -> setSolidColor(kVision)
+            Superstructure.isAiming -> if (currentTime.inMilliseconds() % 250 > 125) {
+                setSolidColor(Color.kGreen)
+            } else {
+                setSolidColor(Color.kBlack)
+            }
 
             // Goldenrod when exit sensor is triggered.
-            Feeder.exitSensorTriggered -> setSolidColor(kExitSensor)
+            Feeder.exitSensorTriggered -> setSolidColor(Color.kGoldenrod)
 
             // Blue when intake sensor is triggered.
-            Feeder.intakeSensorTriggered -> setSolidColor(kIntakeSensor)
+            Feeder.intakeSensorTriggered -> setSolidColor(Color.kBlue)
+
+            Robot.currentMode != FalconTimedRobot.Mode.DISABLED -> when {
+                GoalTracker.isTrackingTargets -> setSolidColor(Color.kGreen)
+                else -> setSolidColor(Color.kMaroon)
+            }
 
             // Rainbow when robot is disabled and everything is ready.
             Robot.currentMode == FalconTimedRobot.Mode.DISABLED -> setRainbow()
@@ -138,6 +138,10 @@ object LED : FalconSubsystem() {
 
         // Update with new data.
         led.setData(ledBuffer)
+
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("LED periodic() loop overrun.")
+        }
     }
 
     /**

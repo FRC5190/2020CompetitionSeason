@@ -11,7 +11,6 @@ package org.ghrobotics.frc2020.subsystems.fortunewheel
 import edu.wpi.first.wpilibj.util.Color
 import edu.wpi.first.wpilibj.util.Color8Bit
 import kotlin.math.roundToInt
-import org.ghrobotics.frc2020.FortuneWheelConstants
 
 enum class FortuneColor(val red: Double, val green: Double, val blue: Double) {
     // Default color value

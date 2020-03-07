@@ -6,13 +6,13 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-@file:Suppress("MemberVisibilityCanBePrivate", "unused", "ConstantConditionIf")
+package org.ghrobotics.frc2020.subsystems.intake
 
-package org.ghrobotics.frc2020
+import org.ghrobotics.lib.mathematics.units.amps
 
-const val kIsRaceRobot = true
+object IntakeConstants {
+    const val kIntakeId = 9
+    const val kIntakePistonId = 0
 
-/**
- * Common constants that are shared across subsystems.
- */
-const val kPCMId = 0
+    val kCurrentLimit = 25.amps
+}

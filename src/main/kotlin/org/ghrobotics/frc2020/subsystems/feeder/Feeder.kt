@@ -11,7 +11,7 @@ package org.ghrobotics.frc2020.subsystems.feeder
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.Solenoid
-import org.ghrobotics.frc2020.FeederConstants
+import edu.wpi.first.wpilibj.Timer
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
@@ -73,6 +73,7 @@ object Feeder : FalconSubsystem() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             periodicIO.intakeSensor = intakeSensor.averageVoltage > 1.25
             periodicIO.exitSensor = exitSensor.averageVoltage > 1.0
@@ -87,6 +88,9 @@ object Feeder : FalconSubsystem() {
                     bridgeMotor.setDutyCycle(output.bridgePercent)
                 }
             }
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Feeder periodic() loop overrun.")
         }
     }
 

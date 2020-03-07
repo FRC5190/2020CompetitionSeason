@@ -12,11 +12,9 @@ import org.ghrobotics.frc2020.auto.Autonomous
 import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.frc2020.comms.Network
-import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.feeder.Feeder
-import org.ghrobotics.frc2020.subsystems.forks.Forks
 import org.ghrobotics.frc2020.subsystems.fortunewheel.FortuneWheel
 import org.ghrobotics.frc2020.subsystems.hood.Hood
 import org.ghrobotics.frc2020.subsystems.hook.Hook
@@ -24,8 +22,9 @@ import org.ghrobotics.frc2020.subsystems.intake.Intake
 import org.ghrobotics.frc2020.subsystems.led.LED
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
-import org.ghrobotics.frc2020.subsystems.turret.ZeroTurretCommand
-import org.ghrobotics.frc2020.vision.VisionProcessing
+import org.ghrobotics.frc2020.subsystems.turret.TurretZeroCommand
+import org.ghrobotics.frc2020.vision.GoalTracker
+import org.ghrobotics.frc2020.vision.LimelightManager
 import org.ghrobotics.lib.wrappers.FalconTimedRobot
 
 /**
@@ -48,13 +47,12 @@ object Robot : FalconTimedRobot() {
         Network
 
         // Add vision processing
-        +VisionProcessing
+        +LimelightManager
 
         // Add subsystems
         +Climber
         +Drivetrain
         +Feeder
-        +Forks
         +FortuneWheel
         +Hood
         +Hook
@@ -63,8 +61,7 @@ object Robot : FalconTimedRobot() {
         +Shooter
         +Turret
 
-        ZeroTurretCommand().schedule()
-        VisionProcessing.turnOnLEDs()
+        TurretZeroCommand().schedule()
     }
 
     // Runs once when autonomous period starts
@@ -88,23 +85,22 @@ object Robot : FalconTimedRobot() {
     }
 
     // Runs every 20 ms when robot is on
-    override fun robotPeriodic() {}
+    override fun robotPeriodic() {
+        GoalTracker.periodic()
+    }
 
     // Runs every 20 ms when autonomous is enabled
     override fun autonomousPeriodic() {
-        Superstructure.update()
     }
 
     // Runs every 20 ms when teleop is enabled
     override fun teleopPeriodic() {
         Controls.update()
-        Superstructure.update()
     }
 
     // Runs every 20 ms when robot is disabled
     override fun disabledPeriodic() {
         Controls.update()
-        Superstructure.update()
     }
 
     fun getChecks() = getSubsystemChecks()

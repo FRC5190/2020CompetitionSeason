@@ -9,7 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.climber
 
 import edu.wpi.first.wpilibj.Solenoid
-import org.ghrobotics.frc2020.ClimberConstants
+import edu.wpi.first.wpilibj.Timer
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
@@ -19,7 +19,6 @@ import org.ghrobotics.lib.mathematics.units.derived.Volt
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
 import org.ghrobotics.lib.motors.ctre.FalconSRX
-import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the climber assembly and the climber winch
@@ -41,15 +40,17 @@ object Climber : FalconSubsystem() {
     private val extensionPiston = Solenoid(kPCMId, ClimberConstants.kExtensionPistonId)
     private val winchBrake = Solenoid(kPCMId, ClimberConstants.kWinchBrakeId)
 
+    // Connection status
     private var isConnected = true
 
+    // PeriodicIO
     private val periodicIO = PeriodicIO()
-
-    val current get() = periodicIO.current
 
     // Getters
     var isWinchLocked = false
         private set
+
+    val current get() = periodicIO.current
 
     override fun lateInit() {
         if (isConnected) {
@@ -57,7 +58,7 @@ object Climber : FalconSubsystem() {
             winchSlaveMotor.follow(winchMasterMotor)
 
             // Set default command.
-            defaultCommand = ManualClimberCommand { 0.0 }
+            defaultCommand = ClimberPercentCommand { 0.0 }
 
             setWinchBrake(false)
         } else {
@@ -66,18 +67,18 @@ object Climber : FalconSubsystem() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             periodicIO.voltage = winchMasterMotor.voltageOutput
             periodicIO.current = winchMasterMotor.drawnCurrent
 
             when (val desiredOutput = periodicIO.desiredOutput) {
-                is Output.Nothing -> {
-                    winchMasterMotor.setNeutral()
-                }
-                is Output.Percent -> {
-                    winchMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-                }
+                is Output.Nothing -> winchMasterMotor.setNeutral()
+                is Output.Percent -> winchMasterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
             }
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Climber periodic() loop overrun.")
         }
     }
 

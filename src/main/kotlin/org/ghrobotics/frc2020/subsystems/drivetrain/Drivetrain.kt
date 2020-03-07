@@ -10,20 +10,16 @@ package org.ghrobotics.frc2020.subsystems.drivetrain
 
 import com.ctre.phoenix.sensors.PigeonIMU
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.controller.RamseteController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
-import edu.wpi.first.wpilibj.geometry.Pose2d
-import edu.wpi.first.wpilibj.geometry.Twist2d
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
-import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.DriveConstants
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.Second
+import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.operations.div
-import org.ghrobotics.lib.mathematics.units.operations.times
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.drive.FalconWestCoastDrivetrain
@@ -95,10 +91,6 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         rightMotor.controller.p = DriveConstants.kP
     }
 
-    override fun checkSubsystem(): Command {
-        return TestDrivetrainCommand().withTimeout(2.0)
-    }
-
     override fun lateInit() {
         super.lateInit()
         isConnected = leftMotor.isConnected() && rightMotor.isConnected() &&
@@ -124,12 +116,16 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         }
 
         // Set the default command
-        defaultCommand = ManualDriveCommand()
+        defaultCommand = DrivetrainTeleopCommand()
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             super.periodic()
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Drivetrain periodic() loop overrun.")
         }
     }
 
@@ -141,24 +137,10 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     }
 
     /**
-     * Returns the predicted pose at some point in the future
-     * based on current movements.
-     *
-     * @param lookahead The amount of time to lookahead to.
-     * @return The predicted pose.
+     * Returns the angle of the robot relative to the field.
      */
-    fun getPredictedPose(lookahead: SIUnit<Second>): Pose2d {
-        // Get the predicted distance traveled.
-        val dx = (leftVelocity + rightVelocity) / 2.0 * lookahead
-
-        val rawGyroData = DoubleArray(3)
-        pigeon.getRawGyro(rawGyroData)
-
-        // Get the predicted change in the angle.
-        val dtheta = Math.toRadians(rawGyroData[0]) * lookahead.value
-
-        // Integrate the pose forward in time.
-        return getPose().exp(Twist2d(dx.value, 0.0, dtheta))
+    fun getAngle(): SIUnit<Radian> {
+        return SIUnit(robotPosition.rotation.radians)
     }
 
     /**

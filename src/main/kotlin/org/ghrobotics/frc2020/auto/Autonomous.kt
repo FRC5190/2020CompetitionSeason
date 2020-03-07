@@ -9,19 +9,9 @@
 package org.ghrobotics.frc2020.auto
 
 import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.auto.routines.CheckSubsystemsRoutine
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
-import org.ghrobotics.frc2020.auto.routines.DriveCharacterizationRoutine
-import org.ghrobotics.frc2020.auto.routines.EightBallReverseTrenchRoutine
-import org.ghrobotics.frc2020.auto.routines.EightBallTrenchRoutine
-import org.ghrobotics.frc2020.auto.routines.FiveBallStealRoutine
-import org.ghrobotics.frc2020.auto.routines.LineCrossRoutine
+import org.ghrobotics.frc2020.auto.routines.DrivetrainCharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.ShooterCharacterizationRoutine
-import org.ghrobotics.frc2020.auto.routines.SixBallReverseTrenchRoutine
-import org.ghrobotics.frc2020.auto.routines.SixBallTrenchRoutine
-import org.ghrobotics.frc2020.auto.routines.TenBallStealRoutine
-import org.ghrobotics.frc2020.auto.routines.TestingRoutine
-import org.ghrobotics.frc2020.auto.routines.ThreeBallRoutine
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.lib.commands.sequential
 
@@ -37,24 +27,16 @@ object Autonomous {
     fun start() {
         // Start the auto mode based on what is selected.
         JUST = when (Network.autoModeSelector.selected) {
-            Mode.CHECK_SUBSYSTEMS -> CheckSubsystemsRoutine()
-            Mode.DRIVE_CHARACTERIZE -> DriveCharacterizationRoutine()
-            Mode.SHOOTER_CHARACTERIZE -> ShooterCharacterizationRoutine()
+            // Characterization Routines.
+            Mode.DRIVETRAIN_CHARACTERIZATION -> DrivetrainCharacterizationRoutine()
+            Mode.SHOOTER_CHARACTERIZATION -> ShooterCharacterizationRoutine()
 
-            Mode.TESTING -> TestingRoutine()
-            Mode.LINE_CROSS -> LineCrossRoutine()
-            Mode.THREE_BALL -> ThreeBallRoutine()
+            // Steal Routines.
+            Mode.STEAL_AND_SHOOT_FROM_INIT_LINE -> TODO()
+            Mode.STEAL_AND_SHOOT_FROM_PROTECTED_ZONE -> TODO()
 
-            Mode.FIVE_BALL_STEAL -> FiveBallStealRoutine()
-
-            Mode.SIX_BALL_TRENCH -> SixBallTrenchRoutine()
-            Mode.REVERSE_SIX_BALL_TRENCH -> SixBallReverseTrenchRoutine()
-            Mode.ASSIST_WITH_REVERSE_SIX_BALL_TRENCH -> SixBallReverseTrenchRoutine(pushOff = true)
-
-            Mode.EIGHT_BALL_TRENCH -> EightBallTrenchRoutine()
-            Mode.REVERSE_EIGHT_BALL_TRENCH -> EightBallReverseTrenchRoutine()
-
-            Mode.TEN_BALL_STEAL -> TenBallStealRoutine()
+            // Trench Routines.
+            Mode.TRENCH -> TODO()
 
             null -> DefaultRoutine()
         }.getRoutine()
@@ -71,24 +53,9 @@ object Autonomous {
      * Represents the various auto modes.
      */
     enum class Mode {
-        CHECK_SUBSYSTEMS,
-        DRIVE_CHARACTERIZE,
-        SHOOTER_CHARACTERIZE,
-
-        TESTING,
-        LINE_CROSS,
-        THREE_BALL,
-
-        FIVE_BALL_STEAL,
-
-        SIX_BALL_TRENCH,
-        REVERSE_SIX_BALL_TRENCH,
-        ASSIST_WITH_REVERSE_SIX_BALL_TRENCH,
-
-        EIGHT_BALL_TRENCH,
-        REVERSE_EIGHT_BALL_TRENCH,
-
-        TEN_BALL_STEAL
+        DRIVETRAIN_CHARACTERIZATION, SHOOTER_CHARACTERIZATION,
+        STEAL_AND_SHOOT_FROM_PROTECTED_ZONE, STEAL_AND_SHOOT_FROM_INIT_LINE,
+        TRENCH
     }
 
     @Suppress("FunctionName")

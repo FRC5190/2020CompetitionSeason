@@ -13,13 +13,14 @@ import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.geometry.Pose2d
-import org.ghrobotics.frc2020.TurretConstants
-import org.ghrobotics.frc2020.kIsRaceRobot
+import edu.wpi.first.wpilibj.geometry.Transform2d
+import kotlin.math.atan2
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
+import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
 import org.ghrobotics.lib.mathematics.units.amps
@@ -30,17 +31,17 @@ import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.radians
 import org.ghrobotics.lib.mathematics.units.derived.toRotation2d
 import org.ghrobotics.lib.mathematics.units.derived.volts
+import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
-import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
 import org.ghrobotics.lib.utils.InterpolatingTreeMapBuffer
 import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the turret on the robot.
  */
-object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
+object Turret : FalconSubsystem() {
 
     // Hardware
     private val master = FalconMAX(
@@ -61,6 +62,18 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
     private val buffer =
         InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(1.seconds) { Timer.getFPGATimestamp().seconds }
 
+    // Lambda that dictates the turret's default behavior.
+    val defaultBehavior: () -> SIUnit<Radian> = {
+        if (GoalTracker.isTrackingTargets) {
+            val turretToGoal = GoalTracker.latestTurretToGoal
+
+            // Calculate angle to goal.
+            SIUnit(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
+        } else {
+            -Drivetrain.getAngle()
+        }
+    }
+
     // Getters
     val speed get() = periodicIO.velocity
     val current get() = periodicIO.current
@@ -79,10 +92,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         }()
     }
 
-    fun getFieldRelativeAngle(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): SIUnit<Radian> {
-        val robotAngle = Drivetrain.getPose(timestamp).rotation.radians
-        return getAngle(timestamp) + SIUnit(robotAngle)
-    }
+    var distance: SIUnit<Meter> = 0.meters
+        private set
 
     /**
      * Returns the turret position with the robot's center as the origin of
@@ -92,8 +103,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      * @return The turret position with the robot's center as the origin of
      *         the coordinate frame at the specified timestamp.
      */
-    fun getRobotToTurret(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): Pose2d {
-        return Pose2d(TurretConstants.kTurretRelativeToRobotCenter, getAngle(timestamp).toRotation2d())
+    fun getRobotToTurret(timestamp: SIUnit<Second> = Timer.getFPGATimestamp().seconds): Transform2d {
+        return Transform2d(TurretConstants.kTurretRelativeToRobotCenter, getAngle(timestamp).toRotation2d())
     }
 
     // Status (zeroing or ready)
@@ -117,21 +128,25 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
 
             master.canSparkMax.setSoftLimit(
                 CANSparkMax.SoftLimitDirection.kReverse,
-                TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.start)
+                TurretConstants.kNativeUnitModel.toNativeUnitPosition(
+                    TurretConstants.kAcceptableRange.start
+                )
                     .value.toFloat()
             )
             master.canSparkMax.setSoftLimit(
                 CANSparkMax.SoftLimitDirection.kForward,
-                TurretConstants.kNativeUnitModel.toNativeUnitPosition(TurretConstants.kAcceptableRange.endInclusive)
-                    .value.toFloat()
+                TurretConstants.kNativeUnitModel.toNativeUnitPosition(
+                    TurretConstants.kAcceptableRange.endInclusive
+                ).value.toFloat()
             )
 
-            enableClosedLoopControl()
+            master.controller.p = TurretConstants.kP
+            master.controller.ff = TurretConstants.kF
         } else {
             println("Did not initialize Turret")
         }
 
-        defaultCommand = AlignOrFieldRelativeZeroCommand()
+        defaultCommand = TurretPositionCommand(defaultBehavior)
     }
 
     /**
@@ -139,7 +154,7 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
      */
     fun zero() {
         periodicIO.resetPosition = true
-        periodicIO.resetTo = if (kIsRaceRobot) 81.78.degrees else 211.39.degrees
+        periodicIO.resetTo = TurretConstants.kZeroLocation
         setStatus(Status.READY)
     }
 
@@ -193,17 +208,8 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
         master.brakeMode = brakeMode
     }
 
-    override fun enableClosedLoopControl() {
-        master.controller.p = TurretConstants.kP
-        master.controller.ff = TurretConstants.kF
-    }
-
-    override fun disableClosedLoopControl() {
-        master.controller.p = 0.0
-        master.controller.ff = 0.0
-    }
-
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             // Read sensor values.
             periodicIO.position = master.encoder.position
@@ -211,10 +217,9 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             periodicIO.voltage = master.voltageOutput
             periodicIO.current = master.drawnCurrent
 
-            periodicIO.hallEffect = !hallEffectSensor.get()
-
-            // Update the buffer.
             buffer[Timer.getFPGATimestamp().seconds] = periodicIO.position
+
+            periodicIO.hallEffect = !hallEffectSensor.get()
 
             if (periodicIO.resetPosition) {
                 periodicIO.resetPosition = false
@@ -231,6 +236,9 @@ object Turret : FalconSubsystem(), SensorlessCompatibleSubsystem {
             } else {
                 master.setNeutral()
             }
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Turret periodic() loop overrun.")
         }
     }
 

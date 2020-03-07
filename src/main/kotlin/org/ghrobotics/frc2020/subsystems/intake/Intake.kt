@@ -10,10 +10,9 @@ package org.ghrobotics.frc2020.subsystems.intake
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Solenoid
-import edu.wpi.first.wpilibj2.command.Command
-import org.ghrobotics.frc2020.IntakeConstants
-import org.ghrobotics.frc2020.IntakeConstants.kIntakePistonId
+import edu.wpi.first.wpilibj.Timer
 import org.ghrobotics.frc2020.kPCMId
+import org.ghrobotics.frc2020.subsystems.intake.IntakeConstants.kIntakePistonId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -66,6 +65,7 @@ object Intake : FalconSubsystem() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         if (isConnected) {
             periodicIO.voltage = intakeMaster.voltageOutput
             periodicIO.current = intakeMaster.drawnCurrent
@@ -76,6 +76,9 @@ object Intake : FalconSubsystem() {
                     intakeMaster.setNeutral()
                 is Output.Percent -> intakeMaster.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
             }
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Intake periodic() loop overrun.")
         }
     }
 
@@ -102,9 +105,5 @@ object Intake : FalconSubsystem() {
 
     fun resetPosition(position: SIUnit<NativeUnit>) {
         intakeMaster.encoder.resetPosition(position)
-    }
-
-    override fun checkSubsystem(): Command {
-        return TestIntakeCommand().withTimeout(3.0)
     }
 }

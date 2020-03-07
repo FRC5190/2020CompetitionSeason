@@ -12,8 +12,8 @@ import com.revrobotics.CANSparkMaxLowLevel
 import com.revrobotics.ColorSensorV3
 import edu.wpi.first.wpilibj.I2C
 import edu.wpi.first.wpilibj.Solenoid
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
-import org.ghrobotics.frc2020.FortuneWheelConstants
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Frac
@@ -87,22 +87,26 @@ object FortuneWheel : FalconSubsystem() {
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         // Update PeriodicIO variables
-        periodicIO.sensorColor = FortuneColor.getFortune(colorSensor.color)
-        periodicIO.rawColor = colorSensor.color
-        periodicIO.spinnerPosition = spinnerMotor.encoder.position
-        periodicIO.spinnerVelocity = spinnerMotor.encoder.velocity
-
-        // Do stuff
-        if (periodicIO.resetPosition) {
-            spinnerMotor.encoder.resetPosition(0.meters)
-            periodicIO.resetPosition = false
-        }
-
-        when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing -> spinnerMotor.setNeutral()
-            is Output.Percent -> spinnerMotor.setDutyCycle(desiredOutput.speed, 0.0.volts)
-            is Output.Position -> spinnerMotor.setPosition(desiredOutput.position, 0.0.volts)
+//        periodicIO.sensorColor = FortuneColor.getFortune(colorSensor.color)
+//        periodicIO.rawColor = colorSensor.color
+//        periodicIO.spinnerPosition = spinnerMotor.encoder.position
+//        periodicIO.spinnerVelocity = spinnerMotor.encoder.velocity
+//
+//        // Do stuff
+//        if (periodicIO.resetPosition) {
+//            spinnerMotor.encoder.resetPosition(0.meters)
+//            periodicIO.resetPosition = false
+//        }
+//
+//        when (val desiredOutput = periodicIO.desiredOutput) {
+//            is Output.Nothing -> spinnerMotor.setNeutral()
+//            is Output.Percent -> spinnerMotor.setDutyCycle(desiredOutput.speed, 0.0.volts)
+//            is Output.Position -> spinnerMotor.setPosition(desiredOutput.position, 0.0.volts)
+//        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("FortuneWheel periodic() loop overrun.")
         }
     }
 

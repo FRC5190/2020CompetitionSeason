@@ -9,7 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.hook
 
 import com.revrobotics.CANSparkMaxLowLevel
-import org.ghrobotics.frc2020.HookConstants
+import edu.wpi.first.wpilibj.Timer
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.Meter
@@ -47,10 +47,11 @@ object Hook : FalconSubsystem() {
         } else {
             println("Did not initialize Hook")
         }
-        defaultCommand = ManualHookCommand { 0.0 }
+        defaultCommand = HookPercentCommand { 0.0 }
     }
 
     override fun periodic() {
+        val now = Timer.getFPGATimestamp()
         periodicIO.voltage = masterMotor.voltageOutput
         periodicIO.current = masterMotor.drawnCurrent
 
@@ -59,6 +60,9 @@ object Hook : FalconSubsystem() {
                 masterMotor.setNeutral()
             is Output.Percent ->
                 masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("Hook periodic() loop overrun.")
         }
     }
 
