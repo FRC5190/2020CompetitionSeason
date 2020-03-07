@@ -7,7 +7,7 @@ object ShooterConstants {
     const val kMasterId = 6
     const val kSlaveId = 7
 
-    const val kGearRatio = 1.0 / 2.0
+    private const val kGearRatio = 1.0 / 2.0
 
     val kNativeUnitModel =
         NativeUnitRotationModel(kGearRatio.nativeUnits)
@@ -16,6 +16,6 @@ object ShooterConstants {
     const val kV = 0.01
     const val kA = 0.0
 
-    const val kP = 0.00025
+    const val kP = 0.00037
     const val kF = 0.0
 }

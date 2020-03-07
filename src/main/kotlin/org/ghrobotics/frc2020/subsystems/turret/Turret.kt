@@ -62,6 +62,18 @@ object Turret : FalconSubsystem() {
     private val buffer =
         InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(1.seconds) { Timer.getFPGATimestamp().seconds }
 
+    // Lambda that dictates the turret's default behavior.
+    val defaultBehavior: () -> SIUnit<Radian> = {
+        if (GoalTracker.isTrackingTargets) {
+            val turretToGoal = GoalTracker.latestTurretToGoal
+
+            // Calculate angle to goal.
+            SIUnit(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
+        } else {
+            -Drivetrain.getAngle()
+        }
+    }
+
     // Getters
     val speed get() = periodicIO.velocity
     val current get() = periodicIO.current
@@ -134,16 +146,7 @@ object Turret : FalconSubsystem() {
             println("Did not initialize Turret")
         }
 
-        defaultCommand = TurretPositionCommand {
-            if (GoalTracker.isTrackingTargets) {
-                val turretToGoal = GoalTracker.latestTurretToGoal
-
-                // Calculate angle to goal.
-                SIUnit(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
-            } else {
-                -Drivetrain.getAngle()
-            }
-        }
+        defaultCommand = TurretPositionCommand(defaultBehavior)
     }
 
     /**

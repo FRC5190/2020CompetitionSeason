@@ -31,7 +31,6 @@ import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.derived.inDegrees
 import org.ghrobotics.lib.mathematics.units.derived.rpm
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
@@ -45,8 +44,6 @@ import org.ghrobotics.lib.mathematics.units.seconds
 object Superstructure {
 
     // Constants
-    private const val kDefaultFeedRate = 0.70
-    private const val kMaxFeedRateShootingTime = 1.5
     private const val kDefaultIntakeSpeed = 0.9
 
     private val kShooterTolerance = 20.rpm
@@ -101,12 +98,10 @@ object Superstructure {
                         +parallel {
                             +WaitForDrivetrainToStopCommand()
                             +WaitUntilCommand {
-                                val shooter = (Shooter.velocity - shooterParams.speed).absoluteValue
-                                val hood = (Hood.angle - shooterParams.angle).absoluteValue
-                                println("Shooter: ${shooter.value}, Hood: ${hood.inDegrees()}, ST: ${kShooterTolerance.value}, HT: ${kHoodTolerance.value}")
-                                shooter < kShooterTolerance && hood < kHoodTolerance
+                                (Shooter.velocity - shooterParams.speed).absoluteValue < kShooterTolerance
+                                    && (Hood.angle - shooterParams.angle).absoluteValue < kHoodTolerance
                             }
-                        }
+                        }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
 
                         // Store locked turret angle.
                         +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
@@ -115,7 +110,6 @@ object Superstructure {
                         +parallel {
                             +TurretPositionCommand { lockedTurretAngle }
                             +FeederPercentCommand(lockedShooterParams.feedRate, 0.8)
-                                .withTimeout(lockedShooterParams.feedRate / kMaxFeedRateShootingTime)
                         }
                     }
                 )
@@ -151,12 +145,12 @@ object Superstructure {
                                 lockedShooterParams = ShooterPlanner[GoalTracker.latestTurretToGoalDistance]
                             })
                             +WaitUntilCommand {
-                                val shooter = (Shooter.velocity - lockedShooterParams.speed).absoluteValue
-                                val hood = (Hood.angle - lockedShooterParams.angle).absoluteValue
-                                println("Shooter: ${shooter.value}, Hood: ${hood.inDegrees()}, ST: ${kShooterTolerance.value}, HT: ${kHoodTolerance.value}")
-                                shooter < kShooterTolerance && hood < kHoodTolerance
+                                +WaitUntilCommand {
+                                    (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance
+                                        && (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
+                                }
                             }
-                        }
+                        }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
 
                         // Store locked turret angle.
                         +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
@@ -164,8 +158,7 @@ object Superstructure {
                         // Feed balls.
                         +parallel {
                             +TurretPositionCommand { lockedTurretAngle }
-                            +InstantCommand(Runnable { println("shooting now with ${lockedShooterParams.feedRate}") })
-                            +FeederPercentCommand({lockedShooterParams.feedRate}, {0.8})
+                            +FeederPercentCommand({ lockedShooterParams.feedRate }, { 0.8 })
                         }
                     }
                 )
