@@ -25,14 +25,14 @@ import org.ghrobotics.frc2020.subsystems.shooter.ShooterVelocityCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
 import org.ghrobotics.frc2020.vision.GoalTracker
-import org.ghrobotics.frc2020.vision.LimelightManager
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.derived.radians
+import org.ghrobotics.lib.mathematics.units.derived.inDegrees
+import org.ghrobotics.lib.mathematics.units.derived.rpm
 import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.operations.div
@@ -49,8 +49,8 @@ object Superstructure {
     private const val kMaxFeedRateShootingTime = 1.5
     private const val kDefaultIntakeSpeed = 0.9
 
-    private val kShooterTolerance = 10.radians / 1.seconds
-    private val kHoodTolerance = 0.5.degrees
+    private val kShooterTolerance = 20.rpm
+    private val kHoodTolerance = 0.8.degrees
 
     // Locking parameters
     private var lockedShooterParams = ShooterPlanner.ShooterParameters(SIUnit(0.0), SIUnit(0.0), 0.0)
@@ -101,8 +101,10 @@ object Superstructure {
                         +parallel {
                             +WaitForDrivetrainToStopCommand()
                             +WaitUntilCommand {
-                                (Shooter.velocity - shooterParams.speed).absoluteValue < kShooterTolerance &&
-                                    (Hood.angle - shooterParams.angle).absoluteValue < kHoodTolerance
+                                val shooter = (Shooter.velocity - shooterParams.speed).absoluteValue
+                                val hood = (Hood.angle - shooterParams.angle).absoluteValue
+                                println("Shooter: ${shooter.value}, Hood: ${hood.inDegrees()}, ST: ${kShooterTolerance.value}, HT: ${kHoodTolerance.value}")
+                                shooter < kShooterTolerance && hood < kHoodTolerance
                             }
                         }
 
@@ -146,11 +148,13 @@ object Superstructure {
                         +parallel {
                             +WaitForDrivetrainToStopCommand()
                             +InstantCommand(Runnable {
-                                lockedShooterParams = ShooterPlanner[LimelightManager.getDistanceToGoal()]
+                                lockedShooterParams = ShooterPlanner[GoalTracker.latestTurretToGoalDistance]
                             })
                             +WaitUntilCommand {
-                                (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
-                                    (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
+                                val shooter = (Shooter.velocity - lockedShooterParams.speed).absoluteValue
+                                val hood = (Hood.angle - lockedShooterParams.angle).absoluteValue
+                                println("Shooter: ${shooter.value}, Hood: ${hood.inDegrees()}, ST: ${kShooterTolerance.value}, HT: ${kHoodTolerance.value}")
+                                shooter < kShooterTolerance && hood < kHoodTolerance
                             }
                         }
 
@@ -160,8 +164,8 @@ object Superstructure {
                         // Feed balls.
                         +parallel {
                             +TurretPositionCommand { lockedTurretAngle }
-                            +FeederPercentCommand(lockedShooterParams.feedRate, 0.8)
-                                .withTimeout(lockedShooterParams.feedRate / kMaxFeedRateShootingTime)
+                            +InstantCommand(Runnable { println("shooting now with ${lockedShooterParams.feedRate}") })
+                            +FeederPercentCommand({lockedShooterParams.feedRate}, {0.8})
                         }
                     }
                 )

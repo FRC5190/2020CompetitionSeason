@@ -36,6 +36,7 @@ class FeederPercentCommand(
     }
 
     override fun execute() {
+        println(feederPercent())
         Feeder.setPercent(feederPercent(), bridgePercent())
     }
 

@@ -86,7 +86,7 @@ object Robot : FalconTimedRobot() {
 
     // Runs every 20 ms when robot is on
     override fun robotPeriodic() {
-        GoalTracker.update()
+        GoalTracker.periodic()
     }
 
     // Runs every 20 ms when autonomous is enabled

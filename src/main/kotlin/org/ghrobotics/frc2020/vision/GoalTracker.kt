@@ -8,6 +8,7 @@
 
 package org.ghrobotics.frc2020.vision
 
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
@@ -76,6 +77,7 @@ object GoalTracker : TargetTracker(
     }
 
     fun periodic() {
+        val now = Timer.getFPGATimestamp()
         super.update()
 
         // Get field-relative turret pose.
@@ -91,6 +93,9 @@ object GoalTracker : TargetTracker(
 
             // Calculate distance
             latestTurretToGoalDistance = SIUnit(latestTurretToGoal.translation.norm)
+        }
+        if (Timer.getFPGATimestamp() - now > 0.02) {
+            println("GoalTracker periodic() overrun")
         }
     }
 }

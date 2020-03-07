@@ -89,22 +89,22 @@ object FortuneWheel : FalconSubsystem() {
     override fun periodic() {
         val now = Timer.getFPGATimestamp()
         // Update PeriodicIO variables
-        periodicIO.sensorColor = FortuneColor.getFortune(colorSensor.color)
-        periodicIO.rawColor = colorSensor.color
-        periodicIO.spinnerPosition = spinnerMotor.encoder.position
-        periodicIO.spinnerVelocity = spinnerMotor.encoder.velocity
-
-        // Do stuff
-        if (periodicIO.resetPosition) {
-            spinnerMotor.encoder.resetPosition(0.meters)
-            periodicIO.resetPosition = false
-        }
-
-        when (val desiredOutput = periodicIO.desiredOutput) {
-            is Output.Nothing -> spinnerMotor.setNeutral()
-            is Output.Percent -> spinnerMotor.setDutyCycle(desiredOutput.speed, 0.0.volts)
-            is Output.Position -> spinnerMotor.setPosition(desiredOutput.position, 0.0.volts)
-        }
+//        periodicIO.sensorColor = FortuneColor.getFortune(colorSensor.color)
+//        periodicIO.rawColor = colorSensor.color
+//        periodicIO.spinnerPosition = spinnerMotor.encoder.position
+//        periodicIO.spinnerVelocity = spinnerMotor.encoder.velocity
+//
+//        // Do stuff
+//        if (periodicIO.resetPosition) {
+//            spinnerMotor.encoder.resetPosition(0.meters)
+//            periodicIO.resetPosition = false
+//        }
+//
+//        when (val desiredOutput = periodicIO.desiredOutput) {
+//            is Output.Nothing -> spinnerMotor.setNeutral()
+//            is Output.Percent -> spinnerMotor.setDutyCycle(desiredOutput.speed, 0.0.volts)
+//            is Output.Position -> spinnerMotor.setPosition(desiredOutput.position, 0.0.volts)
+//        }
         if (Timer.getFPGATimestamp() - now > 0.02) {
             println("FortuneWheel periodic() loop overrun.")
         }
