@@ -13,7 +13,7 @@ import org.junit.Test
 class PathTimingTest {
     @Test
     fun timeStealAuto() {
-        println("Steal Auto Protected: ${StealRoutine(true).getDuration()}")
-        println("Steal Auto Init Line: ${StealRoutine(false).getDuration()}")
+//        println("Steal Auto Protected: ${StealRoutine(true).getDuration()}")
+//        println("Steal Auto Init Line: ${StealRoutine(false).getDuration()}")
     }
 }
