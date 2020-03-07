@@ -14,6 +14,7 @@ import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.hood.Hood
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter
 import org.ghrobotics.frc2020.subsystems.turret.Turret
+import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.lib.mathematics.twodim.geometry.x_u
 import org.ghrobotics.lib.mathematics.twodim.geometry.y_u
 import org.ghrobotics.lib.mathematics.units.derived.inDegrees
@@ -83,7 +84,7 @@ object Network {
                 position(row = 2, column = 2)
                 size(width = 2, height = 1)
 
-                double("Distance") { Turret.distance.inInches() }
+                double("Distance") { GoalTracker.latestTurretToGoalDistance.inInches() }
             }
             booleanBox("Climb Mode", Robot::isClimbMode) {
                 position(row = 2, column = 6)

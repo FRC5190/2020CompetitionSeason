@@ -11,6 +11,7 @@ package org.ghrobotics.frc2020.subsystems.drivetrain
 import edu.wpi.first.wpilibj.GenericHID
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.lib.commands.FalconCommand
+import org.ghrobotics.lib.utils.withDeadband
 import org.ghrobotics.lib.wrappers.hid.getRawButton
 import org.ghrobotics.lib.wrappers.hid.getX
 import org.ghrobotics.lib.wrappers.hid.getY
@@ -26,8 +27,8 @@ class DrivetrainTeleopCommand : FalconCommand(Drivetrain) {
     }
 
     companion object {
-        val xSource = Controls.driverController.getY(GenericHID.Hand.kLeft)
-        val cSource = Controls.driverController.getX(GenericHID.Hand.kLeft)
+        val xSource = Controls.driverController.getY(GenericHID.Hand.kLeft).withDeadband(0.05)
+        val cSource = Controls.driverController.getX(GenericHID.Hand.kLeft).withDeadband(0.05)
         val qSource = Controls.driverController.getRawButton(kX)
     }
 }
