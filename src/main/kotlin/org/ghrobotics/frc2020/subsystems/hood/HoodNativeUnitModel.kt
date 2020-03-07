@@ -9,11 +9,9 @@
 package org.ghrobotics.frc2020.subsystems.hood
 
 import org.ghrobotics.lib.mathematics.units.SIUnit
-import org.ghrobotics.lib.mathematics.units.derived.Acceleration
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.Velocity
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnit
-import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitAcceleration
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitModel
 import org.ghrobotics.lib.mathematics.units.nativeunit.NativeUnitVelocity
 import org.ghrobotics.lib.mathematics.units.operations.div

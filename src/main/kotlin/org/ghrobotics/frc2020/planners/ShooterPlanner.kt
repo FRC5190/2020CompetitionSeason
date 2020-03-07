@@ -10,9 +10,9 @@
 
 package org.ghrobotics.frc2020.planners
 
+import java.util.Objects
 import org.ghrobotics.lib.mathematics.epsilonEquals
 import org.ghrobotics.lib.mathematics.lerp
-import java.util.Objects
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity

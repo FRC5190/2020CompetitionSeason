@@ -10,7 +10,6 @@ package org.ghrobotics.frc2020.comms
 
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.auto.Autonomous
-import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.hood.Hood
 import org.ghrobotics.frc2020.subsystems.shooter.Shooter

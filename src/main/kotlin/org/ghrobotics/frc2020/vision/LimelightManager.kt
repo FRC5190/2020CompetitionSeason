@@ -11,6 +11,10 @@ package org.ghrobotics.frc2020.vision
 import edu.wpi.first.wpilibj.MedianFilter
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Rotation2d
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.tan
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.lib.commands.FalconSubsystem
@@ -19,13 +23,8 @@ import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.inInches
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.seconds
-import kotlin.math.absoluteValue
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.tan
 
 /**
  * Manages the Limelight on the robot.
@@ -110,8 +109,8 @@ object LimelightManager : FalconSubsystem() {
         turretLimelight.update()
 
         // Handle switching of pipelines.
-        if (getSelectedPipeline() == kDefaultPipelineId
-            && pitchFilter.calculate(turretLimelight.pitch.value) < kSwitchToZoomedPipelineThresold.value &&
+        if (getSelectedPipeline() == kDefaultPipelineId &&
+            pitchFilter.calculate(turretLimelight.pitch.value) < kSwitchToZoomedPipelineThresold.value &&
                 yawFilter.calculate(turretLimelight.yaw.value).absoluteValue < kTxThreshold.value
         ) {
             // Zoom in if the zoomed pipeline can see the target.

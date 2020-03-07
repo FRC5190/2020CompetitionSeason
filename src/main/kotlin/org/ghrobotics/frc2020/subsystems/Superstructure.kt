@@ -98,8 +98,8 @@ object Superstructure {
                         +parallel {
                             +WaitForDrivetrainToStopCommand()
                             +WaitUntilCommand {
-                                (Shooter.velocity - shooterParams.speed).absoluteValue < kShooterTolerance
-                                    && (Hood.angle - shooterParams.angle).absoluteValue < kHoodTolerance
+                                (Shooter.velocity - shooterParams.speed).absoluteValue < kShooterTolerance &&
+                                    (Hood.angle - shooterParams.angle).absoluteValue < kHoodTolerance
                             }
                         }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
 
@@ -146,8 +146,8 @@ object Superstructure {
                             })
                             +WaitUntilCommand {
                                 +WaitUntilCommand {
-                                    (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance
-                                        && (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
+                                    (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
+                                        (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
                                 }
                             }
                         }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
