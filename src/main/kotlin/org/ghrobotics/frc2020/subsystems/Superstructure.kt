@@ -98,8 +98,8 @@ object Superstructure {
                     // Wait until drivetrain is stopped, shooter is at reference,
                     // and hood is at reference; then fire.
                     sequential {
+                        +WaitForDrivetrainToStopCommand().deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
                         +parallel {
-                            +WaitForDrivetrainToStopCommand()
                             +WaitUntilCommand {
                                 (Shooter.velocity - shooterParams.speed).absoluteValue < kShooterTolerance &&
                                     (Hood.angle - shooterParams.angle).absoluteValue < kHoodTolerance
@@ -155,10 +155,8 @@ object Superstructure {
                                 ready = true
                             })
                             +WaitUntilCommand {
-                                println((Shooter.velocity - lockedShooterParams.speed).value / 2 / Math.PI * 60)
                                 (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
                                     (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
-
                             }
                         }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
 
