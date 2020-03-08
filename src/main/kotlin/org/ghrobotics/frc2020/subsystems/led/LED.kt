@@ -111,6 +111,9 @@ object LED : FalconSubsystem() {
                 }
             }
 
+            // Rainbow when Superstructure is ready to fire.
+            Superstructure.readyToFire -> setRainbow()
+
             // Green when vision aligning.
             Superstructure.isAiming -> if (currentTime.inMilliseconds() % 250 > 125) {
                 setSolidColor(Color.kGreen)

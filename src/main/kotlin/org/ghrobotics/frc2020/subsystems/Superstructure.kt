@@ -36,6 +36,7 @@ import org.ghrobotics.lib.mathematics.units.inSeconds
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
+import org.ghrobotics.lib.utils.Source
 
 /**
  * Represents the overall superstructure of the robot, including the turret,
@@ -57,7 +58,7 @@ object Superstructure {
     var isAiming = false
         private set
 
-    var ready = false
+    var readyToFire = false
         private set
 
     /**
@@ -81,7 +82,7 @@ object Superstructure {
      * to a stop. This method uses a fixed distance to the goal, and is
      * therefore helpful for autonomous mode.
      */
-    fun scoreWhenStopped(distance: SIUnit<Meter>): Command =
+    fun scoreWhenStopped(distance: SIUnit<Meter>, readyToFire: Source<Boolean> = { true }): Command =
         object : ParallelCommandGroup() {
             // Get the shooter parameters for this distance.
             val shooterParams = ShooterPlanner[distance]
@@ -104,6 +105,7 @@ object Superstructure {
                                 (Shooter.velocity - shooterParams.speed).absoluteValue < kShooterTolerance &&
                                     (Hood.angle - shooterParams.angle).absoluteValue < kHoodTolerance
                             }
+                            +WaitUntilCommand(readyToFire)
                         }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
 
                         // Store locked turret angle.
@@ -128,7 +130,7 @@ object Superstructure {
      * Scores power cells into the high goal once the robot comes
      * to a stop.
      */
-    fun scoreWhenStopped(): Command =
+    fun scoreWhenStopped(readyToFire: Source<Boolean> = { true }): Command =
         object : ParallelCommandGroup() {
             init {
                 addCommands(
@@ -137,11 +139,11 @@ object Superstructure {
 
                     // Spin and shooter and move hood to desired angle.
                     ShooterVelocityCommand {
-                        if (!ready) ShooterPlanner[GoalTracker.latestTurretToGoalDistance].speed else
+                        if (!this@Superstructure.readyToFire) ShooterPlanner[GoalTracker.latestTurretToGoalDistance].speed else
                             lockedShooterParams.speed
                     },
                     HoodPositionCommand {
-                        if (!ready) ShooterPlanner[GoalTracker.latestTurretToGoalDistance].angle else
+                        if (!this@Superstructure.readyToFire) ShooterPlanner[GoalTracker.latestTurretToGoalDistance].angle else
                             lockedShooterParams.angle
                     },
 
@@ -152,12 +154,13 @@ object Superstructure {
                         +parallel {
                             +InstantCommand(Runnable {
                                 lockedShooterParams = ShooterPlanner[GoalTracker.latestTurretToGoalDistance]
-                                ready = true
+                                this@Superstructure.readyToFire = true
                             })
                             +WaitUntilCommand {
                                 (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
                                     (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
                             }
+                            +WaitUntilCommand(readyToFire)
                         }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
 
                         // Store locked turret angle.
@@ -175,7 +178,7 @@ object Superstructure {
             override fun end(interrupted: Boolean) {
                 super.end(interrupted)
                 isAiming = false
-                ready = false
+                this@Superstructure.readyToFire = false
             }
         }
 
