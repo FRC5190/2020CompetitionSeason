@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator
 import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.twodim.trajectory.FalconTrajectoryConfig
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
@@ -78,6 +79,21 @@ object TrajectoryManager {
 
     val singleRendezvousPickupToInitLineScoringLocation: Trajectory =
         generate(WaypointManager.kSingleRendezvousPickup, WaypointManager.kInitLineScoringLocation, kRevConfig)
+
+    val trenchStartToTrenchRendezvousPickup: Trajectory =
+        generate(WaypointManager.kTrenchStart, WaypointManager.kTrenchRendezvousPickup, kFwdConfig)
+
+    val trenchRendezvousPickupToIntermediate: Trajectory =
+        generate(WaypointManager.kTrenchRendezvousPickup, WaypointManager.kTrenchPickupIntermediate, kRevConfig)
+
+    val intermediateToTrenchPickup: Trajectory =
+        TrajectoryGenerator.generateTrajectory(
+            WaypointManager.kTrenchPickupIntermediate, listOf(Translation2d(36.22.feet, 2.48.feet)),
+            WaypointManager.kTrenchPickup, kFwdConfig
+        )
+
+    val trenchPickupToTrenchScoringLocation: Trajectory =
+        generate(WaypointManager.kTrenchPickup, WaypointManager.kTrenchScoringLocation, kRevConfig)
 
     /**
      * Generates a trajectory from a start and end waypoint.

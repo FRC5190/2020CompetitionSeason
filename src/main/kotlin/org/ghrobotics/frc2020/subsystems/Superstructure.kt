@@ -27,6 +27,7 @@ import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
 import org.ghrobotics.frc2020.vision.GoalTracker
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.commands.parallel
+import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -82,7 +83,11 @@ object Superstructure {
      * to a stop. This method uses a fixed distance to the goal, and is
      * therefore helpful for autonomous mode.
      */
-    fun scoreWhenStopped(distance: SIUnit<Meter>, readyToFire: Source<Boolean> = { true }): Command =
+    fun scoreWhenStopped(
+        distance: SIUnit<Meter>,
+        readyToFire: Source<Boolean> = { true },
+        feedTime: Double = 5.0
+    ): Command =
         object : ParallelCommandGroup() {
             // Get the shooter parameters for this distance.
             val shooterParams = ShooterPlanner[distance]
@@ -112,9 +117,8 @@ object Superstructure {
                         +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
 
                         // Feed balls.
-                        +parallel {
+                        +parallelDeadline(FeederPercentCommand(shooterParams.feedRate, 0.8).withTimeout(feedTime)) {
                             +TurretPositionCommand { lockedTurretAngle }
-                            +FeederPercentCommand(lockedShooterParams.feedRate, 0.8)
                         }
                     }
                 )
@@ -130,7 +134,7 @@ object Superstructure {
      * Scores power cells into the high goal once the robot comes
      * to a stop.
      */
-    fun scoreWhenStopped(readyToFire: Source<Boolean> = { true }): Command =
+    fun scoreWhenStopped(readyToFire: Source<Boolean> = { true }, feedTime: Double = 5.0): Command =
         object : ParallelCommandGroup() {
             init {
                 addCommands(
@@ -167,9 +171,10 @@ object Superstructure {
                         +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
 
                         // Feed balls.
-                        +parallel {
+                        +parallelDeadline(
+                            FeederPercentCommand({ lockedShooterParams.feedRate }, { 0.8 }).withTimeout(feedTime)
+                        ) {
                             +TurretPositionCommand { lockedTurretAngle }
-                            +FeederPercentCommand({ lockedShooterParams.feedRate }, { 0.8 })
                         }
                     }
                 )

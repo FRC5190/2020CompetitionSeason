@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
+import org.ghrobotics.lib.mathematics.units.Meter
+import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inches
 
@@ -51,6 +53,15 @@ object WaypointManager {
         y = 24.82.feet,
         angle = Rotation2d.fromDegrees(180.0)
     )
+    val kTrenchStart = Pose2d(
+        x = kInitiationLineX - kRobotLength / 2.0,
+        y = 2.18.feet,
+        angle = Rotation2d.fromDegrees(180.0)
+    )
+
+    val kGoalLocation = Pose2d(
+        x = kMaxFieldX, y = kGoalY, angle = Rotation2d()
+    )
 
     val kOpponentTrenchBalls = Pose2d(
         x = 34.00.feet, y = 24.82.feet, angle = Rotation2d.fromDegrees(181.0)
@@ -58,6 +69,14 @@ object WaypointManager {
 
     val kProtectedScoringLocation = Pose2d(
         x = 50.21.feet, y = 09.06.feet, angle = Rotation2d.fromDegrees(102.0)
+    )
+
+    val kTrenchScoringLocation = Pose2d(
+        x = 41.16.feet, y = 04.42.feet, angle = Rotation2d.fromDegrees(-159.0)
+    )
+
+    val kTrenchPickup = Pose2d(
+        x = 23.36.feet, y = 02.18.feet, angle = Rotation2d.fromDegrees(180.0)
     )
 
     val kInitLineScoringLocation = Pose2d(
@@ -75,4 +94,25 @@ object WaypointManager {
     val kSingleRendezvousPickup = Pose2d(
         x = 25.74.feet, y = 14.28.feet, angle = Rotation2d.fromDegrees(-157.0)
     )
+
+    val kTrenchRendezvousPickup = Pose2d(
+        x = 33.97.feet, y = 08.05.feet, angle = Rotation2d.fromDegrees(112.0)
+    )
+
+    val kTrenchPickupIntermediate = Pose2d(
+        x = 40.65.feet, y = 03.82.feet, angle = Rotation2d.fromDegrees(158.0)
+    )
+
+    // Distances
+    val kInitLineScoringDistance =
+        SIUnit<Meter>(kInitLineScoringLocation.translation.getDistance(kGoalLocation.translation))
+
+    val kProtectedScoringDistance =
+        SIUnit<Meter>(kProtectedScoringLocation.translation.getDistance(kGoalLocation.translation))
+
+    val kTrenchRedezvousScoringDistance =
+        SIUnit<Meter>(kTrenchRendezvousPickup.translation.getDistance(kGoalLocation.translation))
+
+    val kTrenchScoringDistance =
+        SIUnit<Meter>(kTrenchScoringLocation.translation.getDistance(kGoalLocation.translation))
 }
