@@ -29,9 +29,9 @@ object TrajectoryManager {
 
     // Constraints
     private val kMaxVelocity = 12.feet / 1.seconds
-    private val kMaxAcceleration = 12.feet / 1.seconds / 1.seconds
+    private val kMaxAcceleration = 10.feet / 1.seconds / 1.seconds
 
-    private val kMaxCentripetalAcceleration = 12.feet / 1.seconds / 1.seconds
+    private val kMaxCentripetalAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
 
     private val kCentripetalAccelerationConstraint =

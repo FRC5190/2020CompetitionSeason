@@ -11,7 +11,7 @@ package org.ghrobotics.frc2020.subsystems
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand
 import org.ghrobotics.frc2020.planners.ShooterPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
@@ -88,9 +88,35 @@ object Superstructure {
         readyToFire: Source<Boolean> = { true },
         feedTime: Double = 5.0
     ): Command =
-        object : ParallelCommandGroup() {
+        object : ParallelDeadlineGroup(
+            // Wait until drivetrain is stopped, shooter is at reference,
+            // and hood is at reference; then fire.
+            sequential {
+                +InstantCommand(Runnable { lockedShooterParams = ShooterPlanner[distance] })
+                +WaitForDrivetrainToStopCommand().deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
+                +parallel {
+                    +WaitUntilCommand {
+                        (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
+                            (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
+                    }.withTimeout(0.1)
+                    +WaitUntilCommand(readyToFire)
+                }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
+
+                // Store locked turret angle.
+                +InstantCommand(Runnable { lockedTurretAngle = GoalTracker.latestTurretAngleToFaceGoal })
+
+                // Feed balls.
+                +parallelDeadline(
+                    FeederPercentCommand(
+                        { lockedShooterParams.feedRate },
+                        { 0.8 }).withTimeout(feedTime)
+                ) {
+                    +TurretPositionCommand { lockedTurretAngle }
+                }
+            }
+        ) {
             // Get the shooter parameters for this distance.
-            val shooterParams = ShooterPlanner[distance]
+
 
             init {
                 addCommands(
@@ -98,29 +124,8 @@ object Superstructure {
                     InstantCommand(Runnable { isAiming = true }),
 
                     // Spin up shooter and move hood to desired angle.
-                    ShooterVelocityCommand(shooterParams.speed),
-                    HoodPositionCommand(shooterParams.angle),
-
-                    // Wait until drivetrain is stopped, shooter is at reference,
-                    // and hood is at reference; then fire.
-                    sequential {
-                        +WaitForDrivetrainToStopCommand().deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
-                        +parallel {
-                            +WaitUntilCommand {
-                                (Shooter.velocity - shooterParams.speed).absoluteValue < kShooterTolerance &&
-                                    (Hood.angle - shooterParams.angle).absoluteValue < kHoodTolerance
-                            }
-                            +WaitUntilCommand(readyToFire)
-                        }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
-
-                        // Store locked turret angle.
-                        +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
-
-                        // Feed balls.
-                        +parallelDeadline(FeederPercentCommand(shooterParams.feedRate, 0.8).withTimeout(feedTime)) {
-                            +TurretPositionCommand { lockedTurretAngle }
-                        }
-                    }
+                    ShooterVelocityCommand { lockedShooterParams.speed },
+                    HoodPositionCommand { lockedShooterParams.angle }
                 )
             }
 
@@ -135,7 +140,34 @@ object Superstructure {
      * to a stop.
      */
     fun scoreWhenStopped(readyToFire: Source<Boolean> = { true }, feedTime: Double = 5.0): Command =
-        object : ParallelCommandGroup() {
+        object : ParallelDeadlineGroup(
+            // Wait until drivetrain is stopped, shooter is at reference,
+            // and hood is at reference; then fire.
+            sequential {
+                +WaitForDrivetrainToStopCommand().deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
+                +parallel {
+                    +InstantCommand(Runnable {
+                        lockedShooterParams = ShooterPlanner[GoalTracker.latestTurretToGoalDistance]
+                        this@Superstructure.readyToFire = true
+                    })
+                    +WaitUntilCommand {
+                        (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
+                            (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
+                    }
+                    +WaitUntilCommand(readyToFire)
+                }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
+
+                // Store locked turret angle.
+                +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
+
+                // Feed balls.
+                +parallelDeadline(
+                    FeederPercentCommand({ lockedShooterParams.feedRate }, { 0.8 }).withTimeout(feedTime)
+                ) {
+                    +TurretPositionCommand { lockedTurretAngle }
+                }
+            }
+        ) {
             init {
                 addCommands(
                     // Set the isAiming flag.
@@ -149,33 +181,6 @@ object Superstructure {
                     HoodPositionCommand {
                         if (!this@Superstructure.readyToFire) ShooterPlanner[GoalTracker.latestTurretToGoalDistance].angle else
                             lockedShooterParams.angle
-                    },
-
-                    // Wait until drivetrain is stopped, shooter is at reference,
-                    // and hood is at reference; then fire.
-                    sequential {
-                        +WaitForDrivetrainToStopCommand().deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
-                        +parallel {
-                            +InstantCommand(Runnable {
-                                lockedShooterParams = ShooterPlanner[GoalTracker.latestTurretToGoalDistance]
-                                this@Superstructure.readyToFire = true
-                            })
-                            +WaitUntilCommand {
-                                (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
-                                    (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
-                            }
-                            +WaitUntilCommand(readyToFire)
-                        }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
-
-                        // Store locked turret angle.
-                        +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
-
-                        // Feed balls.
-                        +parallelDeadline(
-                            FeederPercentCommand({ lockedShooterParams.feedRate }, { 0.8 }).withTimeout(feedTime)
-                        ) {
-                            +TurretPositionCommand { lockedTurretAngle }
-                        }
                     }
                 )
             }
@@ -210,8 +215,8 @@ object Superstructure {
         override fun isFinished() = timer.hasPeriodPassed(kStopTimeThreshold.inSeconds())
 
         companion object {
-            private val kVelocityThreshold = 0.1.inches / 1.seconds
-            private val kStopTimeThreshold = 0.4.seconds
+            private val kVelocityThreshold = 0.3.inches / 1.seconds
+            private val kStopTimeThreshold = 0.2.seconds
         }
     }
 }

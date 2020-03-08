@@ -21,11 +21,13 @@ import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.hood.HoodConstants
 import org.ghrobotics.frc2020.subsystems.hood.HoodPositionCommand
 import org.ghrobotics.frc2020.subsystems.shooter.ShooterVelocityCommand
+import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.inches
 
 class TrenchRoutine : AutoRoutine {
 
@@ -44,26 +46,34 @@ class TrenchRoutine : AutoRoutine {
         // Follow path and intake.
         +parallel {
             +Drivetrain.followTrajectory(path1)
-            +TurretPositionCommand { (-112).degrees }
             +sequential {
-                +WaitCommand(0.5)
+                +TurretPositionCommand { -115.degrees }.withTimeout(0.5)
+                +TurretPositionCommand(Turret.defaultBehavior)
+            }
+            +sequential {
+                +WaitCommand(0.2)
                 +parallel {
                     +ShooterVelocityCommand(firstVolleyParameters.speed)
                     +HoodPositionCommand(firstVolleyParameters.angle)
                 }
             }
-        }.withTimeout(path1.totalTimeSeconds + 0.35)
+            +sequential {
+                +WaitCommand(path1.totalTimeSeconds - 0.3)
+                +Superstructure.intake()
+            }
+        }.withTimeout(path1.totalTimeSeconds + 0.85)
 
         // Shoot
-        +Superstructure.scoreWhenStopped(feedTime = 2.0)
+        +Superstructure.scoreWhenStopped(distance = WaypointManager.kTrenchRedezvousScoringDistance + 5.0.inches, feedTime = 2.3)
 
         // Go to intermediate.
         +Drivetrain.followTrajectory(path2)
 
         // Pickup balls.
         +parallelDeadline(Drivetrain.followTrajectory(path3)) {
+            +Superstructure.intake()
             +HoodPositionCommand { HoodConstants.kAcceptableRange.endInclusive - 0.2.degrees }
-            +TurretPositionCommand { 30.degrees }
+            +TurretPositionCommand { 210.degrees }
         }
 
         // Score balls.

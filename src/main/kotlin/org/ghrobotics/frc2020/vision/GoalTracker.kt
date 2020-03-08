@@ -17,8 +17,11 @@ import org.ghrobotics.frc2020.subsystems.turret.TurretConstants
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
+import org.ghrobotics.lib.mathematics.units.derived.Radian
+import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.vision.TargetTracker
+import kotlin.math.atan2
 
 /**
  * Uses the FalconLibrary TargetTracker class to track the 2020 high-goal
@@ -54,6 +57,8 @@ object GoalTracker : TargetTracker(
      */
     var latestTurretToGoalDistance: SIUnit<Meter> = 0.inches
         private set
+
+    var latestTurretAngleToFaceGoal: SIUnit<Radian> = 0.degrees
 
     /**
      * Returns the closest target to the given field-relative pose.
@@ -93,6 +98,9 @@ object GoalTracker : TargetTracker(
 
             // Calculate distance
             latestTurretToGoalDistance = SIUnit(latestTurretToGoal.translation.norm)
+
+            // Calculate angle
+            latestTurretAngleToFaceGoal = SIUnit(atan2(latestTurretToGoal.translation.y, latestTurretToGoal.translation.x))
         }
         if (Timer.getFPGATimestamp() - now > 0.02) {
             println("GoalTracker periodic() overrun")

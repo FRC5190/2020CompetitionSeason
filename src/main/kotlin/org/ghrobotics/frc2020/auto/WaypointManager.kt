@@ -13,6 +13,7 @@ package org.ghrobotics.frc2020.auto
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
+import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -72,7 +73,7 @@ object WaypointManager {
     )
 
     val kTrenchScoringLocation = Pose2d(
-        x = 41.16.feet, y = 04.42.feet, angle = Rotation2d.fromDegrees(-159.0)
+        x = 42.16.feet, y = 07.42.feet, angle = Rotation2d.fromDegrees(-159.0)
     )
 
     val kTrenchPickup = Pose2d(
@@ -97,7 +98,7 @@ object WaypointManager {
 
     val kTrenchRendezvousPickup = Pose2d(
         x = 33.97.feet, y = 08.05.feet, angle = Rotation2d.fromDegrees(112.0)
-    )
+    ) + Transform2d(-5.inches, 0.inches, Rotation2d.fromDegrees(0.0))
 
     val kTrenchPickupIntermediate = Pose2d(
         x = 40.65.feet, y = 03.82.feet, angle = Rotation2d.fromDegrees(158.0)

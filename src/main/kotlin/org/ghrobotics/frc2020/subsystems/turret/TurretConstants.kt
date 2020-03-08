@@ -35,7 +35,7 @@ object TurretConstants {
 
     val kS = 0.0.volts
 
-    const val kP = 1.10E-5
+    const val kP = 1.25E-5
     const val kF = 1.041667E-4
 
     val kMaxVelocity = 720.degrees / 1.seconds
