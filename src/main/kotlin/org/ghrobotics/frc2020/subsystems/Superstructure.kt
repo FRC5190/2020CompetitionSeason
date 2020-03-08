@@ -46,7 +46,7 @@ object Superstructure {
     // Constants
     private const val kDefaultIntakeSpeed = 0.9
 
-    private val kShooterTolerance = 20.rpm
+    private val kShooterTolerance = 30.rpm
     private val kHoodTolerance = 0.8.degrees
 
     // Locking parameters
@@ -55,6 +55,9 @@ object Superstructure {
 
     // States
     var isAiming = false
+        private set
+
+    var ready = false
         private set
 
     /**
@@ -95,8 +98,8 @@ object Superstructure {
                     // Wait until drivetrain is stopped, shooter is at reference,
                     // and hood is at reference; then fire.
                     sequential {
+                        +WaitForDrivetrainToStopCommand().deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
                         +parallel {
-                            +WaitForDrivetrainToStopCommand()
                             +WaitUntilCommand {
                                 (Shooter.velocity - shooterParams.speed).absoluteValue < kShooterTolerance &&
                                     (Hood.angle - shooterParams.angle).absoluteValue < kHoodTolerance
@@ -133,22 +136,27 @@ object Superstructure {
                     InstantCommand(Runnable { isAiming = true }),
 
                     // Spin and shooter and move hood to desired angle.
-                    ShooterVelocityCommand { ShooterPlanner[GoalTracker.latestTurretToGoalDistance].speed },
-                    HoodPositionCommand { ShooterPlanner[GoalTracker.latestTurretToGoalDistance].angle },
+                    ShooterVelocityCommand {
+                        if (!ready) ShooterPlanner[GoalTracker.latestTurretToGoalDistance].speed else
+                            lockedShooterParams.speed
+                    },
+                    HoodPositionCommand {
+                        if (!ready) ShooterPlanner[GoalTracker.latestTurretToGoalDistance].angle else
+                            lockedShooterParams.angle
+                    },
 
                     // Wait until drivetrain is stopped, shooter is at reference,
                     // and hood is at reference; then fire.
                     sequential {
+                        +WaitForDrivetrainToStopCommand().deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
                         +parallel {
-                            +WaitForDrivetrainToStopCommand()
                             +InstantCommand(Runnable {
                                 lockedShooterParams = ShooterPlanner[GoalTracker.latestTurretToGoalDistance]
+                                ready = true
                             })
                             +WaitUntilCommand {
-                                +WaitUntilCommand {
-                                    (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
-                                        (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
-                                }
+                                (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
+                                    (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
                             }
                         }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
 
@@ -167,6 +175,7 @@ object Superstructure {
             override fun end(interrupted: Boolean) {
                 super.end(interrupted)
                 isAiming = false
+                ready = false
             }
         }
 
@@ -194,7 +203,7 @@ object Superstructure {
 
         companion object {
             private val kVelocityThreshold = 0.1.inches / 1.seconds
-            private val kStopTimeThreshold = 0.2.seconds
+            private val kStopTimeThreshold = 0.4.seconds
         }
     }
 }

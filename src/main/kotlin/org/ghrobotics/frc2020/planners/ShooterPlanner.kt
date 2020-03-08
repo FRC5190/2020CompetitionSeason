@@ -32,11 +32,19 @@ object ShooterPlanner {
     private val map = InterpolatingTreeMap.createFromInterpolatable<Meter, ShooterParameters>()
 
     init {
-        map[79.36.inches] = ShooterParameters(4500.rpm, 41.5.degrees, 1.0)
-        map[110.7.inches] = ShooterParameters(5000.rpm, 31.5.degrees, 0.9)
-        map[153.0.inches] = ShooterParameters(5250.rpm, 25.0.degrees, 0.8)
-        map[239.0.inches] = ShooterParameters(6300.rpm, 18.0.degrees, 0.5)
-        map[290.9.inches] = ShooterParameters(6500.rpm, 11.0.degrees, 0.3)
+        map[75.inches] = ShooterParameters(4300.rpm, 41.5.degrees, 1.0)
+        map[88.5.inches] = ShooterParameters(4500.rpm, 37.5.degrees, 1.0)
+        map[110.inches] = ShooterParameters(4700.rpm, 32.5.degrees, 1.0)
+        map[128.3.inches] = ShooterParameters(4800.rpm, 29.0.degrees, 0.95)
+        map[141.8.inches] = ShooterParameters(5000.rpm, 26.degrees, 0.95)
+        map[163.6.inches] = ShooterParameters(5080.rpm, 23.5.degrees, 0.9)
+        map[192.1.inches] = ShooterParameters(5200.rpm, 20.5.degrees, 0.8)
+        map[204.7.inches] = ShooterParameters(5350.rpm, 18.5.degrees, 0.7)
+        map[236.1.inches] = ShooterParameters(5550.rpm, 16.5.degrees, 0.66)
+        map[270.7.inches] = ShooterParameters(5700.rpm, 13.5.degrees, 0.45)
+        map[285.inches] = ShooterParameters(5820.rpm, 13.0.degrees, 0.40)
+        map[305.inches] = ShooterParameters(6250.rpm, 11.0.degrees, 0.30)
+        map[320.inches] = ShooterParameters(6650.rpm, 10.5.degrees, 0.25)
     }
 
     /**
