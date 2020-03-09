@@ -65,10 +65,16 @@ object Turret : FalconSubsystem() {
     // Lambda that dictates the turret's default behavior.
     val defaultBehavior: () -> SIUnit<Radian> = {
         if (GoalTracker.isTrackingTargets) {
-            val turretToGoal = GoalTracker.latestTurretToGoal
+            GoalTracker.latestTurretAngleToFaceOuterGoal
+        } else {
+            -Drivetrain.getAngle()
+        }
+    }
 
-            // Calculate angle to goal.
-            SIUnit(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
+    val innerGoalBehavior: () -> SIUnit<Radian> = {
+        if (GoalTracker.isTrackingTargets) {
+            println("facing inner")
+            GoalTracker.latestTurretAngleToFaceInnerGoal
         } else {
             -Drivetrain.getAngle()
         }

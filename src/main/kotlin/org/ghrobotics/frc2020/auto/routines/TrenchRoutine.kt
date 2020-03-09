@@ -61,13 +61,13 @@ class TrenchRoutine : AutoRoutine {
                 +WaitCommand(path1.totalTimeSeconds - 0.3)
                 +Superstructure.intake()
             }
-        }.withTimeout(path1.totalTimeSeconds + 0.85)
-
-        // Shoot
-        +Superstructure.scoreWhenStopped(distance = WaypointManager.kTrenchRedezvousScoringDistance + 5.0.inches, feedTime = 2.3)
+        }.withTimeout(path1.totalTimeSeconds + 0.1)
 
         // Go to intermediate.
-        +Drivetrain.followTrajectory(path2)
+        +parallel {
+            +Drivetrain.followTrajectory(path2)
+            +Superstructure.scoreWhenStopped(distance = WaypointManager.kTrenchRedezvousScoringDistance, feedTime = 1.8)
+        }
 
         // Pickup balls.
         +parallelDeadline(Drivetrain.followTrajectory(path3)) {

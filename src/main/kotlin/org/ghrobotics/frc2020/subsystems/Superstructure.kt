@@ -103,7 +103,7 @@ object Superstructure {
                 }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
 
                 // Store locked turret angle.
-                +InstantCommand(Runnable { lockedTurretAngle = GoalTracker.latestTurretAngleToFaceGoal })
+                +InstantCommand(Runnable { lockedTurretAngle = GoalTracker.latestTurretAngleToFaceInnerGoal })
 
                 // Feed balls.
                 +parallelDeadline(
@@ -139,12 +139,16 @@ object Superstructure {
      * Scores power cells into the high goal once the robot comes
      * to a stop.
      */
-    fun scoreWhenStopped(readyToFire: Source<Boolean> = { true }, feedTime: Double = 5.0): Command =
+    fun scoreWhenStopped(
+        readyToFire: Source<Boolean> = { true },
+        feedTime: Double = 5.0,
+        aimToInner: Boolean = false
+    ): Command =
         object : ParallelDeadlineGroup(
             // Wait until drivetrain is stopped, shooter is at reference,
             // and hood is at reference; then fire.
             sequential {
-                +WaitForDrivetrainToStopCommand().deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
+                +WaitForDrivetrainToStopCommand().deadlineWith(TurretPositionCommand(if (aimToInner) Turret.innerGoalBehavior else Turret.defaultBehavior))
                 +parallel {
                     +InstantCommand(Runnable {
                         lockedShooterParams = ShooterPlanner[GoalTracker.latestTurretToGoalDistance]
@@ -155,10 +159,13 @@ object Superstructure {
                             (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
                     }
                     +WaitUntilCommand(readyToFire)
-                }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
+                }.deadlineWith(TurretPositionCommand(if (aimToInner) Turret.innerGoalBehavior else Turret.defaultBehavior))
 
                 // Store locked turret angle.
-                +InstantCommand(Runnable { lockedTurretAngle = Turret.getAngle() })
+                +InstantCommand(Runnable {
+                    lockedTurretAngle =
+                        if (aimToInner) GoalTracker.latestTurretAngleToFaceInnerGoal else GoalTracker.latestTurretAngleToFaceOuterGoal
+                })
 
                 // Feed balls.
                 +parallelDeadline(
@@ -215,7 +222,7 @@ object Superstructure {
         override fun isFinished() = timer.hasPeriodPassed(kStopTimeThreshold.inSeconds())
 
         companion object {
-            private val kVelocityThreshold = 0.3.inches / 1.seconds
+            private val kVelocityThreshold = 0.5.inches / 1.seconds
             private val kStopTimeThreshold = 0.2.seconds
         }
     }

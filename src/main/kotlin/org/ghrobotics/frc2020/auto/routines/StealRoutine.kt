@@ -9,8 +9,11 @@
 package org.ghrobotics.frc2020.auto.routines
 
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.auto.AutoRoutine
 import org.ghrobotics.frc2020.auto.TrajectoryManager
+import org.ghrobotics.frc2020.auto.WaypointManager
+import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.lib.commands.sequential
 
 class StealRoutine(private val shootFromProtected: Boolean = false) : AutoRoutine {
@@ -40,6 +43,13 @@ class StealRoutine(private val shootFromProtected: Boolean = false) : AutoRoutin
     }
 
     override fun getRoutine(): Command = sequential {
+        +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kStealStart) })
+        +Drivetrain.followTrajectory(path1)
+        +Drivetrain.followTrajectory(path2)
+        +Drivetrain.followTrajectory(path3)
+        +Drivetrain.followTrajectory(path4)
+        +Drivetrain.followTrajectory(path5)
+        +Drivetrain.followTrajectory(path6)
     }
 
     fun getDuration(): Double =

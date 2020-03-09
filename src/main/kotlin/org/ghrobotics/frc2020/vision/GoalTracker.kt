@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d
 import edu.wpi.first.wpilibj.geometry.Transform2d
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.turret.TurretConstants
+import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.Second
@@ -58,7 +59,11 @@ object GoalTracker : TargetTracker(
     var latestTurretToGoalDistance: SIUnit<Meter> = 0.inches
         private set
 
-    var latestTurretAngleToFaceGoal: SIUnit<Radian> = 0.degrees
+    var latestTurretAngleToFaceOuterGoal: SIUnit<Radian> = 0.degrees
+        private set
+
+    var latestTurretAngleToFaceInnerGoal: SIUnit<Radian> = 0.degrees
+        private set
 
     /**
      * Returns the closest target to the given field-relative pose.
@@ -93,14 +98,21 @@ object GoalTracker : TargetTracker(
         val fieldToGoal = getClosestTarget(fieldToTurret)
 
         if (fieldToGoal != null) {
+            // Get inner goal rotation
+            val fieldToInnerGoal = fieldToGoal.averagePose + Transform2d(29.inches, 0.inches, Rotation2d())
+
             // Get goal in turret coordinates.
             latestTurretToGoal = fieldToGoal.averagePose.relativeTo(fieldToTurret)
+            val turretToInnerGoal = fieldToInnerGoal.relativeTo(fieldToTurret)
 
             // Calculate distance
             latestTurretToGoalDistance = SIUnit(latestTurretToGoal.translation.norm)
 
             // Calculate angle
-            latestTurretAngleToFaceGoal = SIUnit(atan2(latestTurretToGoal.translation.y, latestTurretToGoal.translation.x))
+            latestTurretAngleToFaceOuterGoal =
+                SIUnit(atan2(latestTurretToGoal.translation.y, latestTurretToGoal.translation.x))
+            latestTurretAngleToFaceInnerGoal =
+                SIUnit(atan2(turretToInnerGoal.translation.y, turretToInnerGoal.translation.x))
         }
         if (Timer.getFPGATimestamp() - now > 0.02) {
             println("GoalTracker periodic() overrun")

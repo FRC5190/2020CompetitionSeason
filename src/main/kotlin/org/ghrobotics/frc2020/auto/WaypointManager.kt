@@ -73,7 +73,7 @@ object WaypointManager {
     )
 
     val kTrenchScoringLocation = Pose2d(
-        x = 42.16.feet, y = 07.42.feet, angle = Rotation2d.fromDegrees(-159.0)
+        x = 42.16.feet, y = 06.42.feet, angle = Rotation2d.fromDegrees(-159.0)
     )
 
     val kTrenchPickup = Pose2d(
@@ -85,7 +85,7 @@ object WaypointManager {
     )
 
     val kDoubleRendezvousPickup = Pose2d(
-        x = 31.15.feet, y = 19.94.feet, angle = Rotation2d.fromDegrees(-157.0)
+        x = 35.34.feet, y = 14.94.feet, angle = Rotation2d.fromDegrees(-157.0)
     )
 
     val kRendezvousPickupIntermediate = Pose2d(
@@ -93,7 +93,7 @@ object WaypointManager {
     )
 
     val kSingleRendezvousPickup = Pose2d(
-        x = 25.74.feet, y = 14.28.feet, angle = Rotation2d.fromDegrees(-157.0)
+        x = 36.35.feet, y = 13.50.feet, angle = Rotation2d.fromDegrees(-157.0)
     )
 
     val kTrenchRendezvousPickup = Pose2d(
@@ -112,7 +112,7 @@ object WaypointManager {
         SIUnit<Meter>(kProtectedScoringLocation.translation.getDistance(kGoalLocation.translation))
 
     val kTrenchRedezvousScoringDistance =
-        SIUnit<Meter>(kTrenchRendezvousPickup.translation.getDistance(kGoalLocation.translation))
+        SIUnit<Meter>(kTrenchPickupIntermediate.translation.getDistance(kGoalLocation.translation))
 
     val kTrenchScoringDistance =
         SIUnit<Meter>(kTrenchScoringLocation.translation.getDistance(kGoalLocation.translation))

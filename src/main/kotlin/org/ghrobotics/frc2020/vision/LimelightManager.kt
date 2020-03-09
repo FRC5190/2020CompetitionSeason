@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.vision
 
 import edu.wpi.first.wpilibj.MedianFilter
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import kotlin.math.absoluteValue
 import kotlin.math.cos
@@ -137,7 +138,7 @@ object LimelightManager : FalconSubsystem() {
                 Turret.getRobotToTurret(timestamp) + VisionConstants.kTurretToCamera + cameraToGoal
 
             // Add goal pose to GoalTracker.
-            GoalTracker.addSample(timestamp, fieldToGoal)
+            GoalTracker.addSample(timestamp, Pose2d(fieldToGoal.translation, Rotation2d()))
         }
     }
 }
