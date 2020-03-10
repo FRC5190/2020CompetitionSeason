@@ -10,6 +10,7 @@
 
 package org.ghrobotics.frc2020.auto
 
+import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
@@ -96,9 +97,9 @@ object WaypointManager {
         x = 36.35.feet, y = 13.50.feet, angle = Rotation2d.fromDegrees(-157.0)
     )
 
-    val kTrenchRendezvousPickup = Pose2d(
+    val kTrenchRendezvousPickup: Pose2d = Pose2d(
         x = 33.97.feet, y = 08.05.feet, angle = Rotation2d.fromDegrees(112.0)
-    ) + Transform2d(-5.inches, 0.inches, Rotation2d.fromDegrees(0.0))
+    ) + Transform2d((-5).inches, (-3).inches, Rotation2d.fromDegrees(0.0))
 
     val kTrenchPickupIntermediate = Pose2d(
         x = 40.65.feet, y = 03.82.feet, angle = Rotation2d.fromDegrees(158.0)
@@ -111,7 +112,7 @@ object WaypointManager {
     val kProtectedScoringDistance =
         SIUnit<Meter>(kProtectedScoringLocation.translation.getDistance(kGoalLocation.translation))
 
-    val kTrenchRedezvousScoringDistance =
+    val kTrenchRendezvousScoringDistance =
         SIUnit<Meter>(kTrenchPickupIntermediate.translation.getDistance(kGoalLocation.translation))
 
     val kTrenchScoringDistance =

@@ -21,13 +21,11 @@ import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.hood.HoodConstants
 import org.ghrobotics.frc2020.subsystems.hood.HoodPositionCommand
 import org.ghrobotics.frc2020.subsystems.shooter.ShooterVelocityCommand
-import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.derived.degrees
-import org.ghrobotics.lib.mathematics.units.inches
 
 class TrenchRoutine : AutoRoutine {
 
@@ -37,36 +35,35 @@ class TrenchRoutine : AutoRoutine {
     private val path3 = TrajectoryManager.intermediateToTrenchPickup
     private val path4 = TrajectoryManager.trenchPickupToTrenchScoringLocation
 
-    private val firstVolleyParameters = ShooterPlanner[WaypointManager.kTrenchRedezvousScoringDistance]
+    private val firstVolleyParameters = ShooterPlanner[WaypointManager.kTrenchRendezvousScoringDistance]
 
     override fun getRoutine(): Command = sequential {
         // Reset odometry.
         +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kTrenchStart) })
 
         // Follow path and intake.
-        +parallel {
-            +Drivetrain.followTrajectory(path1)
-            +sequential {
-                +TurretPositionCommand { -115.degrees }.withTimeout(0.5)
-                +TurretPositionCommand(Turret.defaultBehavior)
-            }
-            +sequential {
-                +WaitCommand(0.2)
-                +parallel {
-                    +ShooterVelocityCommand(firstVolleyParameters.speed)
-                    +HoodPositionCommand(firstVolleyParameters.angle)
-                }
-            }
+        +parallelDeadline(Drivetrain.followTrajectory(path1)) {
+            +TurretPositionCommand { (-115).degrees }
             +sequential {
                 +WaitCommand(path1.totalTimeSeconds - 0.3)
                 +Superstructure.intake()
-            }
-        }.withTimeout(path1.totalTimeSeconds + 0.1)
 
-        // Go to intermediate.
+            }
+        }
+
+        // Go to intermediate and score.
         +parallel {
             +Drivetrain.followTrajectory(path2)
-            +Superstructure.scoreWhenStopped(distance = WaypointManager.kTrenchRedezvousScoringDistance, feedTime = 1.8)
+            +sequential {
+                +parallelDeadline(Superstructure.intake().withTimeout(1.0)) {
+                    +ShooterVelocityCommand(firstVolleyParameters.speed)
+                    +HoodPositionCommand(firstVolleyParameters.angle)
+                }
+                +Superstructure.scoreWhenStopped(
+                    distance = WaypointManager.kTrenchRendezvousScoringDistance,
+                    feedTime = 1.8
+                )
+            }
         }
 
         // Pickup balls.
@@ -80,7 +77,11 @@ class TrenchRoutine : AutoRoutine {
         +parallel {
             +Drivetrain.followTrajectory(path4)
             +sequential {
-                +WaitUntilCommand { !WaypointManager.kControlPanelRegion.contains(Drivetrain.getPose().translation) }
+                +parallelDeadline(WaitUntilCommand {
+                    !WaypointManager.kControlPanelRegion.contains(Drivetrain.getPose().translation)
+                }) {
+                    +Superstructure.intake()
+                }
                 +Superstructure.scoreWhenStopped(distance = WaypointManager.kTrenchScoringDistance, feedTime = 2.5)
             }
         }

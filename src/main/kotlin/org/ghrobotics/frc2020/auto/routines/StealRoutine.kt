@@ -13,8 +13,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand
 import org.ghrobotics.frc2020.auto.AutoRoutine
 import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.auto.WaypointManager
+import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
+import org.ghrobotics.lib.commands.parallel
+import org.ghrobotics.lib.commands.parallelDeadline
 import org.ghrobotics.lib.commands.sequential
+import org.ghrobotics.lib.mathematics.units.derived.degrees
 
 class StealRoutine(private val shootFromProtected: Boolean = false) : AutoRoutine {
 
@@ -43,13 +48,52 @@ class StealRoutine(private val shootFromProtected: Boolean = false) : AutoRoutin
     }
 
     override fun getRoutine(): Command = sequential {
+        // Reset odometry.
         +InstantCommand(Runnable { Drivetrain.resetPosition(WaypointManager.kStealStart) })
-        +Drivetrain.followTrajectory(path1)
-        +Drivetrain.followTrajectory(path2)
-        +Drivetrain.followTrajectory(path3)
-        +Drivetrain.followTrajectory(path4)
-        +Drivetrain.followTrajectory(path5)
-        +Drivetrain.followTrajectory(path6)
+
+        // Pickup balls.
+        +parallelDeadline(Drivetrain.followTrajectory(path1)) {
+            +Superstructure.intake()
+        }
+
+        // Score from specified location.
+        +parallel {
+            +Drivetrain.followTrajectory(path2)
+            +sequential {
+                +parallel {
+                    +TurretPositionCommand { 150.degrees }
+                    +Superstructure.intake()
+                }.withTimeout(path2.totalTimeSeconds - 1.5)
+                +Superstructure.scoreWhenStopped(
+                    distance = if (shootFromProtected) WaypointManager.kInitLineScoringDistance else
+                        WaypointManager.kProtectedScoringDistance, feedTime = 1.8
+                )
+            }
+        }
+
+        // Pickup three other balls.
+        +parallelDeadline(sequential {
+            +Drivetrain.followTrajectory(path3)
+            +Drivetrain.followTrajectory(path4)
+            +Drivetrain.followTrajectory(path5)
+        }) {
+            +Superstructure.intake()
+        }
+
+        // Score from specified location.
+        +parallel {
+            +Drivetrain.followTrajectory(path6)
+            +sequential {
+                +parallel {
+                    +TurretPositionCommand { 150.degrees }
+                    +Superstructure.intake()
+                }.withTimeout(1.0)
+                +Superstructure.scoreWhenStopped(
+                    distance = if (shootFromProtected) WaypointManager.kInitLineScoringDistance else
+                        WaypointManager.kProtectedScoringDistance, feedTime = 1.8
+                )
+            }
+        }
     }
 
     fun getDuration(): Double =
