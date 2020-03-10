@@ -50,6 +50,9 @@ object Controls {
             // Left bumper to intake power cells.
             button(kBumperLeft).change(Superstructure.intake())
 
+            // Left trigger to exhaust balls through the feeder.
+            triggerAxisButton(GenericHID.Hand.kLeft, threshold = 0.04).change(Superstructure.release())
+
             // POV 0 to force turret field-relative zero.
             pov(0).change(TurretPositionCommand { -Drivetrain.getAngle() })
 
