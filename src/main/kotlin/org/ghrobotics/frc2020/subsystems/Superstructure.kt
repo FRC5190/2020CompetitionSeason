@@ -46,7 +46,7 @@ import org.ghrobotics.lib.utils.Source
 object Superstructure {
 
     // Constants
-    private const val kDefaultIntakeSpeed = 0.9
+    private const val kDefaultIntakeSpeed = 1.0
 
     private val kShooterTolerance = 30.rpm
     private val kHoodTolerance = 0.8.degrees

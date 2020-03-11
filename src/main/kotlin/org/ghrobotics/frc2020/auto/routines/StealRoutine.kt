@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.auto.routines
 
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.ghrobotics.frc2020.auto.AutoRoutine
 import org.ghrobotics.frc2020.auto.TrajectoryManager
 import org.ghrobotics.frc2020.auto.WaypointManager
@@ -72,12 +73,20 @@ class StealRoutine(private val shootFromProtected: Boolean = false) : AutoRoutin
         }
 
         // Pickup three other balls.
-        +parallelDeadline(sequential {
-            +Drivetrain.followTrajectory(path3)
-            +Drivetrain.followTrajectory(path4)
-            +Drivetrain.followTrajectory(path5)
-        }) {
-            +Superstructure.intake()
+        +parallelDeadline(Drivetrain.followTrajectory(path3)) {
+            +sequential {
+                +WaitCommand(path3.totalTimeSeconds - 0.3)
+                +Superstructure.intake()
+            }
+        }
+
+        +Drivetrain.followTrajectory(path4).deadlineWith(Superstructure.intake())
+        // Pickup three other balls.
+        +parallelDeadline(Drivetrain.followTrajectory(path5)) {
+            +sequential {
+                +WaitCommand(path5.totalTimeSeconds - 0.3)
+                +Superstructure.intake()
+            }
         }
 
         // Score from specified location.

@@ -35,7 +35,7 @@ class FeederPositionCommand : FalconCommand(Feeder) {
         }
 
         if (Feeder.exitSensorTriggered) {
-//            Feeder.setExitPiston(true)
+            Feeder.setExitPiston(true)
         }
     }
 

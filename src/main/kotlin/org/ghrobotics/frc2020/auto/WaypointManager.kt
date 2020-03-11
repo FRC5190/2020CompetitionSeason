@@ -51,7 +51,7 @@ object WaypointManager {
 
     // Waypoints
     val kStealStart = Pose2d(
-        x = kInitiationLineX - kRobotLength / 2.0,
+        x = kInitiationLineX - kRobotLength / 2.0 - 39.inches,
         y = 24.82.feet,
         angle = Rotation2d.fromDegrees(180.0)
     )
@@ -78,31 +78,31 @@ object WaypointManager {
     )
 
     val kTrenchPickup = Pose2d(
-        x = 23.36.feet, y = 02.18.feet, angle = Rotation2d.fromDegrees(180.0)
+        x = 22.36.feet, y = 02.18.feet, angle = Rotation2d.fromDegrees(180.0)
     )
 
     val kInitLineScoringLocation = Pose2d(
         x = 42.54.feet, y = 11.20.feet, angle = Rotation2d.fromDegrees(132.0)
     )
 
-    val kDoubleRendezvousPickup = Pose2d(
+    val kDoubleRendezvousPickup: Pose2d = Pose2d(
         x = 35.34.feet, y = 14.94.feet, angle = Rotation2d.fromDegrees(-157.0)
-    )
+    ) + Transform2d((-2).inches, 0.inches, Rotation2d.fromDegrees(0.0))
 
     val kRendezvousPickupIntermediate = Pose2d(
         x = 39.03.feet, y = 14.28.feet, angle = Rotation2d.fromDegrees(-157.0)
     )
 
-    val kSingleRendezvousPickup = Pose2d(
+    val kSingleRendezvousPickup: Pose2d = Pose2d(
         x = 36.35.feet, y = 13.50.feet, angle = Rotation2d.fromDegrees(-157.0)
-    )
+    ) + Transform2d((-2).inches, 0.inches, Rotation2d.fromDegrees(0.0))
 
     val kTrenchRendezvousPickup: Pose2d = Pose2d(
         x = 33.97.feet, y = 08.05.feet, angle = Rotation2d.fromDegrees(112.0)
     ) + Transform2d((-5).inches, (-3).inches, Rotation2d.fromDegrees(0.0))
 
     val kTrenchPickupIntermediate = Pose2d(
-        x = 40.65.feet, y = 03.82.feet, angle = Rotation2d.fromDegrees(158.0)
+        x = 40.65.feet, y = 04.52.feet, angle = Rotation2d.fromDegrees(158.0)
     )
 
     // Distances

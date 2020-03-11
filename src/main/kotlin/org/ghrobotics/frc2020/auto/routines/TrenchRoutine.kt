@@ -47,7 +47,6 @@ class TrenchRoutine : AutoRoutine {
             +sequential {
                 +WaitCommand(path1.totalTimeSeconds - 0.3)
                 +Superstructure.intake()
-
             }
         }
 
@@ -55,7 +54,7 @@ class TrenchRoutine : AutoRoutine {
         +parallel {
             +Drivetrain.followTrajectory(path2)
             +sequential {
-                +parallelDeadline(Superstructure.intake().withTimeout(1.0)) {
+                +parallelDeadline(Superstructure.intake().withTimeout(1.5)) {
                     +ShooterVelocityCommand(firstVolleyParameters.speed)
                     +HoodPositionCommand(firstVolleyParameters.angle)
                 }
@@ -77,10 +76,14 @@ class TrenchRoutine : AutoRoutine {
         +parallel {
             +Drivetrain.followTrajectory(path4)
             +sequential {
-                +parallelDeadline(WaitUntilCommand {
-                    !WaypointManager.kControlPanelRegion.contains(Drivetrain.getPose().translation)
+                +parallelDeadline(sequential {
+                    +WaitUntilCommand {
+                        !WaypointManager.kControlPanelRegion.contains(Drivetrain.getPose().translation)
+                    }
+                    +WaitCommand(2.0)
                 }) {
                     +Superstructure.intake()
+                    +TurretPositionCommand { 160.degrees }
                 }
                 +Superstructure.scoreWhenStopped(distance = WaypointManager.kTrenchScoringDistance, feedTime = 2.5)
             }

@@ -84,11 +84,11 @@ object TrajectoryManager {
         generate(WaypointManager.kTrenchStart, WaypointManager.kTrenchRendezvousPickup, kFwdConfig)
 
     val trenchRendezvousPickupToIntermediate: Trajectory =
-        generate(WaypointManager.kTrenchRendezvousPickup, WaypointManager.kTrenchPickupIntermediate, kRevConfig)
+        generate(WaypointManager.kTrenchRendezvousPickup, WaypointManager.kTrenchScoringLocation, kRevConfig)
 
     val intermediateToTrenchPickup: Trajectory =
         TrajectoryGenerator.generateTrajectory(
-            WaypointManager.kTrenchPickupIntermediate, listOf(Translation2d(36.22.feet, 2.48.feet)),
+            WaypointManager.kTrenchPickupIntermediate, listOf(Translation2d(36.22.feet, 2.99.feet)),
             WaypointManager.kTrenchPickup, kFwdConfig
         )
 
