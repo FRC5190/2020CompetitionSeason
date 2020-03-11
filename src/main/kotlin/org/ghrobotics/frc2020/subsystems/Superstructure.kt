@@ -98,7 +98,7 @@ object Superstructure {
                     +WaitUntilCommand {
                         (Shooter.velocity - lockedShooterParams.speed).absoluteValue < kShooterTolerance &&
                             (Hood.angle - lockedShooterParams.angle).absoluteValue < kHoodTolerance
-                    }.withTimeout(0.1)
+                    }.withTimeout(0.01)
                     +WaitUntilCommand(readyToFire)
                 }.deadlineWith(TurretPositionCommand(Turret.defaultBehavior))
 
@@ -222,7 +222,7 @@ object Superstructure {
         override fun isFinished() = timer.hasPeriodPassed(kStopTimeThreshold.inSeconds())
 
         companion object {
-            private val kVelocityThreshold = 0.5.inches / 1.seconds
+            private val kVelocityThreshold = 2.5.inches / 1.seconds
             private val kStopTimeThreshold = 0.2.seconds
         }
     }

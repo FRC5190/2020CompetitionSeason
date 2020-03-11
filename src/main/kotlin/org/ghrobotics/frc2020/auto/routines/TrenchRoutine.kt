@@ -43,7 +43,7 @@ class TrenchRoutine : AutoRoutine {
 
         // Follow path and intake.
         +parallelDeadline(Drivetrain.followTrajectory(path1)) {
-            +TurretPositionCommand { (-115).degrees }
+            +TurretPositionCommand { 180.degrees }
             +sequential {
                 +WaitCommand(path1.totalTimeSeconds - 0.3)
                 +Superstructure.intake()

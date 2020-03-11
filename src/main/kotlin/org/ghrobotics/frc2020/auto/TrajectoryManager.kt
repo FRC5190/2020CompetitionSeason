@@ -88,7 +88,7 @@ object TrajectoryManager {
 
     val intermediateToTrenchPickup: Trajectory =
         TrajectoryGenerator.generateTrajectory(
-            WaypointManager.kTrenchPickupIntermediate, listOf(Translation2d(36.22.feet, 2.99.feet)),
+            WaypointManager.kTrenchScoringLocation, listOf(Translation2d(36.22.feet, 2.99.feet)),
             WaypointManager.kTrenchPickup, kFwdConfig
         )
 

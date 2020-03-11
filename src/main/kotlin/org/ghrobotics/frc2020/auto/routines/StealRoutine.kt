@@ -62,9 +62,9 @@ class StealRoutine(private val shootFromProtected: Boolean = false) : AutoRoutin
             +Drivetrain.followTrajectory(path2)
             +sequential {
                 +parallel {
-                    +TurretPositionCommand { 150.degrees }
+                    +TurretPositionCommand { 240.degrees }
                     +Superstructure.intake()
-                }.withTimeout(path2.totalTimeSeconds - 1.5)
+                }.withTimeout(path2.totalTimeSeconds - 2.0)
                 +Superstructure.scoreWhenStopped(
                     distance = if (shootFromProtected) WaypointManager.kInitLineScoringDistance else
                         WaypointManager.kProtectedScoringDistance, feedTime = 1.8

@@ -87,7 +87,7 @@ object WaypointManager {
 
     val kDoubleRendezvousPickup: Pose2d = Pose2d(
         x = 35.34.feet, y = 14.94.feet, angle = Rotation2d.fromDegrees(-157.0)
-    ) + Transform2d((-2).inches, 0.inches, Rotation2d.fromDegrees(0.0))
+    ) + Transform2d((-8).inches, 0.inches, Rotation2d.fromDegrees(0.0))
 
     val kRendezvousPickupIntermediate = Pose2d(
         x = 39.03.feet, y = 14.28.feet, angle = Rotation2d.fromDegrees(-157.0)
@@ -95,7 +95,7 @@ object WaypointManager {
 
     val kSingleRendezvousPickup: Pose2d = Pose2d(
         x = 36.35.feet, y = 13.50.feet, angle = Rotation2d.fromDegrees(-157.0)
-    ) + Transform2d((-2).inches, 0.inches, Rotation2d.fromDegrees(0.0))
+    ) + Transform2d((-8).inches, 0.inches, Rotation2d.fromDegrees(0.0))
 
     val kTrenchRendezvousPickup: Pose2d = Pose2d(
         x = 33.97.feet, y = 08.05.feet, angle = Rotation2d.fromDegrees(112.0)
