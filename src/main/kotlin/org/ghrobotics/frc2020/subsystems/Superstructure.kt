@@ -117,7 +117,6 @@ object Superstructure {
         ) {
             // Get the shooter parameters for this distance.
 
-
             init {
                 addCommands(
                     // Set the isAiming flag.

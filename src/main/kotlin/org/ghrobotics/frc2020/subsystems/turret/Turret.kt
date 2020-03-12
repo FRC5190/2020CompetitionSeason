@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Transform2d
-import kotlin.math.atan2
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.vision.GoalTracker
