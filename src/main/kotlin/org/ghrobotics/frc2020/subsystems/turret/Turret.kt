@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Transform2d
-import kotlin.math.atan2
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.vision.GoalTracker
@@ -65,10 +64,16 @@ object Turret : FalconSubsystem() {
     // Lambda that dictates the turret's default behavior.
     val defaultBehavior: () -> SIUnit<Radian> = {
         if (GoalTracker.isTrackingTargets) {
-            val turretToGoal = GoalTracker.latestTurretToGoal
+            GoalTracker.latestTurretAngleToFaceOuterGoal
+        } else {
+            -Drivetrain.getAngle()
+        }
+    }
 
-            // Calculate angle to goal.
-            SIUnit(atan2(turretToGoal.translation.y, turretToGoal.translation.x))
+    val innerGoalBehavior: () -> SIUnit<Radian> = {
+        if (GoalTracker.isTrackingTargets) {
+            println("facing inner")
+            GoalTracker.latestTurretAngleToFaceInnerGoal
         } else {
             -Drivetrain.getAngle()
         }

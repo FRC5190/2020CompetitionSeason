@@ -16,4 +16,9 @@ class PathTimingTest {
 //        println("Steal Auto Protected: ${StealRoutine(true).getDuration()}")
 //        println("Steal Auto Init Line: ${StealRoutine(false).getDuration()}")
     }
+
+    @Test
+    fun timeTrenchAuto() {
+        println("Trench Auto: ${TrenchRoutine().getPathDuration()}")
+    }
 }

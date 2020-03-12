@@ -27,5 +27,5 @@ object DriveConstants {
         kWheelRadius
     )
 
-    const val kP = 0.00015
+    const val kP = 0.00013
 }

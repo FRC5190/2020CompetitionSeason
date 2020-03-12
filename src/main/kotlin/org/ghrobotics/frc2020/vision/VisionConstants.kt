@@ -15,7 +15,7 @@ import org.ghrobotics.lib.mathematics.units.seconds
 
 object VisionConstants {
     // Turret to camera transform
-    val kTurretToCamera = Transform2d(10.5.inches, 0.inches, Rotation2d.fromDegrees(0.8))
+    val kTurretToCamera = Transform2d(10.5.inches, 0.inches, Rotation2d.fromDegrees(1.2))
 
     // TargetTracker constants
     val kMaxTargetTrackingLifetime = 1.5.seconds

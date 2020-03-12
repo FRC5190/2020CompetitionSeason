@@ -11,6 +11,7 @@
 package org.ghrobotics.frc2020.planners
 
 import java.util.Objects
+import kotlin.math.ln
 import org.ghrobotics.lib.mathematics.epsilonEquals
 import org.ghrobotics.lib.mathematics.lerp
 import org.ghrobotics.lib.mathematics.units.Meter
@@ -19,6 +20,7 @@ import org.ghrobotics.lib.mathematics.units.derived.AngularVelocity
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.mathematics.units.derived.rpm
+import org.ghrobotics.lib.mathematics.units.inInches
 import org.ghrobotics.lib.mathematics.units.inches
 import org.ghrobotics.lib.types.Interpolatable
 import org.ghrobotics.lib.utils.InterpolatingTreeMap
@@ -30,6 +32,17 @@ import org.ghrobotics.lib.utils.InterpolatingTreeMap
 object ShooterPlanner {
     // Map to store pitch to ShooterPlanner values.
     private val map = InterpolatingTreeMap.createFromInterpolatable<Meter, ShooterParameters>()
+
+    // Functions for RPM, Angle, and Feed Rate
+    private val rpm: (SIUnit<Meter>) -> SIUnit<AngularVelocity> = { distance: SIUnit<Meter> ->
+        (7.97 * distance.inInches() + 3755).rpm
+    }
+    private val angle: (SIUnit<Meter>) -> SIUnit<Radian> = { distance: SIUnit<Meter> ->
+        (134 + -21.5 * ln(distance.inInches())).degrees
+    }
+    private val feedRate: (SIUnit<Meter>) -> Double = { distance: SIUnit<Meter> ->
+        -3.71E-03 * distance.inInches() + 1.46
+    }
 
     init {
         map[75.inches] = ShooterParameters(4300.rpm, 41.5.degrees, 1.0)
@@ -51,7 +64,10 @@ object ShooterPlanner {
      * Returns the shooter parameters for a given distance to the
      * goal.
      */
-    operator fun get(distance: SIUnit<Meter>) = map[distance]!!
+    operator fun get(distance: SIUnit<Meter>): ShooterParameters {
+        return ShooterParameters(rpm(distance), angle(distance), feedRate(distance))
+//        return map[distance]!!
+    }
 
     data class ShooterParameters(
         val speed: SIUnit<AngularVelocity>,

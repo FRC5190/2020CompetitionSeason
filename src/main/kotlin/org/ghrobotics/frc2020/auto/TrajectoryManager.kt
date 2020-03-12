@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator
 import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.twodim.trajectory.FalconTrajectoryConfig
 import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.feet
@@ -28,9 +29,9 @@ object TrajectoryManager {
 
     // Constraints
     private val kMaxVelocity = 12.feet / 1.seconds
-    private val kMaxAcceleration = 12.feet / 1.seconds / 1.seconds
+    private val kMaxAcceleration = 10.feet / 1.seconds / 1.seconds
 
-    private val kMaxCentripetalAcceleration = 12.feet / 1.seconds / 1.seconds
+    private val kMaxCentripetalAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
 
     private val kCentripetalAccelerationConstraint =
@@ -78,6 +79,21 @@ object TrajectoryManager {
 
     val singleRendezvousPickupToInitLineScoringLocation: Trajectory =
         generate(WaypointManager.kSingleRendezvousPickup, WaypointManager.kInitLineScoringLocation, kRevConfig)
+
+    val trenchStartToTrenchRendezvousPickup: Trajectory =
+        generate(WaypointManager.kTrenchStart, WaypointManager.kTrenchRendezvousPickup, kFwdConfig)
+
+    val trenchRendezvousPickupToIntermediate: Trajectory =
+        generate(WaypointManager.kTrenchRendezvousPickup, WaypointManager.kTrenchScoringLocation, kRevConfig)
+
+    val intermediateToTrenchPickup: Trajectory =
+        TrajectoryGenerator.generateTrajectory(
+            WaypointManager.kTrenchScoringLocation, listOf(Translation2d(36.22.feet, 2.99.feet)),
+            WaypointManager.kTrenchPickup, kFwdConfig
+        )
+
+    val trenchPickupToTrenchScoringLocation: Trajectory =
+        generate(WaypointManager.kTrenchPickup, WaypointManager.kTrenchScoringLocation, kRevConfig)
 
     /**
      * Generates a trajectory from a start and end waypoint.

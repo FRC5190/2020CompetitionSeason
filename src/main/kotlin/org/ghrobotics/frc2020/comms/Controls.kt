@@ -35,7 +35,9 @@ import org.ghrobotics.lib.wrappers.hid.xboxController
  */
 object Controls {
 
-    val driverController = xboxController(0) {}
+    val driverController = xboxController(0) {
+        button(kBumperLeft).change(TurretPositionCommand(Turret.innerGoalBehavior))
+    }
 
     private val operatorController = xboxController(1) {
         // Controls when not in climb mode.
@@ -43,9 +45,13 @@ object Controls {
             // Right bumper to shoot. This aims the turret, shooter, and hood
             // and fires when the driver presses his right bumper.
             button(kBumperRight).change(Superstructure.scoreWhenStopped(driverController.getRawButton(kBumperRight)))
+            button(kA).change(Superstructure.scoreWhenStopped(driverController.getRawButton(kBumperRight), 5.0, true))
 
             // Left bumper to intake power cells.
             button(kBumperLeft).change(Superstructure.intake())
+
+            // Left trigger to exhaust balls through the feeder.
+            triggerAxisButton(GenericHID.Hand.kLeft, threshold = 0.04).change(Superstructure.release())
 
             // POV 0 to force turret field-relative zero.
             pov(0).change(TurretPositionCommand { -Drivetrain.getAngle() })

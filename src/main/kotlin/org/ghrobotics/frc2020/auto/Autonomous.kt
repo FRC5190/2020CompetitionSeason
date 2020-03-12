@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
 import org.ghrobotics.frc2020.auto.routines.DrivetrainCharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.ShooterCharacterizationRoutine
+import org.ghrobotics.frc2020.auto.routines.StealRoutine
+import org.ghrobotics.frc2020.auto.routines.TrenchRoutine
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.lib.commands.sequential
 
@@ -32,11 +34,11 @@ object Autonomous {
             Mode.SHOOTER_CHARACTERIZATION -> ShooterCharacterizationRoutine()
 
             // Steal Routines.
-            Mode.STEAL_AND_SHOOT_FROM_INIT_LINE -> TODO()
-            Mode.STEAL_AND_SHOOT_FROM_PROTECTED_ZONE -> TODO()
+            Mode.STEAL_AND_SHOOT_FROM_INIT_LINE -> StealRoutine(false)
+            Mode.STEAL_AND_SHOOT_FROM_PROTECTED_ZONE -> StealRoutine(true)
 
             // Trench Routines.
-            Mode.TRENCH -> TODO()
+            Mode.TRENCH -> TrenchRoutine()
 
             null -> DefaultRoutine()
         }.getRoutine()
