@@ -19,6 +19,6 @@ class PathTimingTest {
 
     @Test
     fun timeTrenchAuto() {
-        println("Trench Auto: ${TrenchRoutine().getPathDuration()}")
+//        println("Trench Auto: ${TrenchRoutine().getPathDuration()}")
     }
 }
