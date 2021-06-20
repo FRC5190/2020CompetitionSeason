@@ -12,8 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command
 import org.ghrobotics.frc2020.auto.routines.DefaultRoutine
 import org.ghrobotics.frc2020.auto.routines.DrivetrainCharacterizationRoutine
 import org.ghrobotics.frc2020.auto.routines.ShooterCharacterizationRoutine
-import org.ghrobotics.frc2020.auto.routines.StealRoutine
-import org.ghrobotics.frc2020.auto.routines.TrenchRoutine
+import org.ghrobotics.frc2020.auto.routines.TrenchRendezvousRoutine
 import org.ghrobotics.frc2020.comms.Network
 import org.ghrobotics.lib.commands.sequential
 
@@ -33,12 +32,8 @@ object Autonomous {
             Mode.DRIVETRAIN_CHARACTERIZATION -> DrivetrainCharacterizationRoutine()
             Mode.SHOOTER_CHARACTERIZATION -> ShooterCharacterizationRoutine()
 
-            // Steal Routines.
-            Mode.STEAL_AND_SHOOT_FROM_INIT_LINE -> StealRoutine(false)
-            Mode.STEAL_AND_SHOOT_FROM_PROTECTED_ZONE -> StealRoutine(true)
-
             // Trench Routines.
-            Mode.TRENCH -> TrenchRoutine()
+            Mode.TRENCH_AND_RENDEZVOUS -> TrenchRendezvousRoutine()
 
             null -> DefaultRoutine()
         }.getRoutine()
@@ -56,8 +51,7 @@ object Autonomous {
      */
     enum class Mode {
         DRIVETRAIN_CHARACTERIZATION, SHOOTER_CHARACTERIZATION,
-        STEAL_AND_SHOOT_FROM_PROTECTED_ZONE, STEAL_AND_SHOOT_FROM_INIT_LINE,
-        TRENCH
+        TRENCH_AND_RENDEZVOUS
     }
 
     @Suppress("FunctionName")

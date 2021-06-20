@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstr
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint
 import edu.wpi.first.wpilibj.trajectory.constraint.MaxVelocityConstraint
 import edu.wpi.first.wpilibj.trajectory.constraint.RectangularRegionConstraint
-import edu.wpi.first.wpilibj.util.Units
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.twodim.trajectory.FalconTrajectoryConfig
@@ -31,10 +30,10 @@ import org.ghrobotics.lib.mathematics.units.seconds
 object TrajectoryManager {
 
     // Constraints
-    private val kMaxVelocity = 10.feet / 1.seconds
-    private val kMaxAcceleration = 8.feet / 1.seconds / 1.seconds
+    private val kMaxVelocity = 12.feet / 1.seconds
+    private val kMaxAcceleration = 10.feet / 1.seconds / 1.seconds
 
-    private val kMaxCentripetalAcceleration = 6.feet / 1.seconds / 1.seconds
+    private val kMaxCentripetalAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
 
     private val kCentripetalAccelerationConstraint =
@@ -45,7 +44,7 @@ object TrajectoryManager {
 
     private val kRegionConstraint = RectangularRegionConstraint(
             WaypointManager.kTrenchRegion.bottomLeft, WaypointManager.kTrenchRegion.topRight,
-            MaxVelocityConstraint(Units.feetToMeters(5.0))
+            MaxVelocityConstraint((6.feet / 1.seconds).value)
     )
 
     // Config
@@ -59,51 +58,23 @@ object TrajectoryManager {
             .setKinematics(Drivetrain.kinematics)
             .addConstraint(kCentripetalAccelerationConstraint)
             .addConstraint(kVoltageConstraint)
-            .addConstraint(kRegionConstraint)
             .setReversed(true)
 
     // Trajectories
-    val stealStartToOpponentTrenchBalls: Trajectory =
-            generate(WaypointManager.kStealStart, WaypointManager.kOpponentTrenchBalls, kFwdConfig)
-
-    val opponentTrenchBallsToProtectedScoringLocation: Trajectory =
-            generate(WaypointManager.kOpponentTrenchBalls, WaypointManager.kProtectedScoringLocation, kRevConfig)
-
-    val opponentTrenchBallsToInitLineScoringLocation: Trajectory =
-            generate(WaypointManager.kOpponentTrenchBalls, WaypointManager.kInitLineScoringLocation, kRevConfig)
-
-    val protectedScoringLocationToDoubleRendezvousPickup: Trajectory =
-            generate(WaypointManager.kProtectedScoringLocation, WaypointManager.kDoubleRendezvousPickup, kFwdConfig)
-
-    val initLineScoringLocationToDoubleRendezvousPickup: Trajectory =
-            generate(WaypointManager.kInitLineScoringLocation, WaypointManager.kDoubleRendezvousPickup, kFwdConfig)
-
-    val doubleRendezvousPickupToRendezvousIntermediate: Trajectory =
-            generate(WaypointManager.kDoubleRendezvousPickup, WaypointManager.kRendezvousPickupIntermediate, kRevConfig)
-
-    val rendezvousIntermediateToSingleRendezvousPickup: Trajectory =
-            generate(WaypointManager.kRendezvousPickupIntermediate, WaypointManager.kSingleRendezvousPickup, kFwdConfig)
-
-    val singleRendezvousPickupToProtectedScoringLocation: Trajectory =
-            generate(WaypointManager.kSingleRendezvousPickup, WaypointManager.kProtectedScoringLocation, kRevConfig)
-
-    val singleRendezvousPickupToInitLineScoringLocation: Trajectory =
-            generate(WaypointManager.kSingleRendezvousPickup, WaypointManager.kInitLineScoringLocation, kRevConfig)
-
     val trenchStartToTrenchRendezvousPickup: Trajectory =
-            generate(WaypointManager.kTrenchStart, WaypointManager.kTrenchRendezvousPickup, kFwdConfig)
+            generate(WaypointManager.kTrenchStart, WaypointManager.kRendezvousPickup, kFwdConfig)
 
-    val trenchRendezvousPickupToIntermediate: Trajectory =
-            generate(WaypointManager.kTrenchRendezvousPickup, WaypointManager.kTrenchScoringLocation, kRevConfig)
+    val trenchRendezvousPickupToScoringLocation: Trajectory =
+            generate(WaypointManager.kRendezvousPickup, WaypointManager.kTrenchScore, kRevConfig)
 
     val intermediateToTrenchPickup: Trajectory =
             TrajectoryGenerator.generateTrajectory(
-                    WaypointManager.kTrenchScoringLocation, listOf(Translation2d(36.22.feet, 2.99.feet)),
+                    WaypointManager.kTrenchScore, listOf(Translation2d(36.22.feet, 2.76.feet)),
                     WaypointManager.kTrenchPickup, kFwdConfig
             )
 
     val trenchPickupToTrenchScoringLocation: Trajectory =
-            generate(WaypointManager.kTrenchPickup, WaypointManager.kTrenchScoringLocation, kRevConfig)
+            generate(WaypointManager.kTrenchPickup, WaypointManager.kTrenchScore, kRevConfig)
 
     /**
      * Generates a trajectory from a start and end waypoint.

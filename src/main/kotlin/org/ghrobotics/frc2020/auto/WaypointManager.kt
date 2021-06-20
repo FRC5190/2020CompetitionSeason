@@ -14,13 +14,11 @@ import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
-import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.feet
 import org.ghrobotics.lib.mathematics.units.inches
-import org.ghrobotics.lib.mathematics.units.meters
 
 /**
  * Handles all waypoints on the field.
@@ -50,72 +48,31 @@ object WaypointManager {
             Translation2d(21.5.feet, 0.feet), Translation2d(25.feet, 4.5.feet)
     )
 
-    // Waypoints
-    val kStealStart = Pose2d(
-            x = kInitiationLineX - kRobotLength / 2.0 - 39.inches,
-            y = 24.82.feet,
-            angle = Rotation2d.fromDegrees(180.0)
+    // Goal
+    val kGoalLocation = Pose2d(
+            x = kMaxFieldX, y = kGoalY, angle = Rotation2d()
     )
+
+    // Waypoints
     val kTrenchStart = Pose2d(
             x = kInitiationLineX - kRobotLength / 2.0,
             y = 2.18.feet,
             angle = Rotation2d.fromDegrees(180.0)
     )
 
-    val kGoalLocation = Pose2d(
-            x = kMaxFieldX, y = kGoalY, angle = Rotation2d()
-    )
-
-    val kOpponentTrenchBalls = Pose2d(
-            x = 34.00.feet, y = 24.82.feet, angle = Rotation2d.fromDegrees(181.0)
-    )
-
-    val kProtectedScoringLocation = Pose2d(
-            x = 50.21.feet, y = 09.06.feet, angle = Rotation2d.fromDegrees(102.0)
-    )
-
-    val kTrenchScoringLocation = Pose2d(
-            x = 42.16.feet, y = 06.42.feet, angle = Rotation2d.fromDegrees(-159.0)
-    )
+    val kRendezvousPickup: Pose2d = Pose2d(
+            x = 31.23.feet, y = 12.12.feet, angle = Rotation2d.fromDegrees(113.0)
+    ) // + Transform2d((-2).feet, 0.inches, Rotation2d.fromDegrees(0.0))
 
     val kTrenchPickup = Pose2d(
             x = 22.36.feet, y = 02.18.feet, angle = Rotation2d.fromDegrees(180.0)
     )
 
-    val kInitLineScoringLocation = Pose2d(
-            x = 42.54.feet, y = 11.20.feet, angle = Rotation2d.fromDegrees(132.0)
-    )
-
-    val kDoubleRendezvousPickup: Pose2d = Pose2d(
-            x = 35.34.feet, y = 14.94.feet, angle = Rotation2d.fromDegrees(-157.0)
-    ) + Transform2d((-8).inches, 0.inches, Rotation2d.fromDegrees(0.0))
-
-    val kRendezvousPickupIntermediate = Pose2d(
-            x = 39.03.feet, y = 14.28.feet, angle = Rotation2d.fromDegrees(-157.0)
-    )
-
-    val kSingleRendezvousPickup: Pose2d = Pose2d(
-            x = 36.35.feet, y = 13.50.feet, angle = Rotation2d.fromDegrees(-157.0)
-    ) + Transform2d((-8).inches, 0.inches, Rotation2d.fromDegrees(0.0))
-
-    val kTrenchRendezvousPickup: Pose2d = Pose2d(
-            x = 9.18.meters, y = 4.052.meters, angle = Rotation2d.fromDegrees(112.0)
-    ) + Transform2d((-30).inches, 0.inches, Rotation2d.fromDegrees(0.0))
-
-    val kTrenchPickupIntermediate = Pose2d(
-            x = 40.65.feet, y = 04.52.feet, angle = Rotation2d.fromDegrees(158.0)
+    val kTrenchScore = Pose2d(
+            x = 40.65.feet, y = 05.03.feet, angle = Rotation2d.fromDegrees(200.0)
     )
 
     // Distances
-    val kInitLineScoringDistance =
-            SIUnit<Meter>(kInitLineScoringLocation.translation.getDistance(kGoalLocation.translation))
-
-    val kProtectedScoringDistance =
-            SIUnit<Meter>(kProtectedScoringLocation.translation.getDistance(kGoalLocation.translation))
-
-    val kTrenchRendezvousScoringDistance =
-            SIUnit<Meter>(kTrenchPickupIntermediate.translation.getDistance(kGoalLocation.translation))
-
     val kTrenchScoringDistance =
-            SIUnit<Meter>(kTrenchScoringLocation.translation.getDistance(kGoalLocation.translation))
+            SIUnit<Meter>(kTrenchScore.translation.getDistance(kGoalLocation.translation))
 }

@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.geometry.Transform2d
+import kotlin.math.atan2
+import org.ghrobotics.frc2020.auto.WaypointManager
 import org.ghrobotics.frc2020.isConnected
 import org.ghrobotics.frc2020.planners.TurretPlanner
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
@@ -44,9 +46,9 @@ object Turret : FalconSubsystem() {
 
     // Hardware
     private val master = FalconMAX(
-        id = TurretConstants.kTurretId,
-        type = CANSparkMaxLowLevel.MotorType.kBrushless,
-        model = TurretConstants.kNativeUnitModel
+            id = TurretConstants.kTurretId,
+            type = CANSparkMaxLowLevel.MotorType.kBrushless,
+            model = TurretConstants.kNativeUnitModel
     )
 
     private val hallEffectSensor = DigitalInput(TurretConstants.kHallEffectSensorId)
@@ -59,7 +61,7 @@ object Turret : FalconSubsystem() {
 
     // Buffer to store previous turret angles for latency compensation.
     private val buffer =
-        InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(1.seconds) { Timer.getFPGATimestamp().seconds }
+            InterpolatingTreeMapBuffer.createFromSI<Second, Radian>(1.seconds) { Timer.getFPGATimestamp().seconds }
 
     // Lambda that dictates the turret's default behavior.
     val defaultBehavior: () -> SIUnit<Radian> = {
@@ -72,10 +74,20 @@ object Turret : FalconSubsystem() {
 
     val innerGoalBehavior: () -> SIUnit<Radian> = {
         if (GoalTracker.isTrackingTargets) {
-            println("facing inner")
             GoalTracker.latestTurretAngleToFaceInnerGoal
         } else {
             -Drivetrain.getAngle()
+        }
+    }
+
+    val autoBehavior: () -> SIUnit<Radian> = {
+        if (GoalTracker.isTrackingTargets) {
+            GoalTracker.latestTurretAngleToFaceInnerGoal
+        } else {
+            // Odometry will be accurate in auto, so we can rely on that.
+            val pose = Drivetrain.getPose()
+            val goal = WaypointManager.kGoalLocation
+            atan2(goal.y - pose.y, goal.x - pose.x).radians - Drivetrain.getAngle()
         }
     }
 
@@ -132,17 +144,17 @@ object Turret : FalconSubsystem() {
             master.brakeMode = true
 
             master.canSparkMax.setSoftLimit(
-                CANSparkMax.SoftLimitDirection.kReverse,
-                TurretConstants.kNativeUnitModel.toNativeUnitPosition(
-                    TurretConstants.kAcceptableRange.start
-                )
-                    .value.toFloat()
+                    CANSparkMax.SoftLimitDirection.kReverse,
+                    TurretConstants.kNativeUnitModel.toNativeUnitPosition(
+                            TurretConstants.kAcceptableRange.start
+                    )
+                            .value.toFloat()
             )
             master.canSparkMax.setSoftLimit(
-                CANSparkMax.SoftLimitDirection.kForward,
-                TurretConstants.kNativeUnitModel.toNativeUnitPosition(
-                    TurretConstants.kAcceptableRange.endInclusive
-                ).value.toFloat()
+                    CANSparkMax.SoftLimitDirection.kForward,
+                    TurretConstants.kNativeUnitModel.toNativeUnitPosition(
+                            TurretConstants.kAcceptableRange.endInclusive
+                    ).value.toFloat()
             )
 
             master.controller.p = TurretConstants.kP
@@ -187,7 +199,7 @@ object Turret : FalconSubsystem() {
      */
     fun setPercent(percent: Double) {
         periodicIO.desiredOutput =
-            Output.Percent(percent)
+                Output.Percent(percent)
         periodicIO.feedforward = 0.volts
     }
 
@@ -205,7 +217,7 @@ object Turret : FalconSubsystem() {
      */
     fun setAngle(angle: SIUnit<Radian>) {
         periodicIO.desiredOutput =
-            Output.Position(TurretPlanner.getOptimizedAngle(angle, periodicIO.position))
+                Output.Position(TurretPlanner.getOptimizedAngle(angle, periodicIO.position))
         periodicIO.feedforward = TurretConstants.kS
     }
 
@@ -256,7 +268,7 @@ object Turret : FalconSubsystem() {
 
         var feedforward: SIUnit<Volt> = 0.volts
         var desiredOutput: Output =
-            Output.Nothing
+                Output.Nothing
 
         var resetPosition: Boolean = false
         var resetTo: SIUnit<Radian> = 0.radians
