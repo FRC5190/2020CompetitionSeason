@@ -63,6 +63,7 @@ object Network {
                 double("RPM") { Shooter.velocity.value * 60 / 2 / Math.PI }
                 double("Speed SI") { Shooter.velocity.value }
                 double("Voltage (V)") { Shooter.voltage.value }
+                double("Setpoint") { Shooter.setpoint }
             }
             grid("Turret") {
                 position(row = 0, column = 8)
@@ -79,6 +80,7 @@ object Network {
                 double("Encoder Raw") { Hood.rawEncoder }
                 double("Angle") { Hood.angle.inDegrees() }
                 double("Speed") { Math.toDegrees(Hood.speed.value) }
+                double("Setpoint") { Math.toDegrees(Hood.setpoint) }
             }
             grid("Shooting") {
                 position(row = 2, column = 2)

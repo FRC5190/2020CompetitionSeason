@@ -11,6 +11,7 @@ package org.ghrobotics.frc2020.subsystems.shooter
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
+import org.ghrobotics.frc2020.isConnected
 import org.ghrobotics.frc2020.kIsRaceRobot
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
@@ -25,7 +26,6 @@ import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.SensorlessCompatibleSubsystem
-import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the shooter subsystem on the robot.
@@ -52,6 +52,9 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
     val position get() = periodicIO.position
     val velocity get() = periodicIO.velocity
     val voltage get() = periodicIO.voltage
+
+    var setpoint = 0.0
+        private set
 
     override fun lateInit() {
         // Check if Spark is on the bus.
@@ -141,7 +144,10 @@ object Shooter : FalconSubsystem(), SensorlessCompatibleSubsystem {
             when (val desiredOutput = periodicIO.desiredOutput) {
                 is Output.Nothing -> masterMotor.setNeutral()
                 is Output.Percent -> masterMotor.setDutyCycle(desiredOutput.percent, periodicIO.feedforward)
-                is Output.Velocity -> masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
+                is Output.Velocity -> {
+                    setpoint = desiredOutput.velocity.value
+                    masterMotor.setVelocity(desiredOutput.velocity, periodicIO.feedforward)
+                }
             }
         }
         if (Timer.getFPGATimestamp() - now > 0.02) {

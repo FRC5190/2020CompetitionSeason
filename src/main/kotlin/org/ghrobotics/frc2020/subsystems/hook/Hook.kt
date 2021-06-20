@@ -10,6 +10,7 @@ package org.ghrobotics.frc2020.subsystems.hook
 
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.Timer
+import org.ghrobotics.frc2020.isConnected
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Ampere
 import org.ghrobotics.lib.mathematics.units.Meter
@@ -20,7 +21,6 @@ import org.ghrobotics.lib.mathematics.units.derived.volts
 import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.nativeunit.DefaultNativeUnitModel
 import org.ghrobotics.lib.motors.rev.FalconMAX
-import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the hook which can slide across the climbing bar.

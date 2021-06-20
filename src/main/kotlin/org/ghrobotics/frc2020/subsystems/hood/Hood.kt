@@ -37,6 +37,9 @@ object Hood : FalconSubsystem() {
     val angle get() = periodicIO.angle
     val speed get() = periodicIO.speed
 
+    var setpoint = 0.0
+        private set
+
     init {
         master.canSparkMax.restoreFactoryDefaults()
 
@@ -64,7 +67,10 @@ object Hood : FalconSubsystem() {
         when (val desiredOutput = periodicIO.desiredOutput) {
             is Output.Nothing -> master.setNeutral()
             is Output.Percent -> master.setDutyCycle(desiredOutput.percent)
-            is Output.Position -> master.setPosition(desiredOutput.angle)
+            is Output.Position -> {
+                setpoint = desiredOutput.angle.value
+                master.setPosition(desiredOutput.angle)
+            }
         }
         if (Timer.getFPGATimestamp() - now > 0.02) {
             println("Hood periodic() loop overrun.")

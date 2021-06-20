@@ -49,7 +49,7 @@ object Superstructure {
     private const val kDefaultIntakeSpeed = 1.0
 
     private val kShooterTolerance = 30.rpm
-    private val kHoodTolerance = 0.8.degrees
+    private val kHoodTolerance = 1.degrees
 
     // Locking parameters
     private var lockedShooterParams = ShooterPlanner.ShooterParameters(SIUnit(0.0), SIUnit(0.0), 0.0)

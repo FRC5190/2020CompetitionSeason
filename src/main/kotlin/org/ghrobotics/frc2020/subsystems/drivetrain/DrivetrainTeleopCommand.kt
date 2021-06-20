@@ -9,6 +9,7 @@
 package org.ghrobotics.frc2020.subsystems.drivetrain
 
 import edu.wpi.first.wpilibj.GenericHID
+import kotlin.math.abs
 import org.ghrobotics.frc2020.comms.Controls
 import org.ghrobotics.lib.commands.FalconCommand
 import org.ghrobotics.lib.utils.withDeadband
@@ -23,7 +24,7 @@ import org.ghrobotics.lib.wrappers.hid.kX
 class DrivetrainTeleopCommand : FalconCommand(Drivetrain) {
 
     override fun execute() {
-        Drivetrain.curvatureDrive(-xSource(), cSource(), qSource())
+        Drivetrain.curvatureDrive(-xSource() * abs(xSource()), cSource(), qSource())
     }
 
     companion object {
