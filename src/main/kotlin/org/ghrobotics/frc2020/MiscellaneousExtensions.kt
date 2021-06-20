@@ -6,7 +6,7 @@
  * Copyright 2019, Green Hope Falcons
  */
 
-package org.ghrobotics.lib.utils
+package org.ghrobotics.frc2020
 
 import org.ghrobotics.lib.motors.rev.FalconMAX
 

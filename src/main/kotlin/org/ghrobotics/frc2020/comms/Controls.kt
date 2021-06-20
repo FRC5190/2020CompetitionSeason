@@ -22,7 +22,6 @@ import org.ghrobotics.lib.mathematics.units.derived.degrees
 import org.ghrobotics.lib.utils.map
 import org.ghrobotics.lib.utils.not
 import org.ghrobotics.lib.wrappers.hid.button
-import org.ghrobotics.lib.wrappers.hid.getRawButton
 import org.ghrobotics.lib.wrappers.hid.kA
 import org.ghrobotics.lib.wrappers.hid.kB
 import org.ghrobotics.lib.wrappers.hid.kBumperLeft
@@ -36,16 +35,10 @@ import org.ghrobotics.lib.wrappers.hid.xboxController
 object Controls {
 
     val driverController = xboxController(0) {
-        button(kBumperLeft).change(TurretPositionCommand(Turret.innerGoalBehavior))
-    }
-
-    private val operatorController = xboxController(1) {
-        // Controls when not in climb mode.
+        // Controls in regular mode.
         state(!Robot::isClimbMode) {
-            // Right bumper to shoot. This aims the turret, shooter, and hood
-            // and fires when the driver presses his right bumper.
-            button(kBumperRight).change(Superstructure.scoreWhenStopped(driverController.getRawButton(kBumperRight)))
-            button(kA).change(Superstructure.scoreWhenStopped(driverController.getRawButton(kBumperRight), 5.0, true))
+            // Right bumper to shoot.
+            button(kBumperRight).change(Superstructure.scoreWhenStopped())
 
             // Left bumper to intake power cells.
             button(kBumperLeft).change(Superstructure.intake())
@@ -100,6 +93,5 @@ object Controls {
 
     fun update() {
         driverController.update()
-        operatorController.update()
     }
 }

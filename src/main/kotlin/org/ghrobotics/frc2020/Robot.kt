@@ -62,6 +62,7 @@ object Robot : FalconTimedRobot() {
         +Turret
 
         TurretZeroCommand().schedule()
+        super.wrappedValue.setNetworkTablesFlushEnabled(true)
     }
 
     // Runs once when autonomous period starts

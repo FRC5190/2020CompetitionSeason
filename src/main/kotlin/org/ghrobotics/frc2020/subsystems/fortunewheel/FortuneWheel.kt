@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.I2C
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.util.Color
+import org.ghrobotics.frc2020.isConnected
 import org.ghrobotics.frc2020.kPCMId
 import org.ghrobotics.lib.commands.FalconSubsystem
 import org.ghrobotics.lib.mathematics.units.Frac
@@ -26,15 +27,14 @@ import org.ghrobotics.lib.mathematics.units.meters
 import org.ghrobotics.lib.mathematics.units.operations.div
 import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
-import org.ghrobotics.lib.utils.isConnected
 
 object FortuneWheel : FalconSubsystem() {
     // Create objects
     private val colorSensor = ColorSensorV3(I2C.Port.kOnboard)
     private val spinnerMotor = FalconMAX(
-        id = FortuneWheelConstants.kSpinnerMotorId,
-        type = CANSparkMaxLowLevel.MotorType.kBrushless,
-        model = FortuneWheelConstants.kSpinnerUnitModel
+            id = FortuneWheelConstants.kSpinnerMotorId,
+            type = CANSparkMaxLowLevel.MotorType.kBrushless,
+            model = FortuneWheelConstants.kSpinnerUnitModel
     )
 
     private val spinnerPiston = Solenoid(kPCMId, FortuneWheelConstants.kFortuneWheelPistonId)

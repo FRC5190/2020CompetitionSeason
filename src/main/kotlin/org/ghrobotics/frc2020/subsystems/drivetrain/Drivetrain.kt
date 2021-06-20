@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.controller.RamseteController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
+import org.ghrobotics.frc2020.isConnected
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -24,7 +25,6 @@ import org.ghrobotics.lib.mathematics.units.seconds
 import org.ghrobotics.lib.motors.rev.FalconMAX
 import org.ghrobotics.lib.subsystems.drive.FalconWestCoastDrivetrain
 import org.ghrobotics.lib.utils.asSource
-import org.ghrobotics.lib.utils.isConnected
 
 /**
  * Represents the drivetrain of the robot.
@@ -104,6 +104,9 @@ object Drivetrain : FalconWestCoastDrivetrain() {
 
             leftSlave1.follow(leftMotor)
             rightSlave1.follow(rightMotor)
+
+            leftMotor.canSparkMax.openLoopRampRate = 0.2
+            rightMotor.canSparkMax.openLoopRampRate = 0.2
 
             leftMotor.outputInverted = false
             leftSlave1.outputInverted = false

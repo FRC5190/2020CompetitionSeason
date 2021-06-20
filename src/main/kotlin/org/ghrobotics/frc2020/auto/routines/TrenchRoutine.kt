@@ -20,7 +20,6 @@ import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
 import org.ghrobotics.frc2020.subsystems.hood.HoodConstants
 import org.ghrobotics.frc2020.subsystems.hood.HoodPositionCommand
-import org.ghrobotics.frc2020.subsystems.shooter.ShooterVelocityCommand
 import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
 import org.ghrobotics.lib.commands.parallel
 import org.ghrobotics.lib.commands.parallelDeadline
@@ -45,7 +44,7 @@ class TrenchRoutine : AutoRoutine {
         +parallelDeadline(Drivetrain.followTrajectory(path1)) {
             +TurretPositionCommand { 180.degrees }
             +sequential {
-                +WaitCommand(path1.totalTimeSeconds - 0.3)
+                +WaitCommand(path1.totalTimeSeconds - 2)
                 +Superstructure.intake()
             }
         }
@@ -54,13 +53,10 @@ class TrenchRoutine : AutoRoutine {
         +parallel {
             +Drivetrain.followTrajectory(path2)
             +sequential {
-                +parallelDeadline(Superstructure.intake().withTimeout(1.5)) {
-                    +ShooterVelocityCommand(firstVolleyParameters.speed)
-                    +HoodPositionCommand(firstVolleyParameters.angle)
-                }
+                +TurretPositionCommand { -Drivetrain.getAngle() }.withTimeout(1.5)
                 +Superstructure.scoreWhenStopped(
-                    distance = WaypointManager.kTrenchRendezvousScoringDistance,
-                    feedTime = 1.8
+                        distance = WaypointManager.kTrenchRendezvousScoringDistance,
+                        feedTime = 1.8
                 )
             }
         }
@@ -83,7 +79,7 @@ class TrenchRoutine : AutoRoutine {
                     +WaitCommand(2.0)
                 }) {
                     +Superstructure.intake()
-                    +TurretPositionCommand { 160.degrees }
+                    +TurretPositionCommand { 200.degrees }
                 }
                 +Superstructure.scoreWhenStopped(distance = WaypointManager.kTrenchScoringDistance, feedTime = 2.5)
             }
@@ -91,5 +87,5 @@ class TrenchRoutine : AutoRoutine {
     }
 
     fun getPathDuration(): Double =
-        path1.totalTimeSeconds + path2.totalTimeSeconds + path3.totalTimeSeconds + path4.totalTimeSeconds
+            path1.totalTimeSeconds + path2.totalTimeSeconds + path3.totalTimeSeconds + path4.totalTimeSeconds
 }

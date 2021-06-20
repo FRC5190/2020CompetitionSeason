@@ -48,12 +48,12 @@ object ShooterPlanner {
         map[75.inches] = ShooterParameters(4300.rpm, 41.5.degrees, 1.0)
         map[88.5.inches] = ShooterParameters(4500.rpm, 37.5.degrees, 1.0)
         map[110.inches] = ShooterParameters(4700.rpm, 32.5.degrees, 1.0)
-        map[128.3.inches] = ShooterParameters(4800.rpm, 29.0.degrees, 0.95)
-        map[141.8.inches] = ShooterParameters(5000.rpm, 26.degrees, 0.95)
+        map[128.3.inches] = ShooterParameters(4800.rpm, 29.0.degrees, 0.9)
+        map[141.8.inches] = ShooterParameters(5000.rpm, 26.degrees, 0.9)
         map[163.6.inches] = ShooterParameters(5080.rpm, 23.5.degrees, 0.9)
-        map[192.1.inches] = ShooterParameters(5200.rpm, 20.5.degrees, 0.8)
-        map[204.7.inches] = ShooterParameters(5350.rpm, 18.5.degrees, 0.7)
-        map[236.1.inches] = ShooterParameters(5550.rpm, 16.5.degrees, 0.66)
+        map[192.1.inches] = ShooterParameters(5200.rpm, 20.5.degrees, 0.65)
+        map[204.7.inches] = ShooterParameters(5350.rpm, 18.5.degrees, 0.50)
+        map[236.1.inches] = ShooterParameters(5550.rpm, 16.5.degrees, 0.50)
         map[270.7.inches] = ShooterParameters(5700.rpm, 13.5.degrees, 0.45)
         map[285.inches] = ShooterParameters(5820.rpm, 13.0.degrees, 0.40)
         map[305.inches] = ShooterParameters(6250.rpm, 11.0.degrees, 0.30)
@@ -65,8 +65,8 @@ object ShooterPlanner {
      * goal.
      */
     operator fun get(distance: SIUnit<Meter>): ShooterParameters {
-        return ShooterParameters(rpm(distance), angle(distance), feedRate(distance))
-//        return map[distance]!!
+//        return ShooterParameters(rpm(distance), angle(distance), feedRate(distance))
+        return map[distance]!!
     }
 
     data class ShooterParameters(
@@ -82,15 +82,15 @@ object ShooterPlanner {
          */
         override fun interpolate(endValue: ShooterParameters, t: Double): ShooterParameters {
             return ShooterParameters(
-                speed.lerp(endValue.speed, t),
-                angle.lerp(endValue.angle, t),
-                feedRate.lerp(endValue.feedRate, t)
+                    speed.lerp(endValue.speed, t),
+                    angle.lerp(endValue.angle, t),
+                    feedRate.lerp(endValue.feedRate, t)
             )
         }
 
         override fun equals(other: Any?): Boolean {
             return other is ShooterParameters && speed epsilonEquals other.speed &&
-                angle epsilonEquals other.angle && feedRate epsilonEquals other.feedRate
+                    angle epsilonEquals other.angle && feedRate epsilonEquals other.feedRate
         }
 
         override fun hashCode(): Int {
