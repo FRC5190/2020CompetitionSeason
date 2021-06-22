@@ -31,7 +31,7 @@ object TrajectoryManager {
 
     // Constraints
     private val kMaxVelocity = 12.feet / 1.seconds
-    private val kMaxAcceleration = 10.feet / 1.seconds / 1.seconds
+    private val kMaxAcceleration = 7.feet / 1.seconds / 1.seconds
 
     private val kMaxCentripetalAcceleration = 8.feet / 1.seconds / 1.seconds
     private val kMaxVoltage = 10.volts
@@ -44,7 +44,7 @@ object TrajectoryManager {
 
     private val kRegionConstraint = RectangularRegionConstraint(
             WaypointManager.kTrenchRegion.bottomLeft, WaypointManager.kTrenchRegion.topRight,
-            MaxVelocityConstraint((6.feet / 1.seconds).value)
+            MaxVelocityConstraint((4.feet / 1.seconds).value)
     )
 
     // Config

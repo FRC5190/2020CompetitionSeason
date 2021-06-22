@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.controller.RamseteController
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry
+import edu.wpi.first.wpilibj.smartdashboard.Field2d
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.ghrobotics.frc2020.isConnected
 import org.ghrobotics.lib.mathematics.units.SIUnit
 import org.ghrobotics.lib.mathematics.units.derived.Radian
@@ -38,24 +40,24 @@ object Drivetrain : FalconWestCoastDrivetrain() {
 
     // Create motors
     override val leftMotor = FalconMAX(
-        id = DriveConstants.kLeftMasterId,
-        type = CANSparkMaxLowLevel.MotorType.kBrushless,
-        model = DriveConstants.kNativeUnitModel
+            id = DriveConstants.kLeftMasterId,
+            type = CANSparkMaxLowLevel.MotorType.kBrushless,
+            model = DriveConstants.kNativeUnitModel
     )
     override val rightMotor = FalconMAX(
-        id = DriveConstants.kRightMasterId,
-        type = CANSparkMaxLowLevel.MotorType.kBrushless,
-        model = DriveConstants.kNativeUnitModel
+            id = DriveConstants.kRightMasterId,
+            type = CANSparkMaxLowLevel.MotorType.kBrushless,
+            model = DriveConstants.kNativeUnitModel
     )
     private val leftSlave1 = FalconMAX(
-        DriveConstants.kLeftSlaveId,
-        CANSparkMaxLowLevel.MotorType.kBrushless,
-        DriveConstants.kNativeUnitModel
+            DriveConstants.kLeftSlaveId,
+            CANSparkMaxLowLevel.MotorType.kBrushless,
+            DriveConstants.kNativeUnitModel
     )
     private val rightSlave1 = FalconMAX(
-        DriveConstants.kRightSlaveId,
-        CANSparkMaxLowLevel.MotorType.kBrushless,
-        DriveConstants.kNativeUnitModel
+            DriveConstants.kRightSlaveId,
+            CANSparkMaxLowLevel.MotorType.kBrushless,
+            DriveConstants.kNativeUnitModel
     )
 
     // Connection status
@@ -81,6 +83,9 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     // Getter for average velocity
     val averageVelocity get() = (leftVelocity + rightVelocity) / 2.0
 
+    // Field display
+    val field = Field2d()
+
     override fun disableClosedLoopControl() {
         leftMotor.controller.p = 0.0
         rightMotor.controller.p = 0.0
@@ -94,7 +99,7 @@ object Drivetrain : FalconWestCoastDrivetrain() {
     override fun lateInit() {
         super.lateInit()
         isConnected = leftMotor.isConnected() && rightMotor.isConnected() &&
-            leftSlave1.isConnected() && rightSlave1.isConnected()
+                leftSlave1.isConnected() && rightSlave1.isConnected()
 
         if (isConnected) {
             leftMotor.canSparkMax.restoreFactoryDefaults()
@@ -114,6 +119,7 @@ object Drivetrain : FalconWestCoastDrivetrain() {
             rightSlave1.outputInverted = true
 
             enableClosedLoopControl()
+            SmartDashboard.putData("Field", field)
         } else {
             println("Did not initialize Drivetrain")
         }
@@ -126,6 +132,7 @@ object Drivetrain : FalconWestCoastDrivetrain() {
         val now = Timer.getFPGATimestamp()
         if (isConnected) {
             super.periodic()
+            field.robotPose = getPose()
         }
         if (Timer.getFPGATimestamp() - now > 0.02) {
             println("Drivetrain periodic() loop overrun.")

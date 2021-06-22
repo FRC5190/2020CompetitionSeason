@@ -9,6 +9,7 @@
 package org.ghrobotics.frc2020.auto.routines
 
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.WaitCommand
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand
 import org.ghrobotics.frc2020.auto.AutoRoutine
@@ -57,6 +58,9 @@ class TrenchRendezvousRoutine : AutoRoutine {
     //  * Execute Group 2 of path following while intaking balls.
     //  * Score
     override fun getRoutine(): Command = sequential {
+        // Reset odometry to the starting location of the pose.
+        +InstantCommand(Runnable { Drivetrain.resetPosition(path1.initialPose) })
+
         // Execute Group 1 of path following while intaking balls.
         // Note that all commands inside a parallel deadline group are canceled once the
         // deadline command (path following) exits.
@@ -100,7 +104,7 @@ class TrenchRendezvousRoutine : AutoRoutine {
 
             // Intake until the first path is complete and then some.
             val kFirstPathIntakeOverflowTime = 0.5
-            +Superstructure.intake().withTimeout(kFirstPathIntakeOverflowTime)
+            +Superstructure.intake().withTimeout(path3.totalTimeSeconds + kFirstPathIntakeOverflowTime)
 
             // This sequential command group takes care of the shooter and hood behavior.
             +sequential {

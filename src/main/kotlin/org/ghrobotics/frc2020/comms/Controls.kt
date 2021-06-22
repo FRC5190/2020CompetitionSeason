@@ -15,7 +15,7 @@ import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.climber.ClimberPercentCommand
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
-import org.ghrobotics.frc2020.subsystems.hood.HoodPercentCommand
+import org.ghrobotics.frc2020.subsystems.hook.HookPercentCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
 import org.ghrobotics.lib.mathematics.units.derived.degrees
@@ -73,7 +73,7 @@ object Controls {
 
             // Move the hook with the right axis.
             axisButton(XboxController.Axis.kRightY.value, threshold = 0.04) {
-                change(HoodPercentCommand(source))
+                change(HookPercentCommand(source))
             }
 
             // Toggle winch brake.
