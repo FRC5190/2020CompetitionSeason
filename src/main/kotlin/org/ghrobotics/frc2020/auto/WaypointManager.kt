@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.geometry.Pose2d
 import edu.wpi.first.wpilibj.geometry.Rotation2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Pose2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Rectangle2d
-import org.ghrobotics.lib.mathematics.twodim.geometry.Transform2d
 import org.ghrobotics.lib.mathematics.twodim.geometry.Translation2d
 import org.ghrobotics.lib.mathematics.units.Meter
 import org.ghrobotics.lib.mathematics.units.SIUnit
@@ -63,10 +62,10 @@ object WaypointManager {
 
     val kRendezvousPickup: Pose2d = Pose2d(
             x = 31.23.feet, y = 12.12.feet, angle = Rotation2d.fromDegrees(113.0)
-    ) + Transform2d((-2).feet, -6.inches, Rotation2d.fromDegrees(0.0))
+    ) // + Transform2d((-2).feet, -6.inches, Rotation2d.fromDegrees(0.0))
 
     val kTrenchPickup = Pose2d(
-            x = 22.36.feet, y = 02.18.feet, angle = Rotation2d.fromDegrees(180.0)
+            x = 22.36.feet + 69.inches, y = 02.18.feet + 5.inches, angle = Rotation2d.fromDegrees(180.0)
     )
 
     val kTrenchScore = Pose2d(

@@ -71,11 +71,11 @@ class TrenchRendezvousRoutine : AutoRoutine {
             // This sequential command group takes care of the intake behavior.
             +sequential {
                 // Wait for a bit and then start the intake.
-                val kIntakeWaitTime = 1.5
+                val kIntakeWaitTime = 0.5
                 +WaitCommand(kIntakeWaitTime)
 
                 // Intake until the first path is complete.
-                +Superstructure.intake().withTimeout(path1.totalTimeSeconds - kIntakeWaitTime)
+                +Superstructure.intake().withTimeout(path1.totalTimeSeconds - kIntakeWaitTime + 0.5)
             }
 
             // This sequential command group takes care of the shooter/hood behavior.
@@ -112,7 +112,7 @@ class TrenchRendezvousRoutine : AutoRoutine {
                 //  1. The first path has finished (all the balls have been picked up).
                 //  2. The robot is out of the control panel region.
                 //  3. A certain amount of time has elapsed since (1) and (2) have been met.
-                val kSafeTime = 1.0
+                val kSafeTime = 0.2
 
                 // Create the group for the aforementioned conditions.
                 val kConditions = sequential {
