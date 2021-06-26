@@ -10,15 +10,22 @@ package org.ghrobotics.frc2020.comms
 
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand
 import org.ghrobotics.frc2020.Robot
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.climber.ClimberPercentCommand
 import org.ghrobotics.frc2020.subsystems.drivetrain.Drivetrain
+import org.ghrobotics.frc2020.subsystems.feeder.FeederPercentCommand
 import org.ghrobotics.frc2020.subsystems.hook.HookPercentCommand
+import org.ghrobotics.frc2020.subsystems.shooter.Shooter
+import org.ghrobotics.frc2020.subsystems.shooter.ShooterVelocityCommand
 import org.ghrobotics.frc2020.subsystems.turret.Turret
 import org.ghrobotics.frc2020.subsystems.turret.TurretPositionCommand
+import org.ghrobotics.lib.commands.parallel
+import org.ghrobotics.lib.commands.sequential
 import org.ghrobotics.lib.mathematics.units.derived.degrees
+import org.ghrobotics.lib.mathematics.units.derived.rpm
 import org.ghrobotics.lib.utils.map
 import org.ghrobotics.lib.utils.not
 import org.ghrobotics.lib.wrappers.hid.button
@@ -37,14 +44,26 @@ object Controls {
     val driverController = xboxController(0) {
         // Controls in regular mode.
         state(!Robot::isClimbMode) {
-            // Right bumper to shoot.
-            button(kBumperRight).change(Superstructure.scoreWhenStopped())
+            // Right trigger to shoot.
+            triggerAxisButton(GenericHID.Hand.kLeft, threshold = 0.04).change(Superstructure.scoreWhenStopped())
 
-            // Left bumper to intake power cells.
-            button(kBumperLeft).change(Superstructure.intake())
+            // Left trigger to intake power cells.
+            triggerAxisButton(GenericHID.Hand.kRight, threshold = 0.04).change(Superstructure.intake())
 
-            // Left trigger to exhaust balls through the feeder.
-            triggerAxisButton(GenericHID.Hand.kLeft, threshold = 0.04).change(Superstructure.release())
+            // If vision fails, then will shoot from init line.
+            button(kA).change(
+                    parallel {
+                        +ShooterVelocityCommand(4000.rpm)
+                        +TurretPositionCommand { 0.degrees }
+                        +sequential {
+                            +WaitUntilCommand { (Shooter.velocity - 4000.rpm).absoluteValue < 30.rpm }
+                            +FeederPercentCommand(1.0, 1.0)
+                        }
+                    }
+            )
+
+            // Right bumper to exhaust balls through the feeder.
+            button(kBumperRight).change(Superstructure.release())
 
             // POV 0 to force turret field-relative zero.
             pov(0).change(TurretPositionCommand { -Drivetrain.getAngle() })
