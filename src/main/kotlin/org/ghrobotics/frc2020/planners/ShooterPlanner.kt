@@ -65,8 +65,8 @@ object ShooterPlanner {
      * goal.
      */
     operator fun get(distance: SIUnit<Meter>): ShooterParameters {
-//        return ShooterParameters(rpm(distance), angle(distance), feedRate(distance))
-        return map[distance]!!
+        return ShooterParameters(rpm(distance), angle(distance) + 1.degrees, feedRate(distance))
+//        return map[distance]!!
     }
 
     data class ShooterParameters(

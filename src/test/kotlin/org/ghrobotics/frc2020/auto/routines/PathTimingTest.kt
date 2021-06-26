@@ -8,17 +8,9 @@
 
 package org.ghrobotics.frc2020.auto.routines
 
-import org.junit.Test
-
 class PathTimingTest {
-    @Test
-    fun timeStealAuto() {
-//        println("Steal Auto Protected: ${StealRoutine(true).getDuration()}")
-//        println("Steal Auto Init Line: ${StealRoutine(false).getDuration()}")
-    }
-
-    @Test
-    fun timeTrenchAuto() {
-//        println("Trench Auto: ${TrenchRoutine().getPathDuration()}")
-    }
+//    @Test
+//    fun timeTrenchRendezvousAuto() {
+//        println("Trench Rendezvous Auto: ${TrenchRendezvousRoutine().getDuration()}")
+//    }
 }
