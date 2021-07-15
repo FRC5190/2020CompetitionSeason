@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand
 import org.ghrobotics.frc2020.Robot
+import org.ghrobotics.frc2020.planners.ShooterPlanner
 import org.ghrobotics.frc2020.subsystems.Superstructure
 import org.ghrobotics.frc2020.subsystems.climber.Climber
 import org.ghrobotics.frc2020.subsystems.climber.ClimberPercentCommand
@@ -65,11 +66,17 @@ object Controls {
             // Right bumper to exhaust balls through the feeder.
             button(kBumperRight).change(Superstructure.release())
 
-            // POV 0 to force turret field-relative zero.
-            pov(0).change(TurretPositionCommand { -Drivetrain.getAngle() })
+            // POV 0 to adjust hood (makes balls go higher).
+            pov(0).changeOn { ShooterPlanner.hoodAdjustment += 1.degrees }
 
-            // POV 180 to force turret field-relative 180.
-            pov(180).change(TurretPositionCommand { -Drivetrain.getAngle() + 180.degrees })
+            // POV 180 to adjust hood (makes balls go lower).
+            pov(180).changeOn { ShooterPlanner.hoodAdjustment -= 1.degrees }
+
+            // POV 90 to force turret field-relative zero.
+            pov(90).change(TurretPositionCommand { -Drivetrain.getAngle() })
+
+            // POV 270 to force turret field-relative 180.
+            pov(270).change(TurretPositionCommand { -Drivetrain.getAngle() + 180.degrees })
         }
 
         // Controls in climb mode.

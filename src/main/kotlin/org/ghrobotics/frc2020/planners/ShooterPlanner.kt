@@ -44,6 +44,10 @@ object ShooterPlanner {
         -3.71E-03 * distance.inInches() + 1.46
     }
 
+    // The hood adjustment value. This can be used to adjust the hood angle offset
+    // if balls are always going too high or too low.
+    var hoodAdjustment = 1.degrees
+
     init {
         map[75.inches] = ShooterParameters(4300.rpm, 41.5.degrees, 1.0)
         map[88.5.inches] = ShooterParameters(4500.rpm, 37.5.degrees, 1.0)
@@ -65,7 +69,7 @@ object ShooterPlanner {
      * goal.
      */
     operator fun get(distance: SIUnit<Meter>): ShooterParameters {
-        return ShooterParameters(rpm(distance), angle(distance) + 1.degrees, feedRate(distance))
+        return ShooterParameters(rpm(distance), angle(distance) + hoodAdjustment, feedRate(distance))
 //        return map[distance]!!
     }
 
